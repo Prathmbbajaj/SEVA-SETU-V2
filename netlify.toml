@@ -1,0 +1,45 @@
+# SahakarSeva (सहकार सेवा) - Netlify Production Configuration
+
+[build]
+  # Directory that contains index.html, style.css, and app.js
+  publish = "frontend"
+  # Standard build command to signal successful build in Netlify CI
+  command = "npm run build"
+
+# Single Page Application (SPA) routing:
+# Directs all page navigation back to index.html with 200 OK
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# OPTIONAL: Proxy /api requests to your deployed FastAPI backend
+# If you host your FastAPI backend on Render, Railway, or Fly.io,
+# uncomment this block and replace with your backend service URL:
+#
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://your-sahakarseva-backend.onrender.com/api/:splat"
+#   status = 200
+#   force = true
+
+# Security and Performance Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), microphone=(self)"
+    Access-Control-Allow-Origin = "*"
+
+# Optimized static asset caching for CSS & JS
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"

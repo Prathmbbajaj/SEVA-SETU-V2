@@ -7,7 +7,50 @@
  * NGO DARPAN verification form, and SIH guided scenario runner.
  */
 
-const API_BASE_URL = "http://localhost:8000";
+/**
+ * Dynamic API Base URL resolver:
+ * 1. window.SAHAKAR_API_URL or window.API_BASE_URL (injected via config or window)
+ * 2. localStorage.getItem("SAHAKAR_API_URL") (runtime override via browser console/UI)
+ * 3. If hosted on localhost/127.0.0.1 without HTTPS, defaults to http://localhost:8000
+ * 4. In production (Netlify), defaults to "" to avoid Mixed-Content security blocks
+ */
+function resolveApiBaseUrl() {
+  if (typeof window !== "undefined") {
+    if (window.SAHAKAR_API_URL) return window.SAHAKAR_API_URL;
+    if (window.API_BASE_URL) return window.API_BASE_URL;
+    try {
+      const stored = localStorage.getItem("SAHAKAR_API_URL");
+      if (stored) return stored;
+    } catch (e) {}
+
+    const host = window.location.hostname;
+    const isLocal = host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
+    if (isLocal && window.location.protocol !== "https:") {
+      return "http://localhost:8000";
+    }
+  }
+  // Production / Netlify: relative URL or empty base
+  return "";
+}
+
+let API_BASE_URL = resolveApiBaseUrl();
+
+// Developer utility to set custom backend URL on live Netlify site
+if (typeof window !== "undefined") {
+  window.setBackendUrl = function(url) {
+    if (!url) {
+      localStorage.removeItem("SAHAKAR_API_URL");
+      console.log("SahakarSeva: Cleared custom backend URL. Reverting to auto-detection.");
+    } else {
+      localStorage.setItem("SAHAKAR_API_URL", url);
+      console.log(`SahakarSeva: Custom backend URL set to: ${url}`);
+    }
+    API_BASE_URL = resolveApiBaseUrl();
+    if (typeof checkBackendHealth === "function") {
+      checkBackendHealth();
+    }
+  };
+}
 
 // Comprehensive Multilingual Translation Table (159 UI Keys)
 const TRANSLATIONS = {
@@ -827,21 +870,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Check if FastAPI backend is online
 async function checkBackendHealth() {
+  // If no backend URL configured and not on localhost, stay cleanly in Autonomous Engine mode
+  const isLocal = typeof window !== "undefined" && 
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+  if (!API_BASE_URL && !isLocal) {
+    state.hasBackendConnection = false;
+    updateBackendStatusUI(false);
+    return;
+  }
+
   try {
-    const res = await fetch(`${API_BASE_URL}/`, { method: "GET" });
-    if (res.ok) {
-      state.hasBackendConnection = true;
-      const pill = document.getElementById("backend-status-badge");
-      const text = document.getElementById("backend-status-text");
-      if (pill && text) {
-        pill.className = "flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-blue-900/90 border border-blue-600 text-[11px] font-bold text-blue-200";
-        text.innerText = state.currentLanguage === "hi" ? "फास्ट-एपीआई सक्रिय" : "FastAPI Connected";
+    const checkUrl = API_BASE_URL ? `${API_BASE_URL}/` : "/";
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    const res = await fetch(checkUrl, { 
+      method: "GET",
+      signal: controller.signal,
+      headers: { "Accept": "application/json" }
+    });
+    clearTimeout(timeoutId);
+
+    // Verify the response is genuinely FastAPI JSON and not Netlify's HTML fallback
+    const contentType = res.headers.get("content-type") || "";
+    if (res.ok && contentType.includes("application/json")) {
+      const data = await res.json();
+      if (data && (data.status === "online" || data.platform || data.vision)) {
+        state.hasBackendConnection = true;
+        updateBackendStatusUI(true);
+        return;
       }
     }
+    state.hasBackendConnection = false;
+    updateBackendStatusUI(false);
   } catch (e) {
     state.hasBackendConnection = false;
+    updateBackendStatusUI(false);
   }
 }
+
+function updateBackendStatusUI(isConnected) {
+  const pill = document.getElementById("backend-status-badge");
+  const text = document.getElementById("backend-status-text");
+  if (!pill || !text) return;
+
+  if (isConnected) {
+    pill.className = "flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-blue-900/90 border border-blue-600 text-[11px] font-bold text-blue-200";
+    text.innerText = state.currentLanguage === "hi" ? "फास्ट-एपीआई सक्रिय" : "FastAPI Connected";
+  } else {
+    pill.className = "hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/80 border border-emerald-600/60 text-[11px] font-bold text-emerald-300";
+    text.innerText = state.currentLanguage === "hi" ? "स्वायत्त मोड" : "Autonomous Engine";
+  }
+}
+
 
 // 1. Navigation / Portal Switcher
 function switchPortal(portalId) {

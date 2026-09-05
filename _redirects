@@ -1,0 +1,6 @@
+# Root redirects for deployments where publish directory is set to root
+/             /frontend/index.html   200
+/style.css    /frontend/style.css    200
+/app.js       /frontend/app.js       200
+/frontend/*   /frontend/:splat       200
+/*            /frontend/index.html   200
