@@ -1,0 +1,18 @@
+# Pyrefly configuration for SahakarSeva.
+#
+# Without this file, Pyrefly's VS Code extension queries the system Python
+# interpreter instead of the one selected via "Python: Select Interpreter",
+# so it can't see packages that are only installed in .venv (fastapi, geopy,
+# pydantic, uvicorn, ...). That's what was showing up as import errors in
+# main.py and dispatch.py even though the packages are correctly installed.
+# See: https://github.com/facebook/pyrefly/issues/1632
+
+project-includes = ["backend"]
+project-excludes = ["**/__pycache__", ".venv"]
+
+# Point Pyrefly directly at the project's virtualenv interpreter so it
+# resolves imports (and infers python-version/platform) from there.
+python-interpreter-path = ".venv/Scripts/python.exe"
+
+search-path = ["backend"]
+site-package-path = [".venv/Lib/site-packages"]

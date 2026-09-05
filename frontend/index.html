@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SahakarSeva (सहकार सेवा) | Cooperative Gig Platform - Ministry of Cooperation</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            saffron: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309' },
+            coopblue: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 800: '#1e40af', 900: '#1e3a8a', 950: '#0f172a' },
+            emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857' }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-900 pb-24">
+
+  <!-- Toast Container for Real-Time Feedback -->
+  <div id="toast-container"></div>
+
+  <!-- Tricolor Micro-Banner (National Identity) -->
+  <div class="h-1.5 w-full bg-gradient-to-r from-amber-500 via-white to-emerald-600"></div>
+
+  <!-- ================= TOP GOVERNMENT HEADER ================= -->
+  <header class="bg-gradient-to-r from-slate-950 via-coopblue-950 to-indigo-950 text-white shadow-xl sticky top-0 z-50 border-b border-blue-900/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Ministry Emblem -->
+      <div class="flex items-center space-x-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-black text-blue-950 text-2xl shadow-lg border-2 border-amber-300">
+          स
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-black tracking-tight text-white flex items-center gap-1.5">
+              SahakarSeva <span class="text-amber-400 font-bold text-base">(सहकार सेवा)</span>
+            </h1>
+            <span class="bg-blue-900/80 text-blue-200 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-700">SIH 2026</span>
+          </div>
+          <p class="text-xs text-blue-200 flex items-center gap-1.5 font-medium" id="header-ministry-title">
+            <span data-i18n="ministry-subtitle">Ministry of Cooperation, GoI &bull; "Sahakar Se Samriddhi"</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Portal View Switcher -->
+      <nav class="flex items-center bg-slate-900/90 p-1.5 rounded-2xl border border-blue-800/60 space-x-1 shadow-inner">
+        <button id="tab-client" onclick="switchPortal('client')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition bg-blue-600 text-white shadow-md flex items-center space-x-2 btn-tactile">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          <span id="txt-tab-client" data-i18n="tab-client">Citizen App</span>
+        </button>
+        <button id="tab-worker" onclick="switchPortal('worker')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-blue-200 hover:text-white hover:bg-blue-800/50 flex items-center space-x-2 btn-tactile relative">
+          <i data-lucide="radio" class="w-4 h-4"></i>
+          <span id="txt-tab-worker" data-i18n="tab-worker">Worker Radar</span>
+          <span id="worker-radar-ping-badge" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping absolute -top-1 -right-1 hidden"></span>
+        </button>
+        <button id="tab-ministry" onclick="switchPortal('ministry')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-blue-200 hover:text-white hover:bg-blue-800/50 flex items-center space-x-2 btn-tactile">
+          <i data-lucide="landmark" class="w-4 h-4"></i>
+          <span id="txt-tab-ministry" data-i18n="tab-ministry">Ministry Cockpit</span>
+        </button>
+      </nav>
+
+      <!-- System Controls: Sound, Status & Language -->
+      <div class="flex items-center space-x-2">
+        <!-- Audio SFX Toggle -->
+        <button id="btn-audio-toggle" onclick="toggleAudio()" title="Toggle Sound FX" class="p-2 rounded-xl bg-slate-900/80 border border-blue-800/60 text-blue-200 hover:text-amber-300 transition text-xs flex items-center btn-tactile">
+          <i data-lucide="volume-2" class="w-4 h-4" id="audio-icon"></i>
+        </button>
+
+        <!-- Backend Status Pill -->
+        <div id="backend-status-badge" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/80 border border-emerald-600/60 text-[11px] font-bold text-emerald-300" title="Simulated Fast In-Browser Engine Active">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="backend-status-text" data-i18n="backend-status">Autonomous Engine</span>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="flex items-center space-x-1.5 bg-slate-900/80 px-2.5 py-1 rounded-xl border border-blue-800/60">
+          <i data-lucide="languages" class="w-4 h-4 text-amber-400"></i>
+          <select id="lang-select" onchange="toggleLanguage(this.value)" class="bg-transparent text-xs font-bold text-blue-100 outline-none cursor-pointer">
+            <option value="en" class="text-slate-900">English</option>
+            <option value="hi" class="text-slate-900">हिंदी (Hindi)</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ================= VIEW 1: CITIZEN APP ================= -->
+    <section id="view-client" class="space-y-6">
+      
+      <!-- Interactive Workflow Stepper Bar -->
+      <div class="glass-card rounded-2xl p-3 px-4 border-blue-100 flex items-center justify-between overflow-x-auto text-xs font-bold text-slate-500 gap-2">
+        <div class="flex items-center gap-2 text-blue-700 whitespace-nowrap" id="step-nav-1">
+          <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]" id="step-dot-1">1</span>
+          <span data-i18n="step-1">1. Select Service & Plan</span>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 flex-shrink-0"></i>
+        <div class="flex items-center gap-2 text-slate-400 whitespace-nowrap" id="step-nav-2">
+          <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px]" id="step-dot-2">2</span>
+          <span data-i18n="step-2">2. Transparent Invoice</span>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 flex-shrink-0"></i>
+        <div class="flex items-center gap-2 text-slate-400 whitespace-nowrap" id="step-nav-3">
+          <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px]" id="step-dot-3">3</span>
+          <span data-i18n="step-3">3. Proximity Radar Dispatch</span>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 flex-shrink-0"></i>
+        <div class="flex items-center gap-2 text-slate-400 whitespace-nowrap" id="step-nav-4">
+          <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px]" id="step-dot-4">4</span>
+          <span data-i18n="step-4">4. Dual-OTP Settlement</span>
+        </div>
+      </div>
+
+      <!-- Top Search & Emergency Triage Card -->
+      <div class="glass-card rounded-3xl p-6 border-indigo-100" id="search-triage-card">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-5">
+          
+          <!-- Left: Voice & Working Real-Time Search Bar -->
+          <div class="w-full lg:w-3/5">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-black uppercase tracking-wider text-slate-500" id="lbl-search" data-i18n="lbl-search">
+                Search Certified Cooperative Service
+              </label>
+              <span class="text-[11px] font-bold text-blue-600 flex items-center gap-1">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span data-i18n="txt-pacs-verified">PACS & Labour Federation Verified</span>
+              </span>
+            </div>
+
+            <div class="relative flex items-center">
+              <input type="text" id="service-search-input" oninput="filterServicesByText(this.value)" placeholder="Type a trade (e.g. Electrician, Plumber, Emergency Nursing)..." class="w-full pl-11 pr-36 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-slate-900 text-sm font-medium shadow-sm transition" />
+              <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-3.5"></i>
+              
+              <!-- Clear Search Button -->
+              <button id="search-clear-btn" onclick="clearSearch()" title="Clear search" class="absolute right-24 text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hidden">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+
+              <!-- Web Speech Voice Recognition Button -->
+              <button id="voice-btn" onclick="startVoiceRecognition()" title="Speak in Hindi or English" class="absolute right-2 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold flex items-center space-x-1.5 border border-indigo-200 transition btn-tactile">
+                <i data-lucide="mic" class="w-4 h-4 text-indigo-600" id="mic-icon"></i>
+                <span id="voice-btn-txt" data-i18n="txt-speak">Speak</span>
+              </button>
+            </div>
+
+            <!-- Active search status message -->
+            <div id="search-result-status" class="text-xs text-blue-700 font-bold mt-1.5 hidden flex items-center gap-1"></div>
+
+            <!-- Listening status -->
+            <p id="voice-status" class="text-xs text-indigo-600 font-bold mt-1.5 hidden flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+              <span>Listening... Speak your service in Hindi or English</span>
+            </p>
+
+            <!-- Quick Voice / Prompt Chips for 1-click test -->
+            <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+              <span class="text-[11px] text-slate-400 font-medium" data-i18n="txt-quick-suggestions">Quick Suggestions:</span>
+              <button onclick="applyQuickSearch('electrician')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">⚡ Electrician (₹120/hr)</button>
+              <button onclick="applyQuickSearch('plumber')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🔧 Plumber (₹110/hr)</button>
+              <button onclick="applyQuickSearch('healthcare')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🩺 Elder Care (₹150/hr)</button>
+              <button onclick="applyQuickSearch('cleaning')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🧹 Deep Clean (₹90/hr)</button>
+            </div>
+          </div>
+
+          <!-- Right: Emergency / Premium Triage Toggle -->
+          <div class="w-full lg:w-2/5">
+            <div id="emergency-box" class="flex items-center space-x-3.5 bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 p-4 rounded-2xl transition duration-300">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-red-700 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+                <i data-lucide="siren" class="w-6 h-6" id="siren-icon"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-black text-red-950 flex items-center gap-1.5" id="txt-emergency-title" data-i18n="txt-emergency-title">
+                    Emergency Triage Mode
+                    <span class="bg-red-600 text-white text-[9px] font-black uppercase px-1.5 py-0.5 rounded">SOS</span>
+                  </span>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="emergency-toggle" onchange="toggleEmergencyMode()" class="sr-only peer" />
+                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                  </label>
+                </div>
+                <p class="text-xs text-red-800 font-medium mt-0.5" id="txt-emergency-desc" data-i18n="txt-emergency-desc">
+                  Priority sub-30m dispatch for gas leak, short circuit, or medical transit.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Service Selection & Pricing Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left 2 Cols: Service Catalogue & Pricing Plan -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Category Grid -->
+          <div class="glass-card rounded-3xl p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-100 gap-2 mb-4">
+              <div>
+                <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+                  <span id="txt-choose-service" data-i18n="txt-choose-service">Choose a Cooperative Service</span>
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n="txt-service-subtitle">Grassroots fair-wage tariffs - Reduced by 50% vs private aggregators</p>
+              </div>
+              <span class="text-xs text-emerald-800 font-black bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1 shadow-sm">
+                <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span data-i18n="txt-worker-wage-badge">100% Wage To Worker</span>
+              </span>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5" id="service-grid">
+              <!-- Dynamically populated via app.js with reduced prices and active search filter -->
+            </div>
+          </div>
+
+          <!-- Pricing Horizon Plan Selector -->
+          <div class="glass-card rounded-3xl p-6">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+              <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">2</span>
+                <span id="txt-select-pricing" data-i18n="txt-select-pricing">Select Engagement Horizon</span>
+              </h2>
+              <span class="text-xs text-slate-500 font-medium" data-i18n="txt-pricing-subtitle">Fair to technician & citizen</span>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <label class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-2xl p-3.5 text-center transition relative btn-tactile shadow-sm" id="plan-hourly-label">
+                <input type="radio" name="plan_type" value="hourly" checked onchange="selectPlan('hourly')" class="sr-only" />
+                <div class="font-extrabold text-slate-900 text-sm" data-i18n="plan-hourly-title">Hourly Task</div>
+                <div class="text-xs text-slate-500 mt-0.5" data-i18n="plan-hourly-desc">1 hour quick repair</div>
+              </label>
+
+              <label class="cursor-pointer border border-slate-200 rounded-2xl p-3.5 text-center transition hover:border-blue-400 relative btn-tactile" id="plan-daily-label">
+                <input type="radio" name="plan_type" value="daily" onchange="selectPlan('daily')" class="sr-only" />
+                <div class="font-extrabold text-slate-900 text-sm" data-i18n="plan-daily-title">Full Day</div>
+                <div class="text-xs text-slate-500 mt-0.5" data-i18n="plan-daily-desc">8 hours shift</div>
+              </label>
+
+              <label class="cursor-pointer border border-slate-200 rounded-2xl p-3.5 text-center transition hover:border-blue-400 relative btn-tactile" id="plan-weekly-label">
+                <input type="radio" name="plan_type" value="weekly" onchange="selectPlan('weekly')" class="sr-only" />
+                <span class="absolute -top-2.5 right-2 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase shadow" data-i18n="plan-weekly-badge">5% Off</span>
+                <div class="font-extrabold text-slate-900 text-sm" data-i18n="plan-weekly-title">Weekly</div>
+                <div class="text-xs text-emerald-700 font-bold mt-0.5" data-i18n="plan-weekly-desc">5 days project</div>
+              </label>
+
+              <label class="cursor-pointer border border-amber-300 bg-amber-50/30 rounded-2xl p-3.5 text-center transition hover:border-amber-500 relative btn-tactile" id="plan-monthly-label">
+                <input type="radio" name="plan_type" value="monthly" onchange="selectPlan('monthly')" class="sr-only" />
+                <span class="absolute -top-2.5 right-2 bg-amber-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase shadow" data-i18n="plan-monthly-badge">15% Off</span>
+                <div class="font-extrabold text-amber-950 text-sm" data-i18n="plan-monthly-title">Subscription</div>
+                <div class="text-xs text-amber-800 font-bold mt-0.5" data-i18n="plan-monthly-desc">22 days / month</div>
+              </label>
+            </div>
+
+            <!-- NGO / Non-Profit Social Subsidy Checkbox & Verification Action -->
+            <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3" id="ngo-selection-container">
+              <div class="flex items-center space-x-2.5">
+                <input type="checkbox" id="ngo-checkbox" onchange="handleNgoCheckboxChange(this)" class="w-4 h-4 accent-blue-600 rounded cursor-pointer" />
+                <label for="ngo-checkbox" class="text-xs font-extrabold text-slate-800 cursor-pointer flex items-center gap-1.5">
+                  <span data-i18n="txt-ngo-label">Non-Profit / NGO / Community Care (20% Social Subsidy)</span>
+                </label>
+              </div>
+
+              <!-- Verified Status Pill (Initially Hidden or shows 'Requires Verification') -->
+              <div id="ngo-verified-pill" class="hidden text-[11px] font-bold text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                <i data-lucide="badge-check" class="w-4 h-4 text-emerald-600"></i>
+                <span id="ngo-verified-label">DARPAN Verified (20% Subsidy Active)</span>
+                <button onclick="openNgoVerificationModal()" class="text-blue-700 hover:underline ml-1 font-bold">Edit</button>
+              </div>
+
+              <div id="ngo-unverified-hint" class="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200 flex items-center gap-1">
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-600"></i>
+                <span data-i18n="txt-ngo-hint">Requires NGO DARPAN Verification</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cooperative Samriddhi Pass / Subscription Card -->
+          <div class="glass-card rounded-3xl p-6 border-amber-200 relative overflow-hidden" id="subscription-feature-card">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2 mb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-black">★</span>
+                  <h2 class="text-base font-black text-slate-900" data-i18n="sub-card-title">Sahakar Samriddhi Subscription Pass</h2>
+                  <span class="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-amber-300">VIP Citizen Offers</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n="sub-card-sub">Subscribe to unlock up to 30% discount offers, zero emergency fees & exclusive vouchers</p>
+              </div>
+              <div id="subscription-active-status" class="hidden text-xs font-black text-amber-900 bg-amber-100 px-3 py-1.5 rounded-2xl border border-amber-300 flex items-center gap-1.5 shadow-sm">
+                <i data-lucide="crown" class="w-4 h-4 text-amber-600"></i>
+                <span id="sub-active-badge-text">Pass Active: 25% Off Applied</span>
+                <button onclick="openOffersModal()" class="text-blue-700 underline ml-1 font-extrabold text-[11px]">View Offers</button>
+              </div>
+            </div>
+
+            <!-- Tier Selector -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+              <!-- Tier 1: Monthly -->
+              <div class="p-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50/50 relative cursor-pointer hover:border-amber-500 transition btn-tactile" onclick="selectSubTier('monthly_pass')" id="tier-card-monthly_pass">
+                <div class="flex justify-between items-start">
+                  <span class="font-black text-slate-900 text-xs">Citizen Pass</span>
+                  <span class="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">Monthly</span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-1">
+                  <span class="text-2xl font-black text-slate-900">₹199</span>
+                  <span class="text-[10px] text-slate-400 font-medium">/ month</span>
+                </div>
+                <ul class="mt-2 space-y-1 text-[11px] text-slate-600">
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> 20% Off all services</li>
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Zero platform fee</li>
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Emergency triage included</li>
+                </ul>
+              </div>
+
+              <!-- Tier 2: Annual (Recommended) -->
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile" onclick="selectSubTier('annual_samriddhi')" id="tier-card-annual_samriddhi">
+                <div class="flex justify-between items-start">
+                  <span class="font-black text-slate-900 text-xs">Samriddhi Pass</span>
+                  <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">Annual</span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-1">
+                  <span class="text-2xl font-black text-slate-900">₹999</span>
+                  <span class="text-[10px] text-slate-400 font-medium">/ year</span>
+                </div>
+                <ul class="mt-2 space-y-1 text-[11px] text-slate-600">
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> 30% Off all services</li>
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Family 4-member cover</li>
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> ₹500 seasonal voucher</li>
+                </ul>
+              </div>
+
+              <!-- Tier 3: Seniors & Care -->
+              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile" onclick="selectSubTier('elder_care_pass')" id="tier-card-elder_care_pass">
+                <div class="flex justify-between items-start">
+                  <span class="font-black text-slate-900 text-xs">Seniors Care</span>
+                  <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded">Quarterly</span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-1">
+                  <span class="text-2xl font-black text-slate-900">₹499</span>
+                  <span class="text-[10px] text-slate-400 font-medium">/ 3 months</span>
+                </div>
+                <ul class="mt-2 space-y-1 text-[11px] text-slate-600">
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> 25% Off elder nursing</li>
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Priority driver on standby</li>
+                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Free weekly vitals visit</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="flex flex-wrap items-center justify-between gap-3 bg-amber-50 p-3 rounded-2xl border border-amber-200">
+              <div class="text-xs text-amber-950 font-medium flex items-center gap-1.5">
+                <i data-lucide="gift" class="w-4 h-4 text-amber-600"></i>
+                <span id="sub-cta-desc">Instant voucher code <code class="font-bold bg-white px-1.5 py-0.5 rounded text-amber-700">SAMRIDDHI25</code> generated upon checkout!</span>
+              </div>
+              <button type="button" onclick="openSubscriptionCheckoutModal()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black text-xs rounded-xl shadow-md transition flex items-center gap-1.5 btn-tactile">
+                <i data-lucide="credit-card" class="w-4 h-4"></i>
+                <span id="btn-subscribe-text">Subscribe to Pass via Gateway →</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Booking Live Status Card (Revealed upon booking) -->
+          <div id="booking-status-card" class="glass-card rounded-3xl p-6 border-blue-300 bg-gradient-to-br from-blue-50/80 to-indigo-50/70 hidden space-y-4 shadow-lg">
+            <div class="flex items-center justify-between pb-3 border-b border-blue-200">
+              <div class="flex items-center space-x-2.5">
+                <span class="relative flex h-3.5 w-3.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                </span>
+                <span class="font-black text-blue-950 text-base" id="booking-status-title">Booking #1001 Active</span>
+              </div>
+              <span id="booking-badge-status" class="bg-blue-600 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                Broadcasting
+              </span>
+            </div>
+
+            <!-- Assigned Worker & Dual OTP Box -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Worker Profile -->
+              <div class="bg-white p-4 rounded-2xl border border-blue-100 shadow-sm flex items-start space-x-3.5">
+                <div class="w-12 h-12 rounded-xl bg-slate-200 overflow-hidden flex-shrink-0 border border-emerald-400">
+                  <img id="status-worker-photo" src="https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Technician" />
+                </div>
+                <div class="flex-1">
+                  <p class="text-[11px] font-black text-slate-400 uppercase tracking-wider" data-i18n="txt-assigned-worker">Assigned Cooperative Worker</p>
+                  <p class="font-black text-slate-900 text-base" id="status-worker-name">Rajesh Kumar</p>
+                  <p class="text-xs text-emerald-700 font-bold" id="status-worker-coop">✓ Delhi Central Labour Cooperative</p>
+                  <p class="text-xs text-slate-600 mt-1 font-medium" id="status-worker-dist">📍 1.2 km away &bull; Rating: 4.9 ★</p>
+                </div>
+              </div>
+
+              <!-- DUAL OTP DISPLAY CARD -->
+              <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-300 p-4 rounded-2xl shadow-sm flex flex-col justify-center text-center relative overflow-hidden">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[11px] text-amber-900 font-extrabold uppercase tracking-wider" data-i18n="txt-arrival-otp-title">1. Arrival OTP (START_OTP)</span>
+                  <button onclick="copyStartOtp()" class="text-[10px] text-amber-900 bg-amber-200/90 px-2 py-0.5 rounded font-black hover:bg-amber-300 transition" data-i18n="txt-copy-otp">Copy</button>
+                </div>
+                <div class="text-3xl font-black text-amber-950 tracking-widest my-1 font-mono" id="display-start-otp">----</div>
+                <p class="text-[11px] text-amber-800 font-medium" data-i18n="txt-arrival-otp-desc">Share with technician ONLY upon arrival to commence work</p>
+                
+                <div class="mt-2 pt-2 border-t border-amber-200/60 flex items-center justify-between text-[11px]">
+                  <span class="font-bold text-amber-900" data-i18n="txt-end-otp-title">2. Completion OTP:</span>
+                  <span class="font-mono font-black text-amber-950 bg-amber-100 px-2 py-0.5 rounded" id="display-end-otp">----</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Booking Progress Timeline -->
+            <div class="bg-white/80 p-4 rounded-2xl border border-blue-100">
+              <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span data-i18n="txt-timeline-title">Live State Machine Timeline</span>
+                <span class="text-[10px] text-blue-600 font-semibold" data-i18n="txt-timeline-subtitle">Dual-OTP Enforced</span>
+              </h4>
+              <div id="booking-timeline-list" class="space-y-1.5 text-xs text-slate-600">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Demo Shortcut Action Bar -->
+            <div class="flex flex-wrap items-center justify-between bg-blue-100/70 p-3 rounded-xl gap-2 text-xs">
+              <span class="font-bold text-blue-950" data-i18n="txt-demo-shortcuts">Demo Shortcuts:</span>
+              <div class="flex items-center gap-2">
+                <button onclick="switchPortal('worker')" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition btn-tactile" data-i18n="txt-btn-switch-worker">Switch to Worker Radar →</button>
+                <button onclick="autoAdvanceBooking()" class="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition btn-tactile" data-i18n="txt-btn-fast-forward">⚡ Fast-Forward Lifecycle</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right Col: Live OpenStreetMap & Transparent Quotation Card -->
+        <div class="space-y-6">
+          
+          <!-- Leaflet OSM Map -->
+          <div class="glass-card rounded-3xl p-4 overflow-hidden">
+            <div class="flex items-center justify-between mb-2.5 px-1">
+              <h3 class="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                <i data-lucide="map-pin" class="w-4 h-4 text-blue-600"></i>
+                <span data-i18n="txt-map-title">Worker Proximity Radar Map</span>
+              </h3>
+              <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200" data-i18n="txt-map-live">OpenStreetMap Live</span>
+            </div>
+            <div id="client-map" class="h-60 w-full rounded-2xl border border-slate-200 shadow-inner"></div>
+            <div class="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-500 font-medium">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> <span data-i18n="txt-map-you">You (Connaught Place)</span></span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> <span data-i18n="txt-map-workers">Cooperative Workers</span></span>
+            </div>
+          </div>
+
+          <!-- 100% Transparent Price Breakdown Card -->
+          <div class="glass-card rounded-3xl p-6 border-blue-200" id="transparent-invoice-box">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div>
+                <h3 class="font-black text-slate-900 text-base" data-i18n="txt-invoice-title">Transparent Invoice</h3>
+                <p class="text-[11px] text-slate-500" data-i18n="txt-invoice-subtitle">Grassroots fair-wage calculation</p>
+              </div>
+              <span class="text-xs bg-emerald-100 text-emerald-900 font-black px-2.5 py-1 rounded-full border border-emerald-200" data-i18n="txt-invoice-badge">
+                0% Exploitative Cut
+              </span>
+            </div>
+
+            <!-- Itemized Receipt with reduced prices -->
+            <div class="space-y-2.5 py-4 text-xs">
+              <div class="flex justify-between text-slate-600">
+                <span><span data-i18n="txt-lbl-labor">Direct Fair Labor</span> (<span id="lbl-quote-service" class="font-bold text-slate-800">ELECTRICIAN</span>):</span>
+                <span class="font-bold text-slate-900" id="quote-labor">₹120.00</span>
+              </div>
+              <div class="flex justify-between text-slate-600">
+                <span data-i18n="txt-lbl-toolkit">Certified Toolkit Charge:</span>
+                <span class="font-bold text-slate-900" id="quote-toolkit">₹40.00</span>
+              </div>
+              <div class="flex justify-between text-slate-600">
+                <span><span data-i18n="txt-lbl-transit">Direct Transit Tariff</span> (<span id="quote-dist" class="font-semibold text-blue-700">1.2 km</span>):</span>
+                <span class="font-bold text-slate-900" id="quote-transit">₹20.00</span>
+              </div>
+              <div class="flex justify-between text-red-600" id="row-emergency" style="display:none;">
+                <span class="font-semibold flex items-center gap-1">
+                  <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                  <span data-i18n="txt-lbl-emergency">Emergency Priority Surcharge:</span>
+                </span>
+                <span class="font-bold" id="quote-emergency">+₹60.00</span>
+              </div>
+              <div class="flex justify-between text-slate-600">
+                <span data-i18n="txt-lbl-tax">Statutory GST (5%):</span>
+                <span class="font-bold text-slate-900" id="quote-tax">₹6.00</span>
+              </div>
+              <div class="flex justify-between text-blue-900 bg-blue-50/80 p-2 rounded-xl border border-blue-100">
+                <div>
+                  <span class="font-bold block" data-i18n="txt-lbl-platform">Cooperative Welfare Fund (3.5%):</span>
+                  <span class="text-[10px] text-blue-600 font-normal" data-i18n="txt-lbl-platform-sub">Insurance, worker healthcare & pension</span>
+                </div>
+                <span class="font-black text-blue-900" id="quote-platform">₹4.20</span>
+              </div>
+              <div class="flex justify-between text-emerald-700 font-bold bg-emerald-50 p-2 rounded-xl border border-emerald-200" id="row-ngo" style="display:none;">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                  <span data-i18n="txt-lbl-ngo">Verified NGO / Community Subsidy (-20%):</span>
+                </span>
+                <span id="quote-ngo">-₹0.00</span>
+              </div>
+              <div class="flex justify-between text-amber-900 font-bold bg-amber-50 p-2 rounded-xl border border-amber-300" id="row-subscriber-discount" style="display:none;">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span id="lbl-subscriber-discount">Samriddhi VIP Discount (25%):</span>
+                </span>
+                <span id="quote-subscriber-discount">-₹0.00</span>
+              </div>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="pt-3 border-t border-slate-200">
+              <div class="flex justify-between items-baseline mb-3">
+                <span class="text-sm font-black text-slate-900" data-i18n="txt-lbl-total">Total Customer Payable:</span>
+                <span class="text-3xl font-black text-blue-900 tracking-tight" id="quote-total">₹190.20</span>
+              </div>
+
+              <!-- Comparison against Aggregators (Urban Company) -->
+              <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-3 rounded-2xl text-center mb-4">
+                <p class="text-xs text-slate-600 font-medium">
+                  <span data-i18n="txt-lbl-commercial">Urban Company Benchmark:</span> <del class="text-slate-400 font-normal" id="quote-commercial">₹499.00</del>
+                </p>
+                <p class="text-xs font-black text-emerald-800 mt-0.5 flex items-center justify-center gap-1">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                  <span><span data-i18n="txt-lbl-savings-prefix">Citizen Savings: ₹</span><span id="quote-savings">308.80</span></span>
+                  <span class="text-[10px] text-emerald-600 font-medium" data-i18n="txt-lbl-savings-suffix">(Aggregator fee eradicated)</span>
+                </p>
+              </div>
+
+              <!-- Book Now Button -> Opens Payment Gateway -->
+              <button id="btn-book-service" onclick="openPaymentGatewayModal()" class="w-full py-4 bg-gradient-to-r from-blue-700 via-indigo-700 to-coopblue-900 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-sm rounded-2xl shadow-xl transition flex items-center justify-center space-x-2 btn-tactile">
+                <i data-lucide="credit-card" class="w-5 h-5 text-amber-400"></i>
+                <span id="txt-btn-book" data-i18n="txt-btn-book">Confirm & Proceed to Payment</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= CITIZEN REVIEWS & RATINGS (BOTTOM OF CUSTOMER INTERFACE) ================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 border-blue-100 space-y-6 mt-8" id="section-citizen-reviews">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-200 gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+              </div>
+              <h2 class="text-xl font-black text-slate-900 tracking-tight" data-i18n="reviews-heading">Verified Citizen Reviews & Experiences</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="reviews-subheading">Public grassroots accountability &bull; Authentic feedback from cooperative home service clients</p>
+          </div>
+
+          <!-- Overall Rating Badge & Write Review Action -->
+          <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 px-4 py-2 rounded-2xl flex items-center gap-3 shadow-sm">
+              <div class="text-2xl font-black text-amber-600" id="reviews-avg-rating">4.9</div>
+              <div class="text-left text-xs">
+                <div class="text-amber-500 font-bold tracking-widest">★★★★★</div>
+                <div class="text-[11px] text-slate-500 font-medium"><span id="reviews-count-badge">5 verified</span> reviews</div>
+              </div>
+            </div>
+
+            <button type="button" onclick="openWriteReviewModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl shadow-md transition flex items-center gap-1.5 btn-tactile">
+              <i data-lucide="pen-tool" class="w-4 h-4"></i>
+              <span data-i18n="btn-write-review">Write a Review</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl">
+            <button type="button" onclick="filterCitizenReviews('all')" id="tab-review-all" class="px-3 py-1.5 bg-white text-blue-900 font-extrabold rounded-xl shadow-sm transition">All Reviews</button>
+            <button type="button" onclick="filterCitizenReviews('positive')" id="tab-review-positive" class="px-3 py-1.5 text-slate-600 hover:text-slate-900 font-bold rounded-xl transition">⭐ Commendations</button>
+            <button type="button" onclick="filterCitizenReviews('complaint')" id="tab-review-complaint" class="px-3 py-1.5 text-slate-600 hover:text-slate-900 font-bold rounded-xl transition">⚠️ Grievance Logs</button>
+          </div>
+          <span class="text-[11px] text-slate-400 font-medium">100% Dual-OTP Authenticated Clients</span>
+        </div>
+
+        <!-- Reviews Dynamic Grid -->
+        <div id="citizen-reviews-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 2: WORKER RADAR ================= -->
+    <section id="view-worker" class="space-y-6 hidden">
+      
+      <!-- ================= WORKER ONBOARDING & LOGIN WIZARD ================= -->
+      <div id="worker-onboarding-wizard" class="space-y-6">
+        
+        <!-- Onboarding Header Banner -->
+        <div class="bg-gradient-to-r from-slate-950 via-emerald-950 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-900/60 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-emerald-400 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">Cooperative Federation Auth</span>
+              <span class="text-emerald-300 text-xs font-semibold">PACS / Labour Coop Verified Entry</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black mt-2 tracking-tight" data-i18n="worker-auth-title">Worker Dashboard & Credential Onboarding</h2>
+            <p class="text-xs sm:text-sm text-emerald-200 mt-1 max-w-2xl" data-i18n="worker-auth-desc">
+              Verify your trade skill and identity to access the decentralized cooperative gig radar, 100% fair-wage passbook, and instant DBT.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="prefillWorkerDemo('rajesh')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl transition shadow-md btn-tactile flex items-center gap-1.5">
+              <span>⚡ Fast-Track Demo (Rajesh)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Onboarding Stepper Navigation -->
+        <div class="glass-card rounded-2xl p-3 px-5 border-emerald-200 flex items-center justify-between overflow-x-auto text-xs font-bold gap-3">
+          <div class="flex items-center gap-2 text-emerald-800" id="onboard-step-pill-1">
+            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px] font-black">1</span>
+            <span>1. Worker Login</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+          <div class="flex items-center gap-2 text-slate-400" id="onboard-step-pill-2">
+            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px] font-black">2</span>
+            <span>2. Select Category</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+          <div class="flex items-center gap-2 text-slate-400" id="onboard-step-pill-3">
+            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px] font-black">3</span>
+            <span>3. Certificates & Aadhaar</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+          <div class="flex items-center gap-2 text-slate-400" id="onboard-step-pill-4">
+            <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[11px] font-black">4</span>
+            <span>4. Access Granted</span>
+          </div>
+        </div>
+
+        <!-- Wizard Step 1: Login Credentials -->
+        <div id="onboard-step-1" class="glass-card rounded-3xl p-6 sm:p-8 space-y-5 max-w-2xl mx-auto border-emerald-100">
+          <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+              <i data-lucide="smartphone" class="w-5 h-5 text-emerald-700"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-black text-slate-900">Step 1: Enter Mobile Credentials</h3>
+              <p class="text-xs text-slate-500">Registered with your Primary Agricultural Credit Society (PACS) or Labour Federation</p>
+            </div>
+          </div>
+
+          <form onsubmit="handleWorkerStep1Submit(event)" class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Technician Full Name *</label>
+              <input type="text" id="worker-login-name" required placeholder="e.g. Rajesh Kumar" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Mobile Number (Aadhaar Linked) *</label>
+              <input type="text" id="worker-login-phone" required placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Affiliated Cooperative Society</label>
+              <select id="worker-login-coop" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
+                <option value="Delhi Central Labour Cooperative">Delhi Central Labour Cooperative Federation</option>
+                <option value="South Delhi Multi-Purpose Cooperative">South Delhi Multi-Purpose Cooperative Society</option>
+                <option value="NCR Technicians Cooperative">NCR Technicians & Artisans Cooperative</option>
+              </select>
+            </div>
+
+            <div class="pt-3 flex justify-end">
+              <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-md transition flex items-center gap-2 btn-tactile">
+                <span>Continue to Trade Category Selection</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Wizard Step 2: Category of Work -->
+        <div id="onboard-step-2" class="glass-card rounded-3xl p-6 sm:p-8 space-y-5 max-w-3xl mx-auto border-emerald-100 hidden">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
+                <i data-lucide="briefcase" class="w-5 h-5 text-blue-700"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-black text-slate-900">Step 2: Choose Your Category of Work</h3>
+                <p class="text-xs text-slate-500">Select the primary skill for job dispatch and trade certification</p>
+              </div>
+            </div>
+            <button type="button" onclick="goToOnboardStep(1)" class="text-xs text-slate-400 hover:text-slate-700 font-bold">← Back</button>
+          </div>
+
+          <!-- Trade Options Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="onboard-trade-grid">
+            <!-- Dynamically populated via app.js -->
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Years of Practical Trade Experience</label>
+              <select id="worker-experience-select" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
+                <option value="3-5">3 - 5 Years (Journeyman)</option>
+                <option value="1-3">1 - 3 Years (Apprentice)</option>
+                <option value="5+">5+ Years (Master Technician)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Preferred Operating District</label>
+              <select id="worker-district-select" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
+                <option value="Central Delhi">Central Delhi (High Demand)</option>
+                <option value="South Delhi">South Delhi</option>
+                <option value="West Delhi">West Delhi</option>
+                <option value="East Delhi">East Delhi</option>
+                <option value="North Delhi">North Delhi</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-3 flex justify-between items-center">
+            <span class="text-xs text-slate-500 font-medium" id="selected-trade-summary">Selected: <strong class="text-slate-800">Electrician</strong></span>
+            <button type="button" onclick="goToOnboardStep(3)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-md transition flex items-center gap-2 btn-tactile">
+              <span>Proceed to Certificate & Aadhaar Upload</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Wizard Step 3: Certificate & Aadhaar Verification -->
+        <div id="onboard-step-3" class="glass-card rounded-3xl p-6 sm:p-8 space-y-5 max-w-3xl mx-auto border-emerald-100 hidden">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                <i data-lucide="file-check-2" class="w-5 h-5 text-amber-700"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-black text-slate-900">Step 3: Upload Trade Certificate & Aadhaar</h3>
+                <p class="text-xs text-slate-500">Gemini 1.5 Flash AI Multimodal verification against National Council standards</p>
+              </div>
+            </div>
+            <button type="button" onclick="goToOnboardStep(2)" class="text-xs text-slate-400 hover:text-slate-700 font-bold">← Back</button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <!-- Upload 1: Trade Certificate -->
+            <div class="p-4 border-2 border-dashed border-blue-300 rounded-2xl bg-blue-50/40 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="font-black text-slate-900 flex items-center gap-1.5">
+                  <i data-lucide="award" class="w-4 h-4 text-blue-600"></i>
+                  <span>1. Trade Certificate (ITI / NSDC / e-Shram)</span>
+                </span>
+                <span class="text-[10px] text-blue-700 bg-blue-100 font-bold px-2 py-0.5 rounded">Required</span>
+              </div>
+              <p class="text-[11px] text-slate-500">Upload scan or PDF of your National Trade Certificate, Diploma, or Skill India passbook.</p>
+              
+              <div class="bg-white p-3 rounded-xl border border-blue-200 flex items-center justify-between">
+                <input type="file" id="worker-cert-upload" onchange="handleCertFileSelect(this)" class="text-[11px] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white file:cursor-pointer cursor-pointer text-slate-500" />
+              </div>
+              <div id="cert-preview-badge" class="hidden text-[11px] text-emerald-800 font-bold flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span id="cert-filename-label">Certificate Attached (ITI Wireman NTC)</span>
+              </div>
+            </div>
+
+            <!-- Upload 2: Aadhaar Card -->
+            <div class="p-4 border-2 border-dashed border-emerald-300 rounded-2xl bg-emerald-50/40 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="font-black text-slate-900 flex items-center gap-1.5">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                  <span>2. Aadhaar Card (UIDAI e-KYC)</span>
+                </span>
+                <span class="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded">Government ID</span>
+              </div>
+              <p class="text-[11px] text-slate-500">Front and back scan for cooperative direct benefit transfer (DBT) linking.</p>
+              
+              <div class="bg-white p-3 rounded-xl border border-emerald-200 flex items-center justify-between">
+                <input type="file" id="worker-aadhaar-upload" onchange="handleAadhaarFileSelect(this)" class="text-[11px] file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white file:cursor-pointer cursor-pointer text-slate-500" />
+              </div>
+              <div id="aadhaar-preview-badge" class="hidden text-[11px] text-emerald-800 font-bold flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span id="aadhaar-filename-label">Aadhaar Linked: XXXX-XXXX-8921</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Autofill Documents for Evaluation -->
+          <div class="flex items-center justify-between bg-amber-50 border border-amber-200 p-3 rounded-2xl text-xs">
+            <span class="font-bold text-amber-900">Evaluating Prototype?</span>
+            <button type="button" onclick="autoAttachSampleCredentials()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl transition shadow-sm btn-tactile">
+              ⚡ Pre-Fill Verified ITI & Aadhaar Sample
+            </button>
+          </div>
+
+          <!-- AI OCR Verification Trigger -->
+          <div class="pt-2 flex justify-end">
+            <button type="button" id="btn-run-worker-verify" onclick="runWorkerVerification()" class="px-6 py-3.5 bg-gradient-to-r from-blue-700 via-indigo-700 to-coopblue-900 hover:from-blue-800 hover:to-indigo-800 text-white rounded-xl text-xs font-black shadow-lg transition flex items-center gap-2 btn-tactile">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+              <span id="btn-verify-worker-text">Run AI Verification & Complete Onboarding</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Wizard Step 4: Verification Result & Grant App Access -->
+        <div id="onboard-step-4" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 max-w-2xl mx-auto border-emerald-300 text-center hidden">
+          <div class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-md">
+            <i data-lucide="badge-check" class="w-10 h-10 text-emerald-600"></i>
+          </div>
+
+          <div>
+            <span class="bg-emerald-100 text-emerald-800 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-300">Credentials Attested</span>
+            <h3 class="text-2xl font-black text-slate-900 mt-2">Welcome, <span id="onboard-verified-worker-name">Rajesh Kumar</span>!</h3>
+            <p class="text-xs text-slate-600 mt-1 max-w-md mx-auto">
+              Your trade certificate & Aadhaar have been validated with <strong class="text-emerald-700">96.4% confidence</strong>. You are registered with the <span id="onboard-verified-coop-name" class="font-bold text-slate-800">Delhi Central Labour Cooperative</span>.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs text-left grid grid-cols-2 gap-2">
+            <div><span class="text-slate-400 font-bold block text-[10px]">TRADE BADGE</span><strong class="text-slate-800" id="onboard-verified-skill">Electrician (Grade A)</strong></div>
+            <div><span class="text-slate-400 font-bold block text-[10px]">COOPERATIVE ID</span><strong class="text-slate-800 font-mono">DL/PACS/2026/101</strong></div>
+            <div><span class="text-slate-400 font-bold block text-[10px]">WAGE ENTITLEMENT</span><strong class="text-emerald-700">100% Direct DBT (0% Cuts)</strong></div>
+            <div><span class="text-slate-400 font-bold block text-[10px]">STATUS</span><strong class="text-emerald-700">Verified & Active</strong></div>
+          </div>
+
+          <button type="button" onclick="grantWorkerAppAccess()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-sm rounded-2xl shadow-xl transition flex items-center justify-center gap-2 btn-tactile">
+            <i data-lucide="radio" class="w-5 h-5"></i>
+            <span>Enter Cooperative Worker Radar & Live Dispatch →</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ================= WORKER ACTIVE RADAR & WORKSPACE ================= -->
+      <div id="worker-active-workspace" class="space-y-6 hidden">
+
+        <!-- Worker Profile Header & Identity Switcher -->
+        <div class="glass-card rounded-3xl p-6 border-emerald-100 flex flex-col md:flex-row items-center justify-between gap-5">
+          
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <div class="w-16 h-16 rounded-2xl bg-slate-200 overflow-hidden border-2 border-emerald-500 shadow-md">
+                <img id="worker-active-avatar" src="https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Technician" />
+              </div>
+              <span class="absolute -bottom-1 -right-1 bg-emerald-500 w-4 h-4 rounded-full border-2 border-white" title="Active on radar"></span>
+            </div>
+
+            <div>
+              <div class="flex items-center space-x-2 flex-wrap">
+                <h2 class="text-lg font-black text-slate-900" id="worker-card-name">Rajesh Kumar</h2>
+                <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold border border-emerald-200 flex items-center gap-1">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                  <span>Cooperative Verified</span>
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5" id="worker-card-trade">
+                Certified Electrician &bull; Member of <span class="font-bold text-slate-700">Delhi Central Labour Cooperative</span>
+              </p>
+              <div class="flex items-center space-x-4 mt-1.5 text-xs text-slate-600 font-medium">
+                <span id="worker-card-rating">⭐ 4.9 Rating (142 Jobs)</span>
+                <span>Aadhaar: <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-[11px]" id="worker-card-aadhaar">XXXX-XXXX-8921</code></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Switch Worker Persona Dropdown + Guaranteed Take-Home Card + Logout -->
+          <div class="flex flex-wrap items-center gap-3">
+            
+            <!-- Persona Selector -->
+            <div class="bg-slate-100 p-2 rounded-2xl border border-slate-200 text-xs">
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5" data-i18n="txt-switch-worker-lbl">Switch Worker Profile</label>
+              <select id="worker-persona-select" onchange="changeWorkerPersona(this.value)" class="bg-white px-2.5 py-1.5 rounded-xl font-bold text-slate-800 outline-none border border-slate-200 cursor-pointer text-xs">
+                <option value="101">Rajesh Kumar (Electrician)</option>
+                <option value="102">Mohammad Aslam (Plumber)</option>
+                <option value="103">Sunita Sharma (Healthcare)</option>
+                <option value="106">Amit Verma (Backup Electrician)</option>
+              </select>
+            </div>
+
+            <!-- Digital Wallet Passbook Widget -->
+            <div class="flex items-center space-x-3.5 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 px-5 py-3 rounded-2xl shadow-sm">
+              <div>
+                <p class="text-[10px] font-black text-emerald-800 uppercase tracking-wider" data-i18n="txt-today-takehome">Today's Take-Home (100%)</p>
+                <p class="text-2xl font-black text-emerald-950" id="worker-today-wage">₹2,840.00</p>
+                <button onclick="openPassbookModal()" class="text-[10px] text-emerald-700 font-bold hover:underline flex items-center gap-1 mt-0.5">
+                  <span data-i18n="txt-view-passbook">View Cooperative Passbook</span>
+                  <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                </button>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
+                <i data-lucide="wallet" class="w-5 h-5"></i>
+              </div>
+            </div>
+
+            <!-- Log Out / Re-onboard Button -->
+            <button onclick="logoutWorkerToOnboard()" title="Log out or re-verify credentials" class="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200 transition btn-tactile text-xs font-bold flex items-center gap-1">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span class="hidden sm:inline">Exit Cockpit</span>
+            </button>
+
+          </div>
+
+        </div>
+
+      <!-- Main Worker Workspace: Radar & Dual OTP Actions -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Left: Incoming Job Radar Alert (Rapido Style) -->
+        <div class="glass-card rounded-3xl p-6 border-blue-100 relative overflow-hidden">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+            <h3 class="font-black text-slate-900 text-base flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-blue-600 animate-pulse"></span>
+              <span data-i18n="txt-live-radar-title">Live Job Dispatch Radar</span>
+            </h3>
+            <span class="text-xs bg-blue-100 text-blue-900 font-bold px-2.5 py-0.5 rounded-full border border-blue-200" data-i18n="txt-radar-proximity">
+              Proximity Radius: 5 km
+            </span>
+          </div>
+
+          <!-- Radar Scanner Visual Background -->
+          <div class="relative h-64 w-full bg-gradient-to-b from-slate-900 to-indigo-950 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800 mb-4">
+            <!-- Concentric Circles -->
+            <div class="radar-ring" style="width: 80px; height: 80px;"></div>
+            <div class="radar-ring" style="width: 150px; height: 150px;"></div>
+            <div class="radar-ring" style="width: 220px; height: 220px;"></div>
+            <!-- Sweep Beam -->
+            <div class="radar-sweep-beam"></div>
+
+            <!-- Center Worker Beacon -->
+            <div class="z-10 flex flex-col items-center justify-center text-center text-white">
+              <div class="w-8 h-8 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-lg">
+                <i data-lucide="navigation" class="w-4 h-4 text-white"></i>
+              </div>
+              <span class="text-[10px] font-bold mt-1 text-emerald-300" data-i18n="txt-radar-you">You (Online)</span>
+            </div>
+
+            <!-- Idle Radar Message -->
+            <div id="radar-idle-msg" class="absolute bottom-3 text-center text-xs text-blue-300 font-medium z-10 bg-slate-950/80 px-4 py-1 rounded-full border border-blue-800/60" data-i18n="txt-radar-idle">
+              Scanning cooperative broadcast frequency...
+            </div>
+          </div>
+
+          <!-- Fallback Reassignment Notice (Shown when rejected) -->
+          <div id="worker-fallback-notice" class="p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl text-xs text-amber-950 hidden space-y-1 mb-4 shadow-md">
+            <div class="flex items-center gap-1.5 font-black text-amber-900 text-sm">
+              <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-600 animate-spin"></i>
+              <span data-i18n="txt-fallback-activated">Automated Fallback Engine Activated!</span>
+            </div>
+            <p id="worker-fallback-text">Job was declined and instantly reassigned to the next nearest cooperative technician.</p>
+          </div>
+
+          <!-- Active Incoming Job Card (Revealed when Citizen broadcasts) -->
+          <div id="incoming-job-card" class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-500 rounded-2xl p-5 hidden space-y-4 shadow-lg">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="bg-blue-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider" data-i18n="txt-new-broadcast">
+                  New Cooperative Broadcast
+                </span>
+                <h4 class="text-lg font-black text-slate-900 mt-1.5" id="radar-service-type">Electrician Service</h4>
+                <p class="text-xs text-slate-600 font-medium">
+                  Client: <span class="font-bold text-slate-900" id="radar-client-name">Aarav Mehta</span> &bull; <span id="radar-client-dist">1.2 km away (Connaught Place)</span>
+                </p>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] font-bold text-slate-500 uppercase" data-i18n="txt-radar-guaranteed">Guaranteed Pay</span>
+                <p class="text-2xl font-black text-emerald-700" id="radar-payout">₹140.00</p>
+                <span class="text-[10px] text-emerald-600 font-bold">100% Direct DBT</span>
+              </div>
+            </div>
+
+            <!-- Rapido-Style Accept & Decline Buttons (Fallback Demonstration) -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <button onclick="workerRejectJob()" class="py-3 bg-red-100 hover:bg-red-200 text-red-700 font-bold text-xs rounded-xl transition border border-red-200 flex items-center justify-center gap-1.5 btn-tactile">
+                <i data-lucide="x-circle" class="w-4 h-4"></i>
+                <span data-i18n="txt-btn-decline">Decline (Trigger Fallback)</span>
+              </button>
+              <button onclick="workerAcceptJob()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-xs rounded-xl transition shadow-md flex items-center justify-center gap-1.5 btn-tactile">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span data-i18n="txt-btn-accept">Accept & Navigate</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Dual-OTP Service Execution Desk -->
+        <div class="glass-card rounded-3xl p-6 border-slate-200">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+            <h3 class="font-black text-slate-900 text-base flex items-center space-x-2">
+              <i data-lucide="shield-check" class="w-5 h-5 text-blue-600"></i>
+              <span data-i18n="txt-dual-otp-desk">Dual-OTP Verification Desk</span>
+            </h3>
+            <span class="text-xs text-slate-500 font-semibold" data-i18n="txt-dual-otp-sub">Fraud-Proof Settlement</span>
+          </div>
+
+          <!-- Step 1: START OTP -->
+          <div class="p-4 bg-white border border-slate-200 rounded-2xl mb-4 shadow-sm" id="box-step-1">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                <span data-i18n="txt-step1-title">STEP 1: Enter Customer Arrival OTP (START_OTP)</span>
+              </span>
+              <span id="badge-step-1" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 uppercase">
+                LOCKED
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3" data-i18n="txt-step1-desc">Ask customer for the 4-digit START_OTP upon reaching their premises.</p>
+            <div class="flex space-x-2">
+              <input type="text" id="input-start-otp" maxlength="6" placeholder="Enter START_OTP (e.g. 4821)" class="flex-1 px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-blue-600 focus:outline-none" />
+              <button onclick="autoFillStartOtp()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl transition" title="Auto-fill for demo">Auto-Fill</button>
+              <button onclick="submitStartOtp()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition btn-tactile" data-i18n="txt-btn-verify-start">Verify Start</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Proof of Work & END OTP -->
+          <div class="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm" id="box-step-2">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] flex items-center justify-center font-bold">2</span>
+                <span data-i18n="txt-step2-title">STEP 2: Proof of Work & Completion OTP (END_OTP)</span>
+              </span>
+              <span id="badge-step-2" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 uppercase">
+                PENDING
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3" data-i18n="txt-step2-desc">Upload completion photo and ask customer for END_OTP to release payment.</p>
+            
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <input type="file" id="proof-file" accept="image/*" onchange="previewProofImage(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" />
+                <button onclick="simulateProofUpload()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl whitespace-nowrap" data-i18n="txt-btn-sample-proof">Sample Proof</button>
+              </div>
+
+              <!-- Proof Thumbnail Preview -->
+              <div id="proof-preview-container" class="hidden p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                <img id="proof-preview-img" src="" class="w-12 h-12 object-cover rounded-lg border border-slate-300" alt="Proof" />
+                <div class="text-[11px]">
+                  <p class="font-bold text-emerald-800">✓ Proof of Work Attached</p>
+                  <p class="text-slate-500">Geo-tagged with Connaught Place coordinates</p>
+                </div>
+              </div>
+
+              <div class="flex space-x-2">
+                <input type="text" id="input-end-otp" maxlength="6" placeholder="Enter END_OTP (e.g. 7914)" class="flex-1 px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+                <button onclick="autoFillEndOtp()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl transition" title="Auto-fill for demo">Auto-Fill</button>
+                <button onclick="submitEndOtp()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition btn-tactile" data-i18n="txt-btn-release">Release Payout</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Credential Vault Card -->
+          <div class="mt-5 pt-4 border-t border-slate-200">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider" data-i18n="txt-ai-cred-title">AI Verified Trade Credentials</h4>
+              <button onclick="openCredentialModal()" class="text-[11px] font-bold text-blue-600 hover:underline flex items-center gap-1">
+                <span data-i18n="txt-inspect-ocr">Inspect Document OCR</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
+                  <div>
+                    <span id="worker-card-cert-title" class="font-bold text-slate-800 block text-[11px]">ITI Wireman NTC</span>
+                    <span id="worker-card-cert-issuer" class="text-[10px] text-slate-400">NCVT Attested</span>
+                  </div>
+                </div>
+                <span class="bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded text-[10px]">96% AI Match</span>
+              </div>
+
+              <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="file-check" class="w-4 h-4 text-blue-600"></i>
+                  <div>
+                    <span class="font-bold text-slate-800 block text-[11px]">Aadhaar e-KYC</span>
+                    <span class="text-[10px] text-slate-400">UIDAI Verified</span>
+                  </div>
+                </div>
+                <span class="bg-emerald-100 text-emerald-800 font-black px-2 py-0.5 rounded text-[10px]">Active</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 3: MINISTRY OF COOPERATION COCKPIT ================= -->
+    <section id="view-ministry" class="space-y-6 hidden">
+      
+      <!-- Ministry Banner -->
+      <div class="bg-gradient-to-r from-slate-950 via-coopblue-950 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-5 border border-blue-900/60">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="bg-amber-400 text-blue-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">Apex Governance Desk</span>
+            <span class="text-blue-300 text-xs font-semibold">Live PACS Federation Telemetry</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black mt-2 tracking-tight" data-i18n="txt-min-title">Ministry of Cooperation, Government of India</h2>
+          <p class="text-xs sm:text-sm text-blue-200 mt-1 max-w-2xl" data-i18n="txt-min-desc">
+            Real-time fair wage oversight, PACS federations registry, district shortage intelligence, and AI credential verification.
+          </p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="fetchMinistryAnalytics()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black rounded-xl transition flex items-center space-x-2 border border-blue-400 shadow-md btn-tactile">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            <span data-i18n="txt-btn-refresh-telemetry">Refresh Live Data</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- National KPI Cards with Animated Counters -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="glass-card rounded-3xl p-5 border-blue-100">
+          <div class="flex items-center justify-between text-slate-500">
+            <span class="text-[11px] font-black uppercase tracking-wider" data-i18n="txt-kpi-coops">Registered Cooperatives</span>
+            <i data-lucide="landmark" class="w-4 h-4 text-blue-600"></i>
+          </div>
+          <p class="text-3xl font-black text-slate-900 mt-2" id="m-coop-count">3 Federations</p>
+          <p class="text-xs text-emerald-700 font-bold mt-1">✓ Primary Agricultural Credit Societies</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-5 border-blue-100">
+          <div class="flex items-center justify-between text-slate-500">
+            <span class="text-[11px] font-black uppercase tracking-wider" data-i18n="txt-kpi-workers">Verified Gig Technicians</span>
+            <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+          </div>
+          <p class="text-3xl font-black text-slate-900 mt-2" id="m-worker-count">7 Technicians</p>
+          <p class="text-xs text-blue-600 font-bold mt-1">100% Aadhaar & ITI Trade Attested</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-5 border-blue-100">
+          <div class="flex items-center justify-between text-slate-500">
+            <span class="text-[11px] font-black uppercase tracking-wider" data-i18n="txt-kpi-wages">Direct Wages Disbursed</span>
+            <i data-lucide="credit-card" class="w-4 h-4 text-emerald-600"></i>
+          </div>
+          <p class="text-3xl font-black text-emerald-700 mt-2" id="m-wage-count">₹3,68,900</p>
+          <p class="text-xs text-slate-500 font-medium mt-1">0% Platform Extraction / Middlemen</p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-5 border-blue-100">
+          <div class="flex items-center justify-between text-slate-500">
+            <span class="text-[11px] font-black uppercase tracking-wider" data-i18n="txt-kpi-savings">Citizen Savings Generated</span>
+            <i data-lucide="trending-up" class="w-4 h-4 text-amber-600"></i>
+          </div>
+          <p class="text-3xl font-black text-amber-600 mt-2" id="m-savings-count">₹1,40,182</p>
+          <p class="text-xs text-slate-500 font-medium mt-1">Compared to commercial aggregators</p>
+        </div>
+
+      </div>
+
+      <!-- District Analytics & Verification Desk -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left 2 Cols: District Priority Heatmap -->
+        <div class="lg:col-span-2 glass-card rounded-3xl p-6 border-slate-200">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 mb-4 gap-2">
+            <div>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="txt-district-title">District Deployment & Shortage Intelligence</h3>
+              <p class="text-xs text-slate-500" data-i18n="txt-district-sub">Autonomous PACS dispatch & vocational training triggers</p>
+            </div>
+            <span class="text-xs text-slate-500 font-medium bg-slate-100 px-2.5 py-1 rounded-full">Updated every 5 mins</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-100 text-slate-700 font-black uppercase tracking-wider rounded-xl">
+                <tr>
+                  <th class="p-3 rounded-l-xl" data-i18n="th-district">District</th>
+                  <th class="p-3" data-i18n="th-demand">Demand Index</th>
+                  <th class="p-3" data-i18n="th-workers">Active Technicians</th>
+                  <th class="p-3" data-i18n="th-status">Status</th>
+                  <th class="p-3 rounded-r-xl" data-i18n="th-action">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium" id="district-table-body">
+                <!-- Dynamically injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Col: Verification Desk -->
+        <div class="glass-card rounded-3xl p-6 border-slate-200 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="txt-ai-desk-title">AI Verification Desk</h3>
+              <p class="text-xs text-slate-500" data-i18n="txt-ai-desk-sub">Gemini 1.5 Flash Document Attestation</p>
+            </div>
+            <span class="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-amber-200">
+              AI Monitored
+            </span>
+          </div>
+
+          <div class="space-y-3" id="verification-queue">
+            <!-- Candidate 1 -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-slate-900 text-xs">Suresh Yadav</span>
+                <span class="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">94% AI Match</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-medium">Skill: Waste Segregation & Sanitation</p>
+              <p class="text-[11px] text-slate-600">Municipal Solid Waste Certificate (UIDAI: XXXX-6721)</p>
+              <div class="pt-1 flex space-x-2">
+                <button onclick="approveVerificationCandidate(this, 'Suresh Yadav')" class="flex-1 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition btn-tactile">Approve & Issue Seal</button>
+                <button onclick="openCredentialModal('Suresh Yadav')" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Audit</button>
+              </div>
+            </div>
+
+            <!-- Candidate 2 -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-slate-900 text-xs">Pooja Devi</span>
+                <span class="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">98% AI Match</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-medium">Skill: Green Sanitation & Facility Care</p>
+              <p class="text-[11px] text-slate-600">e-Shram Portal Certified (UIDAI: XXXX-3341)</p>
+              <div class="pt-1 flex space-x-2">
+                <button onclick="approveVerificationCandidate(this, 'Pooja Devi')" class="flex-1 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition btn-tactile">Approve & Issue Seal</button>
+                <button onclick="openCredentialModal('Pooja Devi')" class="px-3 py-1.5 bg-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-300 transition">Audit</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Federation Activity Ticker -->
+          <div class="pt-3 border-t border-slate-200">
+            <span class="text-[11px] font-black uppercase text-slate-400 tracking-wider block mb-2" data-i18n="txt-live-stream-title">Live Federation Stream</span>
+            <div id="ministry-live-ticker" class="space-y-1.5 text-[11px] text-slate-600">
+              <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>₹2,840 DBT disbursed to Delhi Central Labour Coop</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> <span>South Delhi PACS added 14 new technicians</span></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= MINISTRY COMPONENT 1: REGIONAL DEMAND ANALYTICS & CHARTS ================= -->
+      <div class="glass-card rounded-3xl p-6 border-blue-200 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+              </span>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="min-demand-charts-title">Regional Worker Demand Intelligence & Charts</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5" data-i18n="min-demand-charts-sub">Geospatial shortage radar for targeted PACS vocational training & emergency re-allocation</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-blue-600"></span> Electrician</span>
+            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-indigo-500"></span> Plumber</span>
+            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-pink-500"></span> Healthcare</span>
+            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> Cleaning</span>
+          </div>
+        </div>
+
+        <!-- Visual Bar Chart Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="ministry-demand-chart-grid">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </div>
+
+      <!-- ================= MINISTRY COMPONENT 2: CITIZEN REVIEWS & GRIEVANCE LOG ================= -->
+      <div class="glass-card rounded-3xl p-6 border-slate-200 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+              </span>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="min-reviews-title">Citizen Grievance & Worker Review Log</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5" data-i18n="min-reviews-sub">Track complaints against technicians, positive commendations, and enforce federation discipline</p>
+          </div>
+
+          <!-- Filter Pills -->
+          <div class="flex items-center gap-2 text-xs">
+            <button onclick="filterMinistryGrievances('all')" id="min-btn-all" class="px-3 py-1.5 bg-blue-600 text-white font-bold rounded-xl shadow-sm transition">All Logs</button>
+            <button onclick="filterMinistryGrievances('complaint')" id="min-btn-complaint" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">⚠️ Complaints Only</button>
+            <button onclick="filterMinistryGrievances('positive')" id="min-btn-positive" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition">⭐ Commendations</button>
+          </div>
+        </div>
+
+        <!-- Grievance Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-100 text-slate-700 font-black uppercase tracking-wider rounded-xl">
+              <tr>
+                <th class="p-3 rounded-l-xl">ID</th>
+                <th class="p-3">Citizen</th>
+                <th class="p-3">Worker & Trade</th>
+                <th class="p-3">Type</th>
+                <th class="p-3">Review & Grievance Detail</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 rounded-r-xl">Ministry Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium" id="ministry-reviews-table-body">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= MINISTRY COMPONENT 3: APP REVENUE & WELFARE AUDIT ================= -->
+      <div class="glass-card rounded-3xl p-6 border-emerald-200 space-y-5 bg-gradient-to-br from-white to-emerald-50/30">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                <i data-lucide="pie-chart" class="w-4 h-4"></i>
+              </span>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="min-revenue-title">Platform Revenue Generated & Cooperative Welfare Audit</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5" data-i18n="min-revenue-sub">Transparent public ledger: 100% worker wage pass-through + 3.5% non-profit social protection pool</p>
+          </div>
+          <button onclick="downloadRevenueAuditSlip()" class="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-black transition shadow-sm flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export Official Audit Slip</span>
+          </button>
+        </div>
+
+        <!-- Revenue Metrics Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-slate-400 font-black block uppercase text-[10px]">Gross Transaction Volume (GMV)</span>
+            <div id="revenue-gmv" class="text-2xl font-black text-slate-900 mt-1">₹14,28,500</div>
+            <span class="text-emerald-700 font-bold text-[11px] mt-0.5 block">↑ 18.4% month-over-month</span>
+          </div>
+
+          <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 shadow-sm">
+            <span class="text-emerald-800 font-black block uppercase text-[10px]">100% Direct Worker DBT</span>
+            <div id="revenue-worker-wages" class="text-2xl font-black text-emerald-950 mt-1">₹12,85,650</div>
+            <span class="text-emerald-700 font-bold text-[11px] mt-0.5 block">0% Intermediary Fee</span>
+          </div>
+
+          <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200 shadow-sm">
+            <span class="text-blue-800 font-black block uppercase text-[10px]">Cooperative Welfare Pool (3.5%)</span>
+            <div id="revenue-welfare-pool" class="text-2xl font-black text-blue-950 mt-1">₹50,000</div>
+            <span class="text-blue-700 font-bold text-[11px] mt-0.5 block">Health insurance & pension reserve</span>
+          </div>
+
+          <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 shadow-sm">
+            <span class="text-amber-800 font-black block uppercase text-[10px]">Subscription Passes Revenue</span>
+            <div id="revenue-subscriptions" class="text-2xl font-black text-amber-950 mt-1">₹92,850</div>
+            <span class="text-amber-700 font-bold text-[11px] mt-0.5 block">460+ Active subscribers</span>
+          </div>
+        </div>
+
+        <!-- Revenue Proportion Visualization Bar -->
+        <div class="space-y-2 pt-2">
+          <div class="flex justify-between text-xs font-bold text-slate-700">
+            <span>Disbursement Ratio: 90% Worker Take-Home | 3.5% Cooperative Cess | 6.5% Subscription Growth</span>
+            <span class="text-emerald-700 font-bold">100% Audited</span>
+          </div>
+          <div class="h-4 w-full bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+            <div class="bg-emerald-600 h-full transition-all" style="width: 90%;" title="90% Direct Worker Wages"></div>
+            <div class="bg-blue-600 h-full transition-all" style="width: 3.5%;" title="3.5% Cooperative Welfare Fund"></div>
+            <div class="bg-amber-500 h-full transition-all" style="width: 6.5%;" title="6.5% Subscription Pass Reserve"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= GUIDED DEMO CONTROLLER BAR (SIH EVALUATOR MODE) ================= -->
+  <aside class="fixed bottom-3 inset-x-0 max-w-5xl mx-auto px-4 z-40">
+    <div class="bg-slate-950/95 text-white backdrop-blur-xl border border-blue-600/40 rounded-2xl shadow-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Label -->
+      <div class="flex items-center space-x-2.5">
+        <span class="flex h-3 w-3 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+        </span>
+        <div>
+          <span class="text-xs font-black tracking-wide uppercase text-amber-400" data-i18n="scenario-title">SIH Hackathon Scenario Runner</span>
+          <span class="hidden md:inline text-[11px] text-slate-300 ml-1">&bull; <span data-i18n="scenario-sub">1-Click Interactive Demonstration</span></span>
+        </div>
+      </div>
+
+      <!-- 5 Quick Scenario Buttons -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="runScenario('booking')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
+          <span data-i18n="scenario-btn-1">⚡ 1. Standard Booking</span>
+        </button>
+        <button onclick="runScenario('payment')" class="px-3 py-1.5 bg-purple-700 hover:bg-purple-600 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
+          <span data-i18n="scenario-btn-2">💳 2. Payment Gateway</span>
+        </button>
+        <button onclick="runScenario('ngo')" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
+          <span data-i18n="scenario-btn-3">🤝 3. NGO Verification</span>
+        </button>
+        <button onclick="runScenario('fallback')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
+          <span data-i18n="scenario-btn-4">🚨 4. Emergency & Fallback</span>
+        </button>
+        <button onclick="runScenario('otp')" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
+          <span data-i18n="scenario-btn-5">🛡️ 5. Dual-OTP Closure</span>
+        </button>
+        <button onclick="resetDemoState()" title="Reset All Data" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition text-xs btn-tactile">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ================= MODAL: DEMO PAYMENT GATEWAY INTERFACE ================= -->
+  <div id="modal-payment-gateway" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto">
+      
+      <!-- Payment Gateway Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-700 to-indigo-900 text-white flex items-center justify-center font-black shadow-md border border-blue-500">
+            <i data-lucide="shield-check" class="w-6 h-6 text-amber-400"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-black text-slate-900 text-base" data-i18n="txt-pay-gateway-title">Cooperative BharatPay Gateway</h3>
+              <span class="bg-emerald-100 text-emerald-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-300">NPCI Escrow</span>
+            </div>
+            <p class="text-xs text-slate-500" data-i18n="txt-pay-gateway-sub">National Cooperative Escrow & Settlement - Ministry of Cooperation</p>
+          </div>
+        </div>
+        <button onclick="closePaymentGatewayModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Itemized Price Breakdown Summary Box -->
+      <div class="bg-gradient-to-br from-slate-50 to-blue-50/50 p-4 rounded-2xl border border-blue-200/80 space-y-2.5">
+        <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+          <div>
+            <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider" data-i18n="txt-pay-order-summary">Order & Escrow Summary</span>
+            <p class="font-extrabold text-slate-900 text-sm" id="pay-summary-service">Electrician Service (Connaught Place)</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Net Payable</span>
+            <span class="text-2xl font-black text-blue-900" id="pay-summary-total">₹190.20</span>
+          </div>
+        </div>
+
+        <!-- Detailed Breakdown Lines in Modal -->
+        <div class="space-y-1.5 text-xs text-slate-600">
+          <div class="flex justify-between">
+            <span data-i18n="pay-lbl-labor">Direct Labor Wage (100% to Worker):</span>
+            <span class="font-bold text-slate-900" id="pay-modal-labor">₹120.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span data-i18n="pay-lbl-toolkit">Certified Toolkit Charge:</span>
+            <span class="font-bold text-slate-900" id="pay-modal-toolkit">₹40.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span data-i18n="pay-lbl-transit">Geospatial Transit (1.2 km):</span>
+            <span class="font-bold text-slate-900" id="pay-modal-transit">₹20.00</span>
+          </div>
+          <div class="flex justify-between text-red-600" id="pay-modal-emergency-row" style="display:none;">
+            <span data-i18n="pay-lbl-emergency">Emergency Priority Surcharge:</span>
+            <span class="font-bold" id="pay-modal-emergency">+₹60.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span data-i18n="pay-lbl-tax">Statutory GST (5%):</span>
+            <span class="font-bold text-slate-900" id="pay-modal-tax">₹6.00</span>
+          </div>
+          <div class="flex justify-between text-blue-900">
+            <span data-i18n="pay-lbl-platform">Cooperative Welfare Cess (3.5%):</span>
+            <span class="font-bold" id="pay-modal-platform">₹4.20</span>
+          </div>
+          <div class="flex justify-between text-emerald-700 font-bold" id="pay-modal-ngo-row" style="display:none;">
+            <span data-i18n="pay-lbl-ngo">Verified NGO Subsidy (-20%):</span>
+            <span id="pay-modal-ngo">-₹0.00</span>
+          </div>
+          <div class="flex justify-between text-amber-900 font-bold" id="pay-modal-subscriber-row" style="display:none;">
+            <span>VIP Subscriber Discount:</span>
+            <span id="pay-modal-subscriber-discount">-₹0.00</span>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-200 flex justify-between items-center text-[11px]">
+          <span class="text-emerald-700 font-bold flex items-center gap-1">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            <span data-i18n="pay-lbl-escrow-trust">Held in 256-Bit Escrow until END_OTP Validation</span>
+          </span>
+          <span class="text-slate-400 font-medium">Ref: #PACS-ESCROW-9810</span>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection -->
+      <div>
+        <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2.5" data-i18n="txt-pay-choose-method">
+          Choose Secure Payment Mode
+        </label>
+        
+        <!-- Tab Buttons for Payment Mode -->
+        <div class="grid grid-cols-4 gap-2 mb-3 text-xs font-bold text-slate-600">
+          <button type="button" onclick="selectPayTab('qr')" id="tab-pay-qr" class="py-2 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 text-center transition btn-tactile" data-i18n="pay-tab-qr">
+            UPI QR
+          </button>
+          <button type="button" onclick="selectPayTab('apps')" id="tab-pay-apps" class="py-2 rounded-xl border border-slate-200 hover:border-slate-300 text-center transition btn-tactile" data-i18n="pay-tab-apps">
+            UPI Apps
+          </button>
+          <button type="button" onclick="selectPayTab('bank')" id="tab-pay-bank" class="py-2 rounded-xl border border-slate-200 hover:border-slate-300 text-center transition btn-tactile" data-i18n="pay-tab-bank">
+            Coop Bank
+          </button>
+          <button type="button" onclick="selectPayTab('escrow')" id="tab-pay-escrow" class="py-2 rounded-xl border border-slate-200 hover:border-slate-300 text-center transition btn-tactile" data-i18n="pay-tab-escrow">
+            Escrow Cash
+          </button>
+        </div>
+
+        <!-- 1. UPI QR Code View -->
+        <div id="pay-view-qr" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center space-y-3">
+          <div class="p-3 bg-white rounded-2xl border border-slate-300 shadow-sm relative">
+            <img id="pay-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sahakarseva@dccb%26pn=SahakarSeva%20Ministry%20Cooperation%26am=190.20%26cu=INR" alt="UPI QR" class="w-36 h-36 object-contain" />
+            <div class="absolute inset-x-0 top-1/2 h-0.5 bg-red-500/80 shadow-[0_0_8px_red] animate-pulse"></div>
+          </div>
+          <div>
+            <span class="text-xs font-black text-slate-800 block" data-i18n="pay-lbl-scan-qr">Scan with any UPI App (BHIM / GPay / PhonePe)</span>
+            <span class="text-[11px] font-mono text-slate-500">VPA: sahakarseva.central@npci</span>
+          </div>
+          <button type="button" onclick="simulateUpiApproval()" class="px-3.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-black border border-emerald-300 transition btn-tactile flex items-center gap-1.5">
+            <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-700"></i>
+            <span data-i18n="pay-btn-simulate-qr">⚡ Simulate Instant UPI Mobile App Approval</span>
+          </button>
+        </div>
+
+        <!-- 2. UPI Apps View -->
+        <div id="pay-view-apps" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 hidden text-xs">
+          <label class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-blue-400">
+            <span class="font-extrabold text-slate-800 flex items-center gap-2"><span>📱</span> Google Pay UPI</span>
+            <input type="radio" name="upi_app" checked class="accent-blue-600" />
+          </label>
+          <label class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-blue-400">
+            <span class="font-extrabold text-slate-800 flex items-center gap-2"><span>🟣</span> PhonePe UPI</span>
+            <input type="radio" name="upi_app" class="accent-blue-600" />
+          </label>
+          <label class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-blue-400">
+            <span class="font-extrabold text-slate-800 flex items-center gap-2"><span>🇮🇳</span> BHIM Official Government UPI</span>
+            <input type="radio" name="upi_app" class="accent-blue-600" />
+          </label>
+        </div>
+
+        <!-- 3. Cooperative Bank View -->
+        <div id="pay-view-bank" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 hidden text-xs">
+          <p class="text-[11px] text-slate-500 font-medium" data-i18n="pay-lbl-bank-sub">Pay directly from your Cooperative Society or DCCB account:</p>
+          <select class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-800 outline-none">
+            <option>Delhi Central Cooperative Bank (DCCB)</option>
+            <option>Delhi State Cooperative Apex Bank</option>
+            <option>State Bank of India (SBI Cooperative Branch)</option>
+            <option>RuPay Kisan Cooperative Debit Card</option>
+          </select>
+        </div>
+
+        <!-- 4. Escrow Cash on Completion View -->
+        <div id="pay-view-escrow" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 hidden text-xs">
+          <div class="flex items-start gap-2 text-slate-700">
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <span class="font-extrabold block text-slate-900" data-i18n="pay-zero-cash-title">Zero Upfront Cash Guarantee</span>
+              <p class="text-[11px] text-slate-500 mt-0.5" data-i18n="pay-zero-cash-desc">You only pay in cash or UPI directly to technician once the work is completed and you validate the END_OTP.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Submit Payment & Broadcast Button -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+        <button type="button" onclick="closePaymentGatewayModal()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition" data-i18n="pay-btn-cancel">
+          Cancel
+        </button>
+        <button type="button" id="btn-process-payment" onclick="processPaymentAndBroadcast()" class="px-6 py-3.5 bg-gradient-to-r from-blue-700 via-indigo-700 to-coopblue-900 hover:from-blue-800 hover:to-indigo-800 text-white rounded-xl text-xs font-black shadow-lg transition flex items-center gap-2 btn-tactile">
+          <i data-lucide="lock" class="w-4 h-4 text-amber-400"></i>
+          <span id="btn-pay-text">Authorize Payment of ₹190.20 & Broadcast</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: NGO & NON-PROFIT VERIFICATION FORM ================= -->
+  <div id="modal-ngo-verify" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="heart-handshake" class="w-5 h-5 text-emerald-700"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base" data-i18n="ngo-modal-title">NGO & Non-Profit Verification</h3>
+            <p class="text-xs text-slate-500" data-i18n="ngo-modal-sub">Ministry of Cooperation 20% Social Welfare Subsidy Desk</p>
+          </div>
+        </div>
+        <button onclick="closeNgoVerificationModal(false)" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Instructions Banner -->
+      <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 text-xs text-blue-900 flex items-start gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5"></i>
+        <p data-i18n="ngo-inst-banner">To qualify for the <strong>20% cooperative subsidy</strong>, non-profit institutions must provide their NITI Aayog NGO-DARPAN ID or 12A/80G registration.</p>
+      </div>
+
+      <!-- Quick Pre-fill Button for Demo -->
+      <div class="flex items-center justify-between bg-amber-50 border border-amber-200 p-2.5 rounded-2xl">
+        <span class="text-[11px] font-bold text-amber-900" data-i18n="ngo-eval-title">Evaluating Prototype?</span>
+        <button type="button" onclick="autoFillSampleNgo()" class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl transition shadow-sm btn-tactile">
+          <span data-i18n="ngo-btn-prefill">⚡ Pre-fill Sample NGO</span>
+        </button>
+      </div>
+
+      <!-- Form Inputs -->
+      <form id="ngo-verification-form" onsubmit="submitNgoVerification(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1" data-i18n="ngo-lbl-name">
+            Registered Non-Profit / NGO Name *
+          </label>
+          <input type="text" id="ngo-input-name" required placeholder="e.g. Goonj Community Welfare Foundation" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1" data-i18n="ngo-lbl-darpan">
+              NITI Aayog DARPAN ID *
+            </label>
+            <input type="text" id="ngo-input-darpan" required placeholder="e.g. DL/2021/0219482" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1" data-i18n="ngo-lbl-tax">
+              Income Tax 12A / 80G No.
+            </label>
+            <input type="text" id="ngo-input-tax" placeholder="e.g. AAATG1294RE20214" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1" data-i18n="ngo-lbl-purpose">
+            Community Service Purpose *
+          </label>
+          <select id="ngo-input-purpose" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
+            <option value="elder">Elderly Healthcare & Assisted Living</option>
+            <option value="disaster">Disaster Response & Emergency Home Relief</option>
+            <option value="sanitation">Slum & Community Sanitation Campaign</option>
+            <option value="education">Non-Profit Education Facility Maintenance</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1" data-i18n="ngo-lbl-rep">
+            Authorized Representative Name
+          </label>
+          <input type="text" id="ngo-input-rep" placeholder="e.g. Anshu Gupta (Director)" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeNgoVerificationModal(false)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition" data-i18n="ngo-btn-cancel">
+            Cancel
+          </button>
+          <button type="submit" id="btn-submit-ngo-verify" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            <span data-i18n="ngo-btn-verify">Verify DARPAN & Apply 20% Subsidy</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: AI DOCUMENT OCR INSPECTOR ================= -->
+  <div id="modal-credential" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center space-x-2">
+          <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base" data-i18n="cred-modal-title">Gemini 1.5 Flash AI Credential Verification</h3>
+            <p class="text-xs text-slate-500" data-i18n="cred-modal-sub">Ministry of Cooperation Verified Worker Credential Vault</p>
+          </div>
+        </div>
+        <button onclick="closeCredentialModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Extracted Metadata Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-slate-400 font-bold block uppercase text-[10px]" data-i18n="cred-lbl-name">Worker Name</span>
+          <span class="font-black text-slate-900 text-sm" id="modal-worker-name">Rajesh Kumar</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-slate-400 font-bold block uppercase text-[10px]" data-i18n="cred-lbl-issuer">Issuing Body</span>
+          <span class="font-bold text-slate-900" id="modal-worker-issuer">National Council for Vocational Training (NCVT)</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-slate-400 font-bold block uppercase text-[10px]" data-i18n="cred-lbl-certno">Certificate No.</span>
+          <span class="font-mono font-bold text-slate-900" id="modal-worker-certno">NTC/ITI/2022/EL-49821</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-slate-400 font-bold block uppercase text-[10px]" data-i18n="cred-lbl-confidence">Gemini Confidence</span>
+          <span class="font-black text-emerald-700 text-sm" id="modal-worker-confidence">96.4% Attested</span>
+        </div>
+      </div>
+
+      <!-- JSON OCR Payload Display -->
+      <div class="bg-slate-900 text-emerald-400 p-4 rounded-2xl font-mono text-xs overflow-x-auto">
+        <div class="text-slate-400 text-[10px] mb-1">// Gemini 1.5 Flash Verified Multimodal Extraction Payload</div>
+        <pre id="modal-json-display">{
+  "verified": true,
+  "worker_name": "Rajesh Kumar",
+  "skill": "Electrician",
+  "qualification": "National Trade Certificate (Grade A)",
+  "aadhaar_hash": "XXXX-XXXX-8921",
+  "cooperative_federation": "Delhi Central Labour Cooperative",
+  "status": "ATTESTED_GOI"
+}</pre>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeCredentialModal()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition" data-i18n="cred-btn-close">Close Inspector</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: COOPERATIVE PASSBOOK SLIP ================= -->
+  <div id="modal-passbook" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center space-x-2">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+            <i data-lucide="wallet" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base" data-i18n="passbook-modal-title">Cooperative Passbook & DBT Ledger</h3>
+            <p class="text-xs text-slate-500">Delhi Central Labour Cooperative Bank (DCCB)</p>
+          </div>
+        </div>
+        <button onclick="closePassbookModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Passbook Balance Summary -->
+      <div class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white p-5 rounded-2xl shadow-md">
+        <span class="text-xs text-emerald-200 font-bold uppercase tracking-wider" data-i18n="passbook-lbl-balance">Withdrawable Balance</span>
+        <div class="flex items-baseline justify-between mt-1">
+          <span class="text-3xl font-black" id="passbook-modal-balance">₹68,400.00</span>
+          <span class="text-xs bg-emerald-600/80 px-2.5 py-1 rounded-full font-bold" data-i18n="passbook-lbl-nocut">0% Cut Guaranteed</span>
+        </div>
+        <div class="mt-4 pt-3 border-t border-emerald-600/60 flex items-center justify-between text-xs">
+          <span id="passbook-account-number">A/C: DCCB-PACS-8821092</span>
+          <button onclick="simulateDbtWithdrawal()" class="bg-white text-emerald-900 font-extrabold px-3 py-1.5 rounded-xl hover:bg-emerald-50 transition shadow-sm" data-i18n="passbook-btn-dbt">
+            Instant DBT to Bank
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div>
+        <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider mb-2" data-i18n="passbook-lbl-recent">Recent Disbursed Earnings</h4>
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-100 text-slate-700 font-bold">
+              <tr>
+                <th class="p-2.5" data-i18n="passbook-th-jobid">Job ID</th>
+                <th class="p-2.5" data-i18n="passbook-th-service">Service</th>
+                <th class="p-2.5" data-i18n="passbook-th-status">Status</th>
+                <th class="p-2.5 text-right" data-i18n="passbook-th-disbursed">Disbursed</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium" id="passbook-ledger-body">
+              <tr>
+                <td class="p-2.5 font-bold">#1001</td>
+                <td class="p-2.5">Electrician (Connaught Place)</td>
+                <td class="p-2.5 text-emerald-700 font-bold">✓ Credited</td>
+                <td class="p-2.5 text-right font-bold text-slate-900">₹140.00</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold">#0998</td>
+                <td class="p-2.5">Short Circuit Triage</td>
+                <td class="p-2.5 text-emerald-700 font-bold">✓ Credited</td>
+                <td class="p-2.5 text-right font-bold text-slate-900">₹220.00</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold">#0984</td>
+                <td class="p-2.5">Weekly Appliance Maintenance</td>
+                <td class="p-2.5 text-emerald-700 font-bold">✓ Credited</td>
+                <td class="p-2.5 text-right font-bold text-slate-900">₹580.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end space-x-2">
+        <button onclick="closePassbookModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition" data-i18n="passbook-btn-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: SUBSCRIPTION PAYMENT GATEWAY ================= -->
+  <div id="modal-subscription-gateway" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 text-white flex items-center justify-center font-black shadow-md border border-amber-300">
+            <i data-lucide="crown" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base" data-i18n="sub-gateway-title">Cooperative Samriddhi Pass Checkout</h3>
+            <p class="text-xs text-slate-500">Official Ministry of Cooperation Citizen Welfare Gateway</p>
+          </div>
+        </div>
+        <button onclick="closeSubscriptionModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Plan Summary Box -->
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 space-y-2">
+        <div class="flex justify-between items-center pb-2 border-b border-amber-200">
+          <div>
+            <span class="text-[10px] font-black uppercase text-amber-800 tracking-wider">Selected Pass Tier</span>
+            <p class="font-extrabold text-slate-900 text-sm" id="sub-modal-plan-name">Cooperative Citizen Pass (Monthly)</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 font-bold block uppercase">Subscription Fee</span>
+            <span class="text-2xl font-black text-amber-900" id="sub-modal-price">₹199.00</span>
+          </div>
+        </div>
+        <div class="text-xs text-slate-600 space-y-1 pt-1">
+          <div class="flex justify-between"><span>Includes:</span><strong class="text-emerald-700 font-bold">20% Flat Discount on all tasks</strong></div>
+          <div class="flex justify-between"><span>Bonus Perk:</span><strong class="text-amber-800 font-bold">Free Emergency Priority Triage (<15m)</strong></div>
+          <div class="flex justify-between"><span>Platform Cess:</span><strong class="text-blue-900 font-bold">100% Waived (Saved 3.5%)</strong></div>
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="space-y-3">
+        <label class="block text-xs font-black uppercase tracking-wider text-slate-700">Choose Instant Payment Mode</label>
+        
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center space-y-2.5">
+          <div class="p-2.5 bg-white rounded-2xl border border-slate-300 shadow-sm">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=sahakar.samriddhi@dccb%26pn=Cooperative%20Samriddhi%20Pass%26am=199.00%26cu=INR" alt="UPI QR" class="w-32 h-32 object-contain" />
+          </div>
+          <span class="text-xs font-bold text-slate-700">Scan with BHIM, Google Pay, PhonePe or Paytm</span>
+          <button type="button" onclick="simulateSubPaymentApproval()" class="px-3.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-black border border-emerald-300 transition btn-tactile flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-700"></i>
+            <span>⚡ Simulate Instant UPI Mobile Approval</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+        <button type="button" onclick="closeSubscriptionModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">Cancel</button>
+        <button type="button" onclick="confirmSubscriptionActivation()" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-blue-950 font-black text-xs rounded-xl shadow-lg transition flex items-center gap-2 btn-tactile">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          <span>Authorize & Generate Discount Offers</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: SPECIAL DISCOUNTED OFFERS REWARD VAULT ================= -->
+  <div id="modal-subscription-success" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-amber-300 space-y-5 max-h-[92vh] overflow-y-auto">
+      <div class="text-center space-y-2 pt-2">
+        <div class="w-16 h-16 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-md">
+          <i data-lucide="gift" class="w-10 h-10 text-amber-600"></i>
+        </div>
+        <span class="bg-amber-100 text-amber-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider border border-amber-300">Membership Activated</span>
+        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Special Discounted Offers Generated!</h3>
+        <p class="text-xs text-slate-500 max-w-md mx-auto">
+          Congratulations! You are now an active <strong>Sahakar Samriddhi Pass</strong> subscriber. The following exclusive cooperative vouchers and offers are active on your account:
+        </p>
+      </div>
+
+      <!-- Offers Grid -->
+      <div class="space-y-3" id="offers-list-container">
+        <!-- Offer 1 -->
+        <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl flex items-center justify-between gap-3 shadow-sm">
+          <div>
+            <span class="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase">25% Flat Voucher</span>
+            <h4 class="text-sm font-black text-slate-900 mt-1">SAMRIDDHI25</h4>
+            <p class="text-xs text-slate-600">25% discount applied automatically to all future cooperative bookings.</p>
+          </div>
+          <button onclick="copyOfferCode('SAMRIDDHI25')" class="px-3 py-1.5 bg-white text-slate-800 text-xs font-black rounded-xl border border-amber-300 hover:bg-amber-100 transition">Copy</button>
+        </div>
+
+        <!-- Offer 2 -->
+        <div class="p-4 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-300 rounded-2xl flex items-center justify-between gap-3 shadow-sm">
+          <div>
+            <span class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Emergency Waiver</span>
+            <h4 class="text-sm font-black text-slate-900 mt-1">TRIAGEFREE</h4>
+            <p class="text-xs text-slate-600">Priority sub-15m emergency triage fee is 100% free for your household.</p>
+          </div>
+          <button onclick="copyOfferCode('TRIAGEFREE')" class="px-3 py-1.5 bg-white text-slate-800 text-xs font-black rounded-xl border border-red-300 hover:bg-red-100 transition">Copy</button>
+        </div>
+
+        <!-- Offer 3 -->
+        <div class="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl flex items-center justify-between gap-3 shadow-sm">
+          <div>
+            <span class="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">Passbook Credit</span>
+            <h4 class="text-sm font-black text-slate-900 mt-1">COOPCARE100</h4>
+            <p class="text-xs text-slate-600">₹100 credit on preventative electrical wiring inspection & elder care visit.</p>
+          </div>
+          <button onclick="copyOfferCode('COOPCARE100')" class="px-3 py-1.5 bg-white text-slate-800 text-xs font-black rounded-xl border border-emerald-300 hover:bg-emerald-100 transition">Copy</button>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end space-x-2">
+        <button type="button" onclick="closeOffersModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl shadow-md transition btn-tactile">
+          Apply Vouchers & Return to Booking →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: WRITE CITIZEN REVIEW ================= -->
+  <div id="modal-write-review" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="message-square" class="w-5 h-5 text-blue-700"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base" data-i18n="write-review-title">Submit Service Review & Grievance</h3>
+            <p class="text-xs text-slate-500">Directly audited by the Ministry of Cooperation & PACS Federation</p>
+          </div>
+        </div>
+        <button onclick="closeWriteReviewModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleReviewSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Your Name *</label>
+          <input type="text" id="review-input-name" required placeholder="e.g. Aarav Mehta" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-600 focus:outline-none" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Service Type *</label>
+            <select id="review-input-service" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
+              <option value="electrician">Electrician</option>
+              <option value="plumber">Plumber</option>
+              <option value="healthcare">Healthcare & Nursing</option>
+              <option value="driver">Emergency Driver</option>
+              <option value="cleaning">Deep Cleaning</option>
+              <option value="waste_management">Waste Management</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Technician / Worker</label>
+            <select id="review-input-worker" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
+              <option value="101">Rajesh Kumar (Electrician)</option>
+              <option value="102">Mohammad Aslam (Plumber)</option>
+              <option value="103">Sunita Sharma (Healthcare)</option>
+              <option value="104">Vikram Singh (Driver)</option>
+              <option value="105">Pooja Devi (Cleaning)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Rating Stars -->
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Rating Score *</label>
+          <div class="star-rating items-center" id="review-star-container">
+            <span class="star-btn active" onclick="setStarRating(1)">★</span>
+            <span class="star-btn active" onclick="setStarRating(2)">★</span>
+            <span class="star-btn active" onclick="setStarRating(3)">★</span>
+            <span class="star-btn active" onclick="setStarRating(4)">★</span>
+            <span class="star-btn active" onclick="setStarRating(5)">★</span>
+            <span class="ml-2 font-bold text-slate-800 text-xs" id="review-star-label">5.0 / 5.0 (Excellent)</span>
+          </div>
+          <input type="hidden" id="review-input-rating" value="5" />
+        </div>
+
+        <!-- Category: Commendation vs Grievance/Complaint -->
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Feedback Category *</label>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="p-2.5 border-2 border-emerald-500 bg-emerald-50 rounded-xl cursor-pointer flex items-center gap-2 font-bold text-emerald-900" id="label-type-positive">
+              <input type="radio" name="review_type_radio" value="positive" checked onchange="toggleReviewType('positive')" class="accent-emerald-600" />
+              <span>⭐ Commendation (Praise)</span>
+            </label>
+            <label class="p-2.5 border border-slate-200 hover:border-red-300 rounded-xl cursor-pointer flex items-center gap-2 font-bold text-slate-700" id="label-type-complaint">
+              <input type="radio" name="review_type_radio" value="complaint" onchange="toggleReviewType('complaint')" class="accent-red-600" />
+              <span>⚠️ Grievance / Complaint</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Detailed Review / Grievance Comments *</label>
+          <textarea id="review-input-comment" required rows="3" placeholder="Describe the quality of service, punctuality, fair-wage transparency, or report any issue..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-600 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeWriteReviewModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition">Cancel</button>
+          <button type="submit" id="btn-submit-review" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Publish Verified Review</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
