@@ -1,8 +1,9 @@
 """
-Seed data for SahakarSeva Prototype: Cooperatives, Workers, and Sample Metrics.
+Seed data for Seva Setu Prototype: Cooperatives, Workers, and Sample Metrics.
 """
+from typing import List, Dict, Any
 
-COOPERATIVES = [
+COOPERATIVES: List[Dict[str, Any]] = [
     {
         "id": 1,
         "name": "Delhi Central Labour Cooperative Federation",
@@ -30,7 +31,7 @@ COOPERATIVES = [
 ]
 
 # Workers with real coordinates around Central & South Delhi
-WORKERS = [
+WORKERS: List[Dict[str, Any]] = [
     {
         "id": 101,
         "name": "Rajesh Kumar",
@@ -198,10 +199,154 @@ WORKERS = [
         "total_earned": 28500.0,
         "today_wage": 1600.0,
         "photo": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": 108,
+        "name": "Rameshwar Mistri",
+        "phone": "+91 98188 44551",
+        "skill": "carpentry",
+        "trade": "Carpentry",
+        "coop_id": 1,
+        "coop_name": "Delhi Central Labour Coop",
+        "coop_ac": "COOP-DL-2024-008",
+        "lat": 28.6310,
+        "lng": 77.2140,
+        "coords": [28.6310, 77.2140],
+        "is_available": True,
+        "is_verified": True,
+        "rating": 4.9,
+        "aadhaar": "XXXX-XXXX-9901",
+        "certificate": "ITI Carpentry & Joinery National Trade Certificate",
+        "cert_title": "ITI Carpentry NTC (Grade A)",
+        "cert_issuer": "NCVT Attested",
+        "completed_jobs": 118,
+        "total_earned": 58900.0,
+        "today_wage": 2950.0,
+        "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": 109,
+        "name": "Kailash Chand Prajapati",
+        "phone": "+91 98711 77665",
+        "skill": "pottery",
+        "trade": "Pottery & Terracotta",
+        "coop_id": 3,
+        "coop_name": "NCR Technicians & Artisans Cooperative",
+        "coop_ac": "COOP-DL-2024-009",
+        "lat": 28.6250,
+        "lng": 77.2280,
+        "coords": [28.6250, 77.2280],
+        "is_available": True,
+        "is_verified": True,
+        "rating": 5.0,
+        "aadhaar": "XXXX-XXXX-3382",
+        "certificate": "KVIC Master Artisan Pottery & Terracotta Seal",
+        "cert_title": "KVIC Master Terracotta Artisan",
+        "cert_issuer": "Khadi & Village Industries Commission",
+        "completed_jobs": 84,
+        "total_earned": 42100.0,
+        "today_wage": 2400.0,
+        "photo": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": 110,
+        "name": "Harishankar Lohar",
+        "phone": "+91 98992 33441",
+        "skill": "blacksmith",
+        "trade": "Blacksmith & Metalcraft",
+        "coop_id": 1,
+        "coop_name": "Delhi Central Labour Coop",
+        "coop_ac": "COOP-DL-2024-010",
+        "lat": 28.6380,
+        "lng": 77.2100,
+        "coords": [28.6380, 77.2100],
+        "is_available": True,
+        "is_verified": True,
+        "rating": 4.8,
+        "aadhaar": "XXXX-XXXX-6619",
+        "certificate": "Labour Cooperative Metal Fabrication & Welding Guild",
+        "cert_title": "Labour Metal Fabrication Guild",
+        "cert_issuer": "Delhi Labour Board Attested",
+        "completed_jobs": 102,
+        "total_earned": 51200.0,
+        "today_wage": 2700.0,
+        "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": 111,
+        "name": "Shanti Devi",
+        "phone": "+91 98114 55667",
+        "skill": "tailoring",
+        "trade": "Tailoring & Handloom",
+        "coop_id": 3,
+        "coop_name": "NCR Technicians & Artisans Cooperative",
+        "coop_ac": "COOP-DL-2024-011",
+        "lat": 28.6200,
+        "lng": 77.2180,
+        "coords": [28.6200, 77.2180],
+        "is_available": True,
+        "is_verified": True,
+        "rating": 4.9,
+        "aadhaar": "XXXX-XXXX-8822",
+        "certificate": "Weavers Cooperative Federation Master Tailoring Certificate",
+        "cert_title": "Weavers Federation Tailoring L4",
+        "cert_issuer": "Handloom Development Board",
+        "completed_jobs": 91,
+        "total_earned": 38400.0,
+        "today_wage": 2200.0,
+        "photo": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": 112,
+        "name": "Manoj Kumar",
+        "phone": "+91 98105 88992",
+        "skill": "masonry",
+        "trade": "Masonry & Tile Craft",
+        "coop_id": 2,
+        "coop_name": "South Delhi Multi-Purpose Coop",
+        "coop_ac": "COOP-DL-2024-012",
+        "lat": 28.6400,
+        "lng": 77.2250,
+        "coords": [28.6400, 77.2250],
+        "is_available": True,
+        "is_verified": True,
+        "rating": 4.9,
+        "aadhaar": "XXXX-XXXX-4411",
+        "certificate": "BOCW Board Master Mason & Tiling Trade Grade A",
+        "cert_title": "BOCW Master Mason Grade A",
+        "cert_issuer": "Building & Construction Workers Board",
+        "completed_jobs": 125,
+        "total_earned": 63800.0,
+        "today_wage": 3100.0,
+        "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+        "id": 113,
+        "name": "Surender Pal",
+        "phone": "+91 98119 22339",
+        "skill": "painting",
+        "trade": "Painting & Wall Artisan",
+        "coop_id": 1,
+        "coop_name": "Delhi Central Labour Coop",
+        "coop_ac": "COOP-DL-2024-013",
+        "lat": 28.6350,
+        "lng": 77.2050,
+        "coords": [28.6350, 77.2050],
+        "is_available": True,
+        "is_verified": True,
+        "rating": 4.9,
+        "aadhaar": "XXXX-XXXX-5520",
+        "certificate": "Certified Guild Painter & Surface Finishing",
+        "cert_title": "Certified Guild Surface Artisan",
+        "cert_issuer": "Decorative Guild Attested",
+        "completed_jobs": 108,
+        "total_earned": 54600.0,
+        "today_wage": 2650.0,
+        "photo": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80"
     }
 ]
 
-DISTRICT_ANALYTICS = [
+DISTRICT_ANALYTICS: List[Dict[str, Any]] = [
     {"district": "Central Delhi", "demand_score": 94, "pending_requests": 28, "active_workers": 45, "shortage_alert": True},
     {"district": "South Delhi", "demand_score": 88, "pending_requests": 19, "active_workers": 52, "shortage_alert": False},
     {"district": "East Delhi", "demand_score": 76, "pending_requests": 14, "active_workers": 38, "shortage_alert": False},
@@ -209,7 +354,7 @@ DISTRICT_ANALYTICS = [
     {"district": "North Delhi", "demand_score": 68, "pending_requests": 9, "active_workers": 30, "shortage_alert": False}
 ]
 
-REVIEWS_DB = [
+REVIEWS_DB: List[Dict[str, Any]] = [
     {
         "id": 1,
         "customer_name": "Aarav Mehta",
@@ -297,72 +442,88 @@ REVIEWS_DB = [
     }
 ]
 
-SUBSCRIPTION_PLANS = [
+SUBSCRIPTION_PLANS: List[Dict[str, Any]] = [
     {
         "id": "monthly_pass",
-        "name": "Cooperative Citizen Pass",
+        "name": "Seva Setu Monthly Pass",
         "duration": "Monthly",
         "price": 199,
         "discount_percent": 20,
         "benefits": [
-            "20% Flat Discount on all Services",
+            "20% Flat Discount on all Services & Repairs",
             "Zero Platform Welfare Cess (Saved 3.5%)",
             "Unlimited Priority Emergency Triage (<15 min)",
-            "Free Quarterly Home Safety Audit"
+            "Free Monthly Household Safety & Wiring Audit"
         ],
         "badge": "Popular Choice"
     },
     {
         "id": "annual_samriddhi",
-        "name": "Sahakar Samriddhi Pass",
+        "name": "Seva Setu Yearly Pass",
         "duration": "Annual",
-        "price": 999,
+        "price": 1999,
         "discount_percent": 30,
         "benefits": [
-            "30% Flat Discount across all Cooperatives",
-            "Free Family Member Coverage (up to 4)",
-            "Dedicated PACS Priority Concierge",
-            "₹500 Seasonal Diagnostic Toolkit Voucher"
+            "★ Includes ALL Monthly Pass Benefits (Zero Cess, Priority Triage, Safety Audits)",
+            "Enhanced 30% Flat Discount across all Cooperatives & Artisan Trades",
+            "Free Family Member Coverage (up to 4 Members)",
+            "Dedicated PACS Artisan & Cooperative Concierge Desk",
+            "₹500 Seasonal Festival Artisan & Tool Voucher"
         ],
-        "badge": "Best Value (Save ₹2,400)"
-    },
-    {
-        "id": "elder_care_pass",
-        "name": "Seniors & Care Pass",
-        "duration": "Quarterly",
-        "price": 499,
-        "discount_percent": 25,
-        "benefits": [
-            "25% Discount on Nursing & Healthcare",
-            "SOS Emergency Ambulance Driver on Standby",
-            "Weekly Vitals & Medication Check-in",
-            "Government Subsidy Linked"
-        ],
-        "badge": "Ministry Subsidized"
+        "badge": "Best Value (Save ₹389)"
     }
 ]
 
-REGIONAL_DEMAND_DETAILED = [
+REGIONAL_DEMAND_DETAILED: List[Dict[str, Any]] = [
     {
         "district": "Central Delhi",
         "overall_demand": 94,
         "demand_index": 94,
         "active_workers": 45,
+        "required_workers": 76,
         "shortage": True,
         "status": "Critical Shortage",
         "trade_demand": {
             "electrician": 98,
             "plumber": 85,
-            "healthcare": 78,
+            "carpentry": 82,
             "cleaning": 92,
-            "driver": 88
+            "painting": 76,
+            "healthcare": 78,
+            "masonry": 74,
+            "pottery": 68,
+            "blacksmith": 70,
+            "tailoring": 75,
+            "driver": 88,
+            "waste_management": 80
         },
         "trades": {
             "electrician": 98,
             "plumber": 85,
-            "healthcare": 78,
+            "carpentry": 82,
             "cleaning": 92,
-            "driver": 88
+            "painting": 76,
+            "healthcare": 78,
+            "masonry": 74,
+            "pottery": 68,
+            "blacksmith": 70,
+            "tailoring": 75,
+            "driver": 88,
+            "waste_management": 80
+        },
+        "trade_requirements": {
+            "electrician": {"required": 32, "active": 18, "deficit": 14, "demand_score": 98, "monthly_orders": 420},
+            "plumber": {"required": 24, "active": 15, "deficit": 9, "demand_score": 85, "monthly_orders": 310},
+            "carpentry": {"required": 18, "active": 11, "deficit": 7, "demand_score": 82, "monthly_orders": 240},
+            "cleaning": {"required": 28, "active": 20, "deficit": 8, "demand_score": 92, "monthly_orders": 360},
+            "painting": {"required": 16, "active": 10, "deficit": 6, "demand_score": 76, "monthly_orders": 190},
+            "healthcare": {"required": 20, "active": 14, "deficit": 6, "demand_score": 78, "monthly_orders": 220},
+            "masonry": {"required": 14, "active": 8, "deficit": 6, "demand_score": 74, "monthly_orders": 160},
+            "pottery": {"required": 10, "active": 6, "deficit": 4, "demand_score": 68, "monthly_orders": 110},
+            "blacksmith": {"required": 12, "active": 7, "deficit": 5, "demand_score": 70, "monthly_orders": 130},
+            "tailoring": {"required": 15, "active": 11, "deficit": 4, "demand_score": 75, "monthly_orders": 150},
+            "driver": {"required": 22, "active": 16, "deficit": 6, "demand_score": 88, "monthly_orders": 280},
+            "waste_management": {"required": 16, "active": 11, "deficit": 5, "demand_score": 80, "monthly_orders": 180}
         },
         "monthly_orders": 1420
     },
@@ -371,21 +532,50 @@ REGIONAL_DEMAND_DETAILED = [
         "overall_demand": 88,
         "demand_index": 88,
         "active_workers": 52,
+        "required_workers": 68,
         "shortage": False,
         "status": "High Demand",
         "trade_demand": {
             "electrician": 84,
             "plumber": 82,
-            "healthcare": 96,
+            "carpentry": 86,
             "cleaning": 89,
-            "driver": 85
+            "painting": 88,
+            "healthcare": 96,
+            "masonry": 70,
+            "pottery": 74,
+            "blacksmith": 66,
+            "tailoring": 80,
+            "driver": 85,
+            "waste_management": 78
         },
         "trades": {
             "electrician": 84,
             "plumber": 82,
-            "healthcare": 96,
+            "carpentry": 86,
             "cleaning": 89,
-            "driver": 85
+            "painting": 88,
+            "healthcare": 96,
+            "masonry": 70,
+            "pottery": 74,
+            "blacksmith": 66,
+            "tailoring": 80,
+            "driver": 85,
+            "waste_management": 78
+        },
+        "trade_requirements": {
+            "electrician": {"required": 26, "active": 22, "deficit": 4, "demand_score": 84, "monthly_orders": 340},
+            "plumber": {"required": 22, "active": 18, "deficit": 4, "demand_score": 82, "monthly_orders": 290},
+            "carpentry": {"required": 20, "active": 16, "deficit": 4, "demand_score": 86, "monthly_orders": 260},
+            "cleaning": {"required": 30, "active": 25, "deficit": 5, "demand_score": 89, "monthly_orders": 410},
+            "painting": {"required": 18, "active": 15, "deficit": 3, "demand_score": 88, "monthly_orders": 230},
+            "healthcare": {"required": 28, "active": 24, "deficit": 4, "demand_score": 96, "monthly_orders": 380},
+            "masonry": {"required": 12, "active": 10, "deficit": 2, "demand_score": 70, "monthly_orders": 140},
+            "pottery": {"required": 12, "active": 10, "deficit": 2, "demand_score": 74, "monthly_orders": 150},
+            "blacksmith": {"required": 10, "active": 8, "deficit": 2, "demand_score": 66, "monthly_orders": 120},
+            "tailoring": {"required": 16, "active": 14, "deficit": 2, "demand_score": 80, "monthly_orders": 200},
+            "driver": {"required": 25, "active": 22, "deficit": 3, "demand_score": 85, "monthly_orders": 320},
+            "waste_management": {"required": 15, "active": 13, "deficit": 2, "demand_score": 78, "monthly_orders": 170}
         },
         "monthly_orders": 1850
     },
@@ -394,21 +584,50 @@ REGIONAL_DEMAND_DETAILED = [
         "overall_demand": 76,
         "demand_index": 76,
         "active_workers": 38,
+        "required_workers": 46,
         "shortage": False,
         "status": "Stable Supply",
         "trade_demand": {
             "electrician": 75,
             "plumber": 80,
-            "healthcare": 65,
+            "carpentry": 72,
             "cleaning": 78,
-            "driver": 70
+            "painting": 70,
+            "healthcare": 65,
+            "masonry": 84,
+            "pottery": 86,
+            "blacksmith": 82,
+            "tailoring": 88,
+            "driver": 70,
+            "waste_management": 82
         },
         "trades": {
             "electrician": 75,
             "plumber": 80,
-            "healthcare": 65,
+            "carpentry": 72,
             "cleaning": 78,
-            "driver": 70
+            "painting": 70,
+            "healthcare": 65,
+            "masonry": 84,
+            "pottery": 86,
+            "blacksmith": 82,
+            "tailoring": 88,
+            "driver": 70,
+            "waste_management": 82
+        },
+        "trade_requirements": {
+            "electrician": {"required": 18, "active": 16, "deficit": 2, "demand_score": 75, "monthly_orders": 210},
+            "plumber": {"required": 16, "active": 14, "deficit": 2, "demand_score": 80, "monthly_orders": 190},
+            "carpentry": {"required": 14, "active": 12, "deficit": 2, "demand_score": 72, "monthly_orders": 160},
+            "cleaning": {"required": 20, "active": 18, "deficit": 2, "demand_score": 78, "monthly_orders": 240},
+            "painting": {"required": 12, "active": 11, "deficit": 1, "demand_score": 70, "monthly_orders": 130},
+            "healthcare": {"required": 14, "active": 13, "deficit": 1, "demand_score": 65, "monthly_orders": 150},
+            "masonry": {"required": 20, "active": 16, "deficit": 4, "demand_score": 84, "monthly_orders": 220},
+            "pottery": {"required": 18, "active": 14, "deficit": 4, "demand_score": 86, "monthly_orders": 180},
+            "blacksmith": {"required": 16, "active": 12, "deficit": 4, "demand_score": 82, "monthly_orders": 170},
+            "tailoring": {"required": 22, "active": 18, "deficit": 4, "demand_score": 88, "monthly_orders": 250},
+            "driver": {"required": 15, "active": 13, "deficit": 2, "demand_score": 70, "monthly_orders": 180},
+            "waste_management": {"required": 18, "active": 15, "deficit": 3, "demand_score": 82, "monthly_orders": 190}
         },
         "monthly_orders": 980
     },
@@ -417,21 +636,50 @@ REGIONAL_DEMAND_DETAILED = [
         "overall_demand": 82,
         "demand_index": 82,
         "active_workers": 40,
+        "required_workers": 56,
         "shortage": True,
         "status": "Shortage Alert",
         "trade_demand": {
             "electrician": 90,
             "plumber": 94,
-            "healthcare": 72,
+            "carpentry": 88,
             "cleaning": 80,
-            "driver": 76
+            "painting": 82,
+            "healthcare": 72,
+            "masonry": 80,
+            "pottery": 70,
+            "blacksmith": 78,
+            "tailoring": 84,
+            "driver": 76,
+            "waste_management": 74
         },
         "trades": {
             "electrician": 90,
             "plumber": 94,
-            "healthcare": 72,
+            "carpentry": 88,
             "cleaning": 80,
-            "driver": 76
+            "painting": 82,
+            "healthcare": 72,
+            "masonry": 80,
+            "pottery": 70,
+            "blacksmith": 78,
+            "tailoring": 84,
+            "driver": 76,
+            "waste_management": 74
+        },
+        "trade_requirements": {
+            "electrician": {"required": 25, "active": 17, "deficit": 8, "demand_score": 90, "monthly_orders": 310},
+            "plumber": {"required": 24, "active": 14, "deficit": 10, "demand_score": 94, "monthly_orders": 330},
+            "carpentry": {"required": 18, "active": 12, "deficit": 6, "demand_score": 88, "monthly_orders": 220},
+            "cleaning": {"required": 22, "active": 18, "deficit": 4, "demand_score": 80, "monthly_orders": 260},
+            "painting": {"required": 16, "active": 12, "deficit": 4, "demand_score": 82, "monthly_orders": 180},
+            "healthcare": {"required": 16, "active": 13, "deficit": 3, "demand_score": 72, "monthly_orders": 170},
+            "masonry": {"required": 16, "active": 12, "deficit": 4, "demand_score": 80, "monthly_orders": 190},
+            "pottery": {"required": 11, "active": 8, "deficit": 3, "demand_score": 70, "monthly_orders": 120},
+            "blacksmith": {"required": 14, "active": 10, "deficit": 4, "demand_score": 78, "monthly_orders": 150},
+            "tailoring": {"required": 18, "active": 14, "deficit": 4, "demand_score": 84, "monthly_orders": 210},
+            "driver": {"required": 18, "active": 15, "deficit": 3, "demand_score": 76, "monthly_orders": 200},
+            "waste_management": {"required": 14, "active": 11, "deficit": 3, "demand_score": 74, "monthly_orders": 160}
         },
         "monthly_orders": 1210
     },
@@ -440,27 +688,56 @@ REGIONAL_DEMAND_DETAILED = [
         "overall_demand": 68,
         "demand_index": 68,
         "active_workers": 30,
+        "required_workers": 36,
         "shortage": False,
         "status": "Balanced",
         "trade_demand": {
             "electrician": 70,
             "plumber": 66,
-            "healthcare": 62,
+            "carpentry": 68,
             "cleaning": 72,
-            "driver": 68
+            "painting": 64,
+            "healthcare": 62,
+            "masonry": 72,
+            "pottery": 75,
+            "blacksmith": 74,
+            "tailoring": 70,
+            "driver": 68,
+            "waste_management": 76
         },
         "trades": {
             "electrician": 70,
             "plumber": 66,
-            "healthcare": 62,
+            "carpentry": 68,
             "cleaning": 72,
-            "driver": 68
+            "painting": 64,
+            "healthcare": 62,
+            "masonry": 72,
+            "pottery": 75,
+            "blacksmith": 74,
+            "tailoring": 70,
+            "driver": 68,
+            "waste_management": 76
+        },
+        "trade_requirements": {
+            "electrician": {"required": 15, "active": 13, "deficit": 2, "demand_score": 70, "monthly_orders": 170},
+            "plumber": {"required": 14, "active": 12, "deficit": 2, "demand_score": 66, "monthly_orders": 150},
+            "carpentry": {"required": 12, "active": 10, "deficit": 2, "demand_score": 68, "monthly_orders": 140},
+            "cleaning": {"required": 16, "active": 14, "deficit": 2, "demand_score": 72, "monthly_orders": 180},
+            "painting": {"required": 10, "active": 9, "deficit": 1, "demand_score": 64, "monthly_orders": 110},
+            "healthcare": {"required": 12, "active": 11, "deficit": 1, "demand_score": 62, "monthly_orders": 130},
+            "masonry": {"required": 14, "active": 12, "deficit": 2, "demand_score": 72, "monthly_orders": 150},
+            "pottery": {"required": 14, "active": 12, "deficit": 2, "demand_score": 75, "monthly_orders": 140},
+            "blacksmith": {"required": 12, "active": 10, "deficit": 2, "demand_score": 74, "monthly_orders": 130},
+            "tailoring": {"required": 14, "active": 12, "deficit": 2, "demand_score": 70, "monthly_orders": 150},
+            "driver": {"required": 14, "active": 12, "deficit": 2, "demand_score": 68, "monthly_orders": 160},
+            "waste_management": {"required": 15, "active": 13, "deficit": 2, "demand_score": 76, "monthly_orders": 160}
         },
         "monthly_orders": 840
     }
 ]
 
-REVENUE_METRICS = {
+REVENUE_METRICS: Dict[str, Any] = {
     "gross_merchandise_value": 1428500.0,
     "direct_worker_wages": 1285650.0,
     "welfare_fund_collected": 50000.0,

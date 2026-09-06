@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SahakarSeva (सहकार सेवा) | Cooperative Gig Platform - Ministry of Cooperation</title>
+  <title>Seva Setu (सेवा सेतु) | Cooperative Gig Platform - Ministry of Cooperation</title>
   <meta name="description" content="Decentralized cooperative gig platform with fair-wage transparency, dual-OTP settlement, and verified PACS credentials. Ministry of Cooperation, GoI." />
   <meta name="theme-color" content="#0f172a" />
 
   <!-- Open Graph / Social Previews for Netlify URL sharing -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="SahakarSeva (सहकार सेवा) - Cooperative Gig Platform" />
+  <meta property="og:title" content="Seva Setu (सेवा सेतु) - Cooperative Gig Platform" />
   <meta property="og:description" content="Decentralized Cooperative Gig Platform with Fair-Wage Transparency & Verified Credentials." />
   <meta property="og:image" content="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80" />
 
@@ -61,12 +61,12 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="text-xl font-black tracking-tight text-white flex items-center gap-1.5">
-              SahakarSeva <span class="text-amber-400 font-bold text-base">(सहकार सेवा)</span>
+              Seva Setu <span class="text-amber-400 font-bold text-base">(सेवा सेतु)</span>
             </h1>
             <span class="bg-blue-900/80 text-blue-200 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-700">SIH 2026</span>
           </div>
           <p class="text-xs text-blue-200 flex items-center gap-1.5 font-medium" id="header-ministry-title">
-            <span data-i18n="ministry-subtitle">Ministry of Cooperation, GoI &bull; "Sahakar Se Samriddhi"</span>
+            <span data-i18n="ministry-subtitle">Ministry of Cooperation, GoI &bull; "Seva Se Samriddhi"</span>
           </p>
         </div>
       </div>
@@ -94,12 +94,6 @@
         <button id="btn-audio-toggle" onclick="toggleAudio()" title="Toggle Sound FX" class="p-2 rounded-xl bg-slate-900/80 border border-blue-800/60 text-blue-200 hover:text-amber-300 transition text-xs flex items-center btn-tactile">
           <i data-lucide="volume-2" class="w-4 h-4" id="audio-icon"></i>
         </button>
-
-        <!-- Backend Status Pill -->
-        <div id="backend-status-badge" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/80 border border-emerald-600/60 text-[11px] font-bold text-emerald-300" title="Simulated Fast In-Browser Engine Active">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="backend-status-text" data-i18n="backend-status">Autonomous Engine</span>
-        </div>
 
         <!-- Language Selector -->
         <div class="flex items-center space-x-1.5 bg-slate-900/80 px-2.5 py-1 rounded-xl border border-blue-800/60">
@@ -187,10 +181,12 @@
             <!-- Quick Voice / Prompt Chips for 1-click test -->
             <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
               <span class="text-[11px] text-slate-400 font-medium" data-i18n="txt-quick-suggestions">Quick Suggestions:</span>
+              <button onclick="applyQuickSearch('carpentry')" class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🔨 Carpentry (₹115/hr)</button>
+              <button onclick="applyQuickSearch('pottery')" class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🏺 Pottery Art (₹95/hr)</button>
+              <button onclick="applyQuickSearch('blacksmith')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">⚒️ Blacksmith (₹120/hr)</button>
               <button onclick="applyQuickSearch('electrician')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">⚡ Electrician (₹120/hr)</button>
               <button onclick="applyQuickSearch('plumber')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🔧 Plumber (₹110/hr)</button>
               <button onclick="applyQuickSearch('healthcare')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🩺 Elder Care (₹150/hr)</button>
-              <button onclick="applyQuickSearch('cleaning')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🧹 Deep Clean (₹90/hr)</button>
             </div>
           </div>
 
@@ -245,6 +241,14 @@
             
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5" id="service-grid">
               <!-- Dynamically populated via app.js with reduced prices and active search filter -->
+            </div>
+
+            <!-- Toggle Show All / Show Less Services -->
+            <div class="mt-4 flex justify-center" id="service-toggle-container">
+              <button id="btn-toggle-services" onclick="toggleShowAllServices()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 text-blue-900 text-xs font-black transition-all flex items-center gap-2 shadow-xs hover:shadow-sm btn-tactile">
+                <span id="txt-toggle-services" data-i18n="txt-show-all-services">Show All 12 Services</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-blue-600 transition-transform duration-300" id="icon-toggle-services"></i>
+              </button>
             </div>
           </div>
 
@@ -309,13 +313,126 @@
             </div>
           </div>
 
+          <!-- 3. Service Schedule & Booking Slot -->
+          <div class="glass-card rounded-3xl p-6 border-blue-200 shadow-sm" id="booking-schedule-section">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2 mb-4">
+              <div>
+                <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">3</span>
+                  <span id="txt-schedule-title" data-i18n="txt-schedule-title">Choose Service Date & Time Slot</span>
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n="txt-schedule-subtitle">Instant emergency dispatch or scheduled future arrival by certified technician</p>
+              </div>
+              <span class="text-[11px] font-black text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span id="badge-schedule-status">Immediate Dispatch (<30 mins)</span>
+              </span>
+            </div>
+
+            <!-- Booking Mode: Instant vs Scheduled -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              <button type="button" onclick="setBookingScheduleType('immediate')" id="btn-mode-immediate" class="p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-black text-blue-950 flex items-center gap-1.5">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+                    <span data-i18n="opt-immediate-title">Instant Dispatch</span>
+                  </span>
+                  <span class="text-[9px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Fastest</span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-1" data-i18n="opt-immediate-desc">Technician dispatched immediately (<30 min average arrival)</p>
+              </button>
+
+              <button type="button" onclick="setBookingScheduleType('scheduled')" id="btn-mode-scheduled" class="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                    <i data-lucide="calendar-clock" class="w-4 h-4 text-blue-600"></i>
+                    <span data-i18n="opt-scheduled-title">Schedule for Later</span>
+                  </span>
+                  <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Advance Booking</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1" data-i18n="opt-scheduled-desc">Choose convenient date & preferred arrival window</p>
+              </button>
+            </div>
+
+            <!-- Schedule Detail Picker (Revealed when 'scheduled' is active) -->
+            <div id="scheduled-picker-details" class="space-y-4 pt-3 border-t border-slate-100 hidden">
+              <!-- Date Picker & Quick Chips -->
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2 flex items-center justify-between">
+                  <span data-i18n="lbl-choose-date">1. Select Service Date:</span>
+                  <span class="text-[11px] font-medium text-slate-400" data-i18n="lbl-up-to-7days">Up to 7 days advance reservation</span>
+                </label>
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <button type="button" onclick="selectQuickDay('today')" id="chip-day-today" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile">
+                    Today
+                  </button>
+                  <button type="button" onclick="selectQuickDay('tomorrow')" id="chip-day-tomorrow" class="px-3 py-1.5 rounded-xl border-2 border-blue-600 text-xs font-bold text-blue-900 bg-blue-50 transition btn-tactile shadow-xs">
+                    Tomorrow
+                  </button>
+                  <button type="button" onclick="selectQuickDay('day_after')" id="chip-day-day_after" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile">
+                    Day After
+                  </button>
+                  <div class="relative flex-1 min-w-[160px]">
+                    <input type="date" id="booking-date-input" onchange="onBookingDateInputChange(this.value)" class="w-full px-3 py-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Time Slot Picker -->
+              <div>
+                <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2" data-i18n="lbl-choose-slot">
+                  2. Select Preferred Time Slot:
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+                  <button type="button" onclick="selectTimeSlot('09:00 AM - 12:00 PM', 'morning')" id="slot-btn-morning" class="p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-center transition btn-tactile shadow-xs">
+                    <span class="text-xs font-black text-blue-950 block">🌅 Morning</span>
+                    <span class="text-[10px] text-blue-700 font-medium">9 AM - 12 PM</span>
+                  </button>
+                  <button type="button" onclick="selectTimeSlot('12:00 PM - 03:00 PM', 'afternoon')" id="slot-btn-afternoon" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
+                    <span class="text-xs font-black text-slate-800 block">☀️ Afternoon</span>
+                    <span class="text-[10px] text-slate-500 font-medium">12 PM - 3 PM</span>
+                  </button>
+                  <button type="button" onclick="selectTimeSlot('03:00 PM - 06:00 PM', 'evening')" id="slot-btn-evening" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
+                    <span class="text-xs font-black text-slate-800 block">🌆 Evening</span>
+                    <span class="text-[10px] text-slate-500 font-medium">3 PM - 6 PM</span>
+                  </button>
+                  <button type="button" onclick="selectTimeSlot('06:00 PM - 09:00 PM', 'night')" id="slot-btn-night" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
+                    <span class="text-xs font-black text-slate-800 block">🌙 Night</span>
+                    <span class="text-[10px] text-slate-500 font-medium">6 PM - 9 PM</span>
+                  </button>
+                </div>
+
+                <!-- Custom exact arrival time -->
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <span class="text-xs text-slate-700 font-semibold flex items-center gap-1.5">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-600"></i>
+                    <span data-i18n="lbl-exact-time">Or specify exact arrival time:</span>
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <input type="time" id="booking-custom-time" onchange="onCustomTimeChange(this.value)" class="px-2.5 py-1 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer" />
+                    <button type="button" onclick="clearCustomTime()" id="btn-clear-custom-time" class="text-[10px] text-slate-400 hover:text-slate-700 underline hidden font-semibold">Reset to Slot</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Confirmation Summary Banner -->
+              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-900 font-bold">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="calendar-check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+                  <span>Selected Schedule: <strong id="confirmed-slot-display" class="font-black text-emerald-950">Tomorrow • 09:00 AM - 12:00 PM</strong></span>
+                </div>
+                <span class="text-[10px] bg-emerald-200/90 text-emerald-900 px-2.5 py-0.5 rounded-full font-black uppercase">Confirmed Slot</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Cooperative Samriddhi Pass / Subscription Card -->
           <div class="glass-card rounded-3xl p-6 border-amber-200 relative overflow-hidden" id="subscription-feature-card">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2 mb-4">
               <div>
                 <div class="flex items-center gap-2">
                   <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-black">★</span>
-                  <h2 class="text-base font-black text-slate-900" data-i18n="sub-card-title">Sahakar Samriddhi Subscription Pass</h2>
+                  <h2 class="text-base font-black text-slate-900" data-i18n="sub-card-title">Seva Setu Samriddhi Subscription Pass</h2>
                   <span class="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-amber-300">VIP Citizen Offers</span>
                 </div>
                 <p class="text-xs text-slate-500 mt-0.5" data-i18n="sub-card-sub">Subscribe to unlock up to 30% discount offers, zero emergency fees & exclusive vouchers</p>
@@ -327,56 +444,58 @@
               </div>
             </div>
 
-            <!-- Tier Selector -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <!-- Tier Selector: Monthly & Yearly Only -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <!-- Tier 1: Monthly -->
-              <div class="p-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50/50 relative cursor-pointer hover:border-amber-500 transition btn-tactile" onclick="selectSubTier('monthly_pass')" id="tier-card-monthly_pass">
+              <div class="p-4 rounded-2xl border-2 border-amber-400 bg-amber-50/50 relative cursor-pointer hover:border-amber-500 transition btn-tactile shadow-sm" onclick="selectSubTier('monthly_pass')" id="tier-card-monthly_pass">
                 <div class="flex justify-between items-start">
-                  <span class="font-black text-slate-900 text-xs">Citizen Pass</span>
-                  <span class="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">Monthly</span>
+                  <div>
+                    <span class="font-black text-slate-900 text-sm">Monthly Citizen Pass</span>
+                    <p class="text-[10px] text-slate-500 font-medium">Standard flexible monthly household coverage</p>
+                  </div>
+                  <span class="text-[10px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">Monthly</span>
                 </div>
-                <div class="mt-2 flex items-baseline gap-1">
-                  <span class="text-2xl font-black text-slate-900">₹199</span>
-                  <span class="text-[10px] text-slate-400 font-medium">/ month</span>
+                <div class="mt-2.5 flex items-baseline gap-1.5">
+                  <span class="text-3xl font-black text-slate-900">₹199</span>
+                  <span class="text-xs text-slate-400 font-medium">/ month</span>
                 </div>
-                <ul class="mt-2 space-y-1 text-[11px] text-slate-600">
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> 20% Off all services</li>
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Zero platform fee</li>
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Emergency triage included</li>
+                <ul class="mt-3 space-y-1.5 text-xs text-slate-600">
+                  <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span><strong>20% Flat Discount</strong> on all tasks & repairs</span></li>
+                  <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span><strong>Zero platform fee</strong> (Save 3.5% on every booking)</span></li>
+                  <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span><strong>Priority emergency triage</strong> (<15 min dispatch)</span></li>
+                  <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span>Free monthly household safety audit</span></li>
                 </ul>
               </div>
 
-              <!-- Tier 2: Annual (Recommended) -->
-              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile" onclick="selectSubTier('annual_samriddhi')" id="tier-card-annual_samriddhi">
+              <!-- Tier 2: Annual (Includes all Monthly Benefits + Exclusive Yearly Perks) -->
+              <div class="p-4 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile shadow-sm" onclick="selectSubTier('annual_samriddhi')" id="tier-card-annual_samriddhi">
                 <div class="flex justify-between items-start">
-                  <span class="font-black text-slate-900 text-xs">Samriddhi Pass</span>
-                  <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">Annual</span>
+                  <div>
+                    <span class="font-black text-slate-900 text-sm flex items-center gap-1.5">
+                      <span>Yearly Samriddhi Pass</span>
+                      <span class="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-300">Save ₹389/yr</span>
+                    </span>
+                    <p class="text-[10px] text-emerald-700 font-bold">12 Months Total Peace of Mind</p>
+                  </div>
+                  <span class="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-full shadow">Yearly</span>
                 </div>
-                <div class="mt-2 flex items-baseline gap-1">
-                  <span class="text-2xl font-black text-slate-900">₹999</span>
-                  <span class="text-[10px] text-slate-400 font-medium">/ year</span>
+                <div class="mt-2.5 flex items-baseline gap-1.5">
+                  <span class="text-3xl font-black text-slate-900">₹1,999</span>
+                  <span class="text-xs text-slate-400 font-medium">/ year</span>
+                  <span class="text-[11px] text-slate-400 line-through ml-1">₹2,388</span>
                 </div>
-                <ul class="mt-2 space-y-1 text-[11px] text-slate-600">
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> 30% Off all services</li>
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Family 4-member cover</li>
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> ₹500 seasonal voucher</li>
-                </ul>
-              </div>
+                
+                <!-- Highlight: All Monthly Benefits Included -->
+                <div class="mt-2 py-1 px-2 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800 flex items-center gap-1">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i>
+                  <span>Includes ALL Monthly Pass Benefits</span>
+                </div>
 
-              <!-- Tier 3: Seniors & Care -->
-              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile" onclick="selectSubTier('elder_care_pass')" id="tier-card-elder_care_pass">
-                <div class="flex justify-between items-start">
-                  <span class="font-black text-slate-900 text-xs">Seniors Care</span>
-                  <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded">Quarterly</span>
-                </div>
-                <div class="mt-2 flex items-baseline gap-1">
-                  <span class="text-2xl font-black text-slate-900">₹499</span>
-                  <span class="text-[10px] text-slate-400 font-medium">/ 3 months</span>
-                </div>
-                <ul class="mt-2 space-y-1 text-[11px] text-slate-600">
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> 25% Off elder nursing</li>
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Priority driver on standby</li>
-                  <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Free weekly vitals visit</li>
+                <ul class="mt-2 space-y-1.5 text-xs text-slate-600">
+                  <li class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span><strong>Upgraded 30% Flat Discount</strong> on all services & artisan crafts</span></li>
+                  <li class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span><strong>Full Family Coverage</strong> (up to 4 members registered)</span></li>
+                  <li class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span><strong>₹500 Seasonal Festival Voucher Pack</strong></span></li>
+                  <li class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i> <span>Dedicated PACS artisan & cooperative concierge</span></li>
                 </ul>
               </div>
             </div>
@@ -406,6 +525,19 @@
               </div>
               <span id="booking-badge-status" class="bg-blue-600 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                 Broadcasting
+              </span>
+            </div>
+
+            <!-- Scheduled Booking Slot Banner -->
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-white/90 border border-blue-200 shadow-xs">
+              <div class="flex items-center gap-2 text-xs text-blue-950 font-bold">
+                <i data-lucide="calendar-check-2" class="w-4 h-4 text-blue-600"></i>
+                <span data-i18n="lbl-active-slot">Confirmed Schedule:</span>
+                <span class="font-black text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200" id="status-booking-slot">Immediate (<30 mins)</span>
+              </div>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                <span>Slot Locked</span>
               </span>
             </div>
 
@@ -497,6 +629,13 @@
 
             <!-- Itemized Receipt with reduced prices -->
             <div class="space-y-2.5 py-4 text-xs">
+              <div class="flex items-center justify-between text-slate-700 bg-slate-50 p-2 rounded-xl border border-slate-200">
+                <span class="flex items-center gap-1.5 font-bold text-slate-700">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
+                  <span data-i18n="lbl-invoice-slot">Scheduled Slot:</span>
+                </span>
+                <span class="font-black text-blue-900" id="invoice-schedule-time">Immediate (<30 mins)</span>
+              </div>
               <div class="flex justify-between text-slate-600">
                 <span><span data-i18n="txt-lbl-labor">Direct Fair Labor</span> (<span id="lbl-quote-service" class="font-bold text-slate-800">ELECTRICIAN</span>):</span>
                 <span class="font-bold text-slate-900" id="quote-labor">₹120.00</span>
@@ -550,16 +689,10 @@
                 <span class="text-3xl font-black text-blue-900 tracking-tight" id="quote-total">₹190.20</span>
               </div>
 
-              <!-- Comparison against Aggregators (Urban Company) -->
-              <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-3 rounded-2xl text-center mb-4">
-                <p class="text-xs text-slate-600 font-medium">
-                  <span data-i18n="txt-lbl-commercial">Urban Company Benchmark:</span> <del class="text-slate-400 font-normal" id="quote-commercial">₹499.00</del>
-                </p>
-                <p class="text-xs font-black text-emerald-800 mt-0.5 flex items-center justify-center gap-1">
-                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-                  <span><span data-i18n="txt-lbl-savings-prefix">Citizen Savings: ₹</span><span id="quote-savings">308.80</span></span>
-                  <span class="text-[10px] text-emerald-600 font-medium" data-i18n="txt-lbl-savings-suffix">(Aggregator fee eradicated)</span>
-                </p>
+              <!-- Direct Fair-Wage Transparency Reassurance -->
+              <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 py-2.5 px-3 rounded-xl mb-4 text-center">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+                <span class="font-bold text-slate-700">100% Direct Fair Wage to Cooperative Technician &bull; Zero Hidden Deductions</span>
               </div>
 
               <!-- Book Now Button -> Opens Payment Gateway -->
@@ -1274,29 +1407,128 @@
 
       </div>
 
-      <!-- ================= MINISTRY COMPONENT 1: REGIONAL DEMAND ANALYTICS & CHARTS ================= -->
-      <div class="glass-card rounded-3xl p-6 border-blue-200 space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-3">
+      <!-- ================= MINISTRY COMPONENT 1: NATIONAL SERVICE REQUIREMENTS & REGIONAL DEMAND REPORTS ================= -->
+      <div class="glass-card rounded-3xl p-6 border-blue-200 space-y-6">
+        <!-- Section Header with Service Selection Dropdown & Export Button -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-slate-200 gap-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+              <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold shadow-sm">
+                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
               </span>
-              <h3 class="font-black text-slate-900 text-base" data-i18n="min-demand-charts-title">Regional Worker Demand Intelligence & Charts</h3>
+              <div>
+                <h3 class="font-black text-slate-900 text-base sm:text-lg" data-i18n="min-demand-charts-title">National Service Requirements & Regional Demand Reports</h3>
+                <p class="text-xs text-slate-500" data-i18n="min-demand-charts-sub">Official workforce demand, technician requirements, and PACS guild deployment reports across all 12 services</p>
+              </div>
             </div>
-            <p class="text-xs text-slate-500 mt-0.5" data-i18n="min-demand-charts-sub">Geospatial shortage radar for targeted PACS vocational training & emergency re-allocation</p>
           </div>
-          <div class="flex items-center gap-2 text-xs">
-            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-blue-600"></span> Electrician</span>
-            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-indigo-500"></span> Plumber</span>
-            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-pink-500"></span> Healthcare</span>
-            <span class="flex items-center gap-1 text-slate-600 font-semibold"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> Cleaning</span>
+
+          <!-- Controls: Service Selection Dropdown & Export Button -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-300 rounded-2xl px-3 py-1.5 shadow-xs">
+              <i data-lucide="filter" class="w-4 h-4 text-blue-600"></i>
+              <label for="min-service-select" class="sr-only">Select Service</label>
+              <select id="min-service-select" onchange="onMinistryServiceChange(this.value)" class="bg-transparent text-xs font-black text-slate-800 outline-none cursor-pointer pr-2">
+                <option value="all">📊 All 12 Services (Consolidated Report)</option>
+                <option value="electrician">⚡ Electrician Services</option>
+                <option value="plumber">🔧 Plumbing & Sanitation</option>
+                <option value="carpentry">🪚 Carpentry & Woodcraft</option>
+                <option value="cleaning">🧹 Deep Sanitation & Facility Care</option>
+                <option value="painting">🎨 Wall Painting & Primer</option>
+                <option value="healthcare">🩺 Elder Care & Health Assist</option>
+                <option value="masonry">🧱 Masonry & Construction</option>
+                <option value="pottery">🏺 Pottery & Terracotta Artisan</option>
+                <option value="blacksmith">⚒️ Blacksmith & Metalcraft</option>
+                <option value="tailoring">🧵 Tailoring & Apparel</option>
+                <option value="driver">🚗 Chauffeur & Commercial Transit</option>
+                <option value="waste_management">♻️ Waste Management & Upcycling</option>
+              </select>
+            </div>
+
+            <button type="button" onclick="downloadServiceRequirementReport()" id="btn-export-service-report" class="px-3.5 py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white rounded-xl text-xs font-black transition shadow-sm flex items-center gap-1.5 btn-tactile">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-blue-200"></i>
+              <span data-i18n="btn-export-req-report">Export Requirement Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Interactive Service Filter Chips (Horizontal Scrollable/Wrap) -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider block" data-i18n="lbl-quick-service-filter">Quick Trade Filter:</span>
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar" id="min-service-chips-container">
+            <!-- Populated dynamically via app.js -->
+          </div>
+        </div>
+
+        <!-- Selected Service Requirement KPIs (4 Cards) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5" id="min-requirement-kpis">
+          <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 shadow-xs">
+            <span class="text-[10px] font-black uppercase text-blue-700 tracking-wider block" data-i18n="lbl-req-workforce">Required Workforce</span>
+            <div class="text-2xl font-black text-blue-950 mt-1" id="min-req-total">276 Technicians</div>
+            <span class="text-[11px] text-blue-700 font-semibold mt-0.5 block" id="min-req-sub">Across 5 NCR Districts</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 shadow-xs">
+            <span class="text-[10px] font-black uppercase text-emerald-700 tracking-wider block" data-i18n="lbl-active-deployed">Active Certified Deployed</span>
+            <div class="text-2xl font-black text-emerald-950 mt-1" id="min-req-active">205 Active</div>
+            <span class="text-[11px] text-emerald-700 font-semibold mt-0.5 block" id="min-req-active-sub">100% ITI / NCVT Verified</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 shadow-xs" id="min-card-deficit">
+            <span class="text-[10px] font-black uppercase text-amber-800 tracking-wider block" data-i18n="lbl-net-deficit">Workforce Deficit / Gap</span>
+            <div class="text-2xl font-black text-amber-950 mt-1" id="min-req-deficit">-71 Deficit</div>
+            <span class="text-[11px] text-amber-700 font-semibold mt-0.5 block" id="min-req-deficit-sub">Target for PACS Recruitment</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-xs">
+            <span class="text-[10px] font-black uppercase text-slate-500 tracking-wider block" data-i18n="lbl-monthly-demand">Monthly Service Demand</span>
+            <div class="text-2xl font-black text-slate-900 mt-1" id="min-req-orders">6,300 Orders</div>
+            <span class="text-[11px] text-slate-600 font-semibold mt-0.5 block" id="min-req-orders-sub">Average Fulfillment: 74.2%</span>
           </div>
         </div>
 
         <!-- Visual Bar Chart Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="ministry-demand-chart-grid">
-          <!-- Dynamically populated via app.js -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5" id="min-chart-heading">
+              <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span>District Demand & Requirement Distribution</span>
+            </h4>
+            <span class="text-[11px] font-medium text-slate-400" id="min-chart-legend">Comparing Demand Index & Requirements</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="ministry-demand-chart-grid">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </div>
+
+        <!-- Granular District Requirement Breakdown Table for Selected Service -->
+        <div class="space-y-3 pt-3 border-t border-slate-100">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="table" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span id="min-table-title">District-Wise Requirement & Allocation Audit</span>
+            </h4>
+            <span class="text-[11px] font-semibold text-slate-500" id="min-table-status-hint">Targeted PACS Guild Allocation</span>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-100 text-slate-700 font-black uppercase tracking-wider">
+                <tr>
+                  <th class="p-3">District</th>
+                  <th class="p-3">Demand Index</th>
+                  <th class="p-3">Required Workforce</th>
+                  <th class="p-3">Active Deployed</th>
+                  <th class="p-3">Workforce Gap</th>
+                  <th class="p-3">Shortage Status</th>
+                  <th class="p-3 text-right">Ministry Directive</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium bg-white" id="ministry-service-req-table-body">
+                <!-- Dynamically populated via app.js -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1475,6 +1707,10 @@
           <div>
             <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider" data-i18n="txt-pay-order-summary">Order & Escrow Summary</span>
             <p class="font-extrabold text-slate-900 text-sm" id="pay-summary-service">Electrician Service (Connaught Place)</p>
+            <p class="text-xs text-blue-700 font-bold flex items-center gap-1 mt-0.5" id="pay-summary-schedule">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span id="pay-summary-slot-text">Immediate (<30 mins)</span>
+            </p>
           </div>
           <div class="text-right">
             <span class="text-[10px] text-slate-400 font-bold block uppercase">Net Payable</span>
@@ -1552,12 +1788,12 @@
         <!-- 1. UPI QR Code View -->
         <div id="pay-view-qr" class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center space-y-3">
           <div class="p-3 bg-white rounded-2xl border border-slate-300 shadow-sm relative">
-            <img id="pay-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sahakarseva@dccb%26pn=SahakarSeva%20Ministry%20Cooperation%26am=190.20%26cu=INR" alt="UPI QR" class="w-36 h-36 object-contain" />
+            <img id="pay-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sevasetu@dccb%26pn=SevaSetu%20Ministry%20Cooperation%26am=190.20%26cu=INR" alt="UPI QR" class="w-36 h-36 object-contain" />
             <div class="absolute inset-x-0 top-1/2 h-0.5 bg-red-500/80 shadow-[0_0_8px_red] animate-pulse"></div>
           </div>
           <div>
             <span class="text-xs font-black text-slate-800 block" data-i18n="pay-lbl-scan-qr">Scan with any UPI App (BHIM / GPay / PhonePe)</span>
-            <span class="text-[11px] font-mono text-slate-500">VPA: sahakarseva.central@npci</span>
+            <span class="text-[11px] font-mono text-slate-500">VPA: sevasetu.central@npci</span>
           </div>
           <button type="button" onclick="simulateUpiApproval()" class="px-3.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-black border border-emerald-300 transition btn-tactile flex items-center gap-1.5">
             <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-700"></i>
@@ -1885,7 +2121,7 @@
         
         <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center space-y-2.5">
           <div class="p-2.5 bg-white rounded-2xl border border-slate-300 shadow-sm">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=sahakar.samriddhi@dccb%26pn=Cooperative%20Samriddhi%20Pass%26am=199.00%26cu=INR" alt="UPI QR" class="w-32 h-32 object-contain" />
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=sevasetu.samriddhi@dccb%26pn=Seva%20Setu%20Samriddhi%20Pass%26am=199.00%26cu=INR" alt="UPI QR" class="w-32 h-32 object-contain" />
           </div>
           <span class="text-xs font-bold text-slate-700">Scan with BHIM, Google Pay, PhonePe or Paytm</span>
           <button type="button" onclick="simulateSubPaymentApproval()" class="px-3.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-black border border-emerald-300 transition btn-tactile flex items-center gap-1.5">
@@ -1915,7 +2151,7 @@
         <span class="bg-amber-100 text-amber-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider border border-amber-300">Membership Activated</span>
         <h3 class="text-2xl font-black text-slate-900 tracking-tight">Special Discounted Offers Generated!</h3>
         <p class="text-xs text-slate-500 max-w-md mx-auto">
-          Congratulations! You are now an active <strong>Sahakar Samriddhi Pass</strong> subscriber. The following exclusive cooperative vouchers and offers are active on your account:
+          Congratulations! You are now an active <strong>Seva Setu Samriddhi Pass</strong> subscriber. The following exclusive cooperative vouchers and offers are active on your account:
         </p>
       </div>
 

@@ -1,48 +1,55 @@
-# SahakarSeva (सहकार सेवा) - SIH Hackathon Prototype
+# Seva Setu (सेवा सेतु)
 ### Decentralized Cooperative Gig Platform with Fair-Wage Transparency & Verified Credentials
-**In collaboration with the Ministry of Cooperation | "Sahakar Se Samriddhi"**
+**In collaboration with the Ministry of Cooperation | "Seva Se Samriddhi" (सेवा से समृद्धि)**
 
 ---
 
 ## 🌟 Overview
-SahakarSeva bridges customers seeking reliable home & emergency services with verified gig workers certified by cooperative federations (e.g., PACS, Labour Cooperatives). 
+**Seva Setu (सेवा सेतु)** connects citizens seeking reliable home, repair, and artisan services with certified gig technicians and craftspeople organized under Primary Agricultural Credit Societies (PACS) and District Cooperative Labour Federations. Operating under the national guiding vision **"Seva Se Samriddhi"**, Seva Setu eliminates exploitative private middleman markups by ensuring 100% direct fair wages to workers with complete itemized billing transparency.
 
 ### Key Capabilities
-1. **Customer Portal**:
-   - Voice & Text search with multi-lingual support.
-   - Flexible pricing plans: **Hourly**, **Daily**, **Weekly**, and **Monthly Subscription** (15% discount).
-   - **Emergency / Premium Triage** toggle for urgent response (elder healthcare, burst pipes, short circuits).
-   - **100% Transparent Bill**: Explicit itemization of labor, toolkit, tax, transit, and a nominal 3.5% cooperative welfare platform fee.
-   - **Dual OTP Verification**: `START_OTP` upon worker arrival and `END_OTP` + proof of work upon completion.
 
-2. **Worker Portal (Rapido-Style Dispatch)**:
-   - Real-time job broadcast radar within proximity radius.
-   - Accept / Reject workflow with **automated fallback reassignment** to the next nearest worker if a job is cancelled.
-   - Direct digital passbook showing 100% guaranteed take-home wage.
-   - Credential vault (Aadhaar & ITI/NSDC trade certificate upload).
+1. **Citizen Portal**:
+   - **Expanded Services & Artisan Trades**: Electrician, Plumber, Deep Cleaning, Emergency Driver, Elder Healthcare, Municipal Waste Management, **Carpentry & Woodcraft**, **Masonry & Tile Craft**, **Pottery & Terracotta Artistry**, **Blacksmithing & Metalcraft**, **Tailoring & Handloom Repair**, and **Painting & Wall Artisan**.
+   - **Streamlined Subscription Tiers**:
+     - **Monthly Pass (₹199/mo)**: 20% flat discount, zero platform welfare cess (3.5% saved), unlimited priority emergency triage (<15 min), and monthly household safety audits.
+     - **Yearly Pass (₹1,999/yr)**: **Includes ALL Monthly Pass Benefits** + enhanced 30% flat discount across all tasks & artisan crafts, 4-member family emergency coverage, dedicated PACS concierge desk, and ₹500 seasonal festival artisan vouchers.
+   - **Transparent Direct Wage Bill**: Clear itemization of labor, toolkit, transit, tax, and cooperative welfare cess—with zero hidden aggregator markups.
+   - **Dual-OTP Verification Desk**: Cryptographic `START_OTP` upon arrival and `END_OTP` with photographic proof upon job completion.
+   - **National BharatPay Cooperative Gateway**: Instant settlement via UPI QR, BHIM, DCCB/PACS direct bank transfers, and zero-cash escrow.
 
-3. **Ministry of Cooperation & Federation Dashboard**:
-   - Real-time analytics: Total active cooperatives, verified workers, cumulative earnings disbursed, and citizen savings.
-   - District-level demand heatmaps for targeted cooperative vocational training.
-   - Verification desk: AI-assisted Aadhaar and trade certificate verification.
-   - Community & NGO subsidy monitoring.
+2. **Worker Portal (Rapido-Style Radar)**:
+   - Real-time job broadcast radar within dynamic proximity radius.
+   - 1-click Accept / Reject workflow with **automated fallback engine** reassigning to the next nearest cooperative technician.
+   - Direct digital passbook displaying 100% guaranteed take-home earnings with zero commission deductions.
+   - Verified credential vault (Aadhaar & ITI / NSDC / KVIC trade certificates).
+
+3. **Ministry of Cooperation Cockpit**:
+   - Real-time national telemetry: Total registered cooperatives, verified technicians, cumulative wages directly disbursed, and citizen savings.
+   - District-level demand & shortage heatmaps for targeted cooperative vocational training.
+   - AI document verification desk (Gemini 1.5 Flash credential verification).
+   - Citizen reviews & public grassroots accountability desk.
 
 ---
 
 ## 📁 Repository Structure
 ```
-DEMO AI PROJECT/
+Seva Setu App/
 ├── backend/
 │   ├── main.py              # FastAPI application & REST endpoints
 │   ├── pricing.py          # Transparent fair-wage calculation engine
 │   ├── dispatch.py         # Proximity query & fallback state machine
 │   ├── ai_ocr.py           # Gemini 1.5 Flash certificate & Aadhaar verification
-│   ├── seed_data.py        # 20+ realistic geo-located workers and bookings
+│   ├── seed_data.py        # 13 geo-located workers across 12 trades & bookings
 │   └── requirements.txt    # Python backend dependencies
 ├── frontend/
-│   ├── index.html          # Unified multi-portal interactive prototype
-│   ├── app.js              # State management, voice recognition, and API client
-│   └── style.css           # Modern Tailwind-inspired responsive styling
+│   ├── index.html          # Unified multi-portal interactive application
+│   ├── app.js              # State management, sound effects, and API client
+│   ├── style.css           # Modern Tailwind-inspired responsive styling
+│   ├── _redirects          # Netlify SPA routing rules
+│   └── _headers            # Security & caching headers
+├── netlify.toml             # Netlify build configuration
+├── verify_netlify_setup.js  # Automated deployment verification script
 └── README.md
 ```
 
@@ -50,7 +57,10 @@ DEMO AI PROJECT/
 
 ## 🚀 Quickstart Guide
 
-### 1. Backend Setup (FastAPI)
+### 1. Frontend (Zero Setup)
+Open `frontend/index.html` directly in your browser, or deploy to Netlify in one click (see [`NETLIFY_DEPLOYMENT.md`](./NETLIFY_DEPLOYMENT.md)). The frontend includes a complete autonomous in-browser engine that runs without requiring a backend server.
+
+### 2. Backend Setup (Optional FastAPI Server)
 ```bash
 cd backend
 python -m venv venv
@@ -62,7 +72,4 @@ source venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
-Swagger API documentation will be available live at: `http://localhost:8000/docs`
-
-### 2. Frontend Setup
-Open `frontend/index.html` directly in any web browser or serve via any static server (e.g., Live Server or `python -m http.server 3000`).
+Live API documentation is available at `http://localhost:8000/docs`.

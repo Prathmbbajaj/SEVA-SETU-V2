@@ -1,5 +1,5 @@
 """
-SahakarSeva FastAPI Main Entrypoint
+Seva Setu FastAPI Main Entrypoint
 REST API for Customers, Workers, and Ministry of Cooperation.
 """
 import sys
@@ -33,7 +33,7 @@ from seed_data import (
 from ai_ocr import verify_worker_documents
 
 app = FastAPI(
-    title="SahakarSeva API (Ministry of Cooperation)",
+    title="Seva Setu API (Ministry of Cooperation)",
     description="Decentralized Cooperative Gig Platform with Fair-Wage Transparency & Priority Triage",
     version="1.0.0"
 )
@@ -66,6 +66,8 @@ class BookingCreateRequest(BaseModel):
     plan: Optional[str] = Field(default="hourly", json_schema_extra={"example": "hourly"})
     is_emergency: Optional[bool] = False
     is_ngo: Optional[bool] = False
+    booking_date: Optional[str] = Field(default=None, json_schema_extra={"example": "2026-09-07"})
+    booking_time: Optional[str] = Field(default=None, json_schema_extra={"example": "10:30 AM"})
     worker_id: Optional[int] = None
     pricing: Optional[dict] = None
 
@@ -130,9 +132,9 @@ class WorkerOnboardRequest(BaseModel):
 @app.get("/")
 def root():
     return {
-        "platform": "SahakarSeva (सहकार सेवा)",
+        "platform": "Seva Setu (सेवा सेतु)",
         "governing_body": "Ministry of Cooperation, Government of India",
-        "vision": "Sahakar Se Samriddhi",
+        "vision": "Seva Se Samriddhi",
         "docs": "/docs",
         "status": "online"
     }
@@ -141,7 +143,7 @@ def root():
 @app.get("/api/workers", tags=["Workers"])
 def list_workers(service: Optional[str] = None):
     if service:
-        return [w for w in WORKERS if w["skill"].lower() == service.lower()]
+        return [w for w in WORKERS if str(w.get("skill", "")).lower() == service.lower()]
     return WORKERS
 
 # 2. Transparent Pricing Quote
@@ -166,7 +168,9 @@ def new_booking(req: BookingCreateRequest):
         service_type=req.service_type,
         plan=req.plan or "hourly",
         is_emergency=bool(req.is_emergency),
-        is_ngo=bool(req.is_ngo)
+        is_ngo=bool(req.is_ngo),
+        booking_date=req.booking_date,
+        booking_time=req.booking_time
     )
     if not result["success"]:
         raise HTTPException(status_code=404, detail=result["message"])
@@ -219,10 +223,10 @@ def get_ministry_analytics():
     verified_workers = len([w for w in WORKERS if w["is_verified"]])
     completed_bookings = [b for b in BOOKINGS_DB.values() if b["status"] == "COMPLETED"]
     
-    total_wages_disbursed = sum(w["total_earned"] for w in WORKERS)
+    total_wages_disbursed = sum(float(w.get("total_earned", 0.0)) for w in WORKERS)
     coop_welfare_fund = round(total_wages_disbursed * 0.035, 2)
     
-    # Calculate estimated citizen savings compared to commercial aggregators (Urban Company)
+    # Calculate estimated citizen savings compared to private commercial aggregators
     commercial_gap = round(total_wages_disbursed * 0.38, 2)
 
     return {
@@ -237,7 +241,7 @@ def get_ministry_analytics():
         "active_bookings_count": len(BOOKINGS_DB),
         "recent_bookings": list(BOOKINGS_DB.values())[-5:],
         "total_reviews": len(REVIEWS_DB),
-        "avg_rating": round(sum(r["rating"] for r in REVIEWS_DB) / len(REVIEWS_DB), 1) if REVIEWS_DB else 5.0
+        "avg_rating": round(sum(float(r.get("rating", 5.0)) for r in REVIEWS_DB) / len(REVIEWS_DB), 1) if REVIEWS_DB else 5.0
     }
 
 # 10. Citizen Reviews & Grievances Desk
@@ -245,7 +249,7 @@ def get_ministry_analytics():
 def get_reviews(review_type: Optional[str] = None, worker_id: Optional[int] = None):
     results = REVIEWS_DB
     if review_type and review_type != "all":
-        results = [r for r in results if (r.get("review_type") or r.get("type") or "").lower() == review_type.lower()]
+        results = [r for r in results if str(r.get("review_type") or r.get("type") or "").lower() == review_type.lower()]
     if worker_id:
         results = [r for r in results if r.get("worker_id") == worker_id]
     return {
@@ -254,13 +258,14 @@ def get_reviews(review_type: Optional[str] = None, worker_id: Optional[int] = No
         "reviews": results,
         "stats": {
             "total_reviews": len(REVIEWS_DB),
-            "average_rating": round(sum(r.get("rating", 5) for r in REVIEWS_DB) / max(len(REVIEWS_DB), 1), 1)
+            "average_rating": round(sum(float(r.get("rating", 5.0)) for r in REVIEWS_DB) / max(len(REVIEWS_DB), 1), 1)
         }
     }
 
 @app.post("/api/reviews", tags=["Reviews"])
 def submit_review(req: ReviewCreateRequest):
-    new_id = max([r["id"] for r in REVIEWS_DB], default=0) + 1
+    existing_ids = [int(r["id"]) for r in REVIEWS_DB if str(r.get("id", "")).isdigit()]
+    new_id = max(existing_ids, default=0) + 1
     import datetime
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     
@@ -305,7 +310,7 @@ def update_review_status(
     if not target_status:
         raise HTTPException(status_code=400, detail="Status must be provided in body or query param")
 
-    clean_id = str(review_id).strip()
+    clean_id = review_id.strip()
     id_numeric = None
     import re
     num_match = re.search(r"\d+", clean_id)
@@ -400,13 +405,52 @@ def get_subscriber_offers():
 
 # 12. Regional Demand Intelligence & Visual Analytics
 @app.get("/api/ministry/regional-demand", tags=["Ministry Dashboard"])
-def get_regional_demand():
+def get_regional_demand(service_type: Optional[str] = None):
+    all_districts = REGIONAL_DEMAND_DETAILED
+    
+    if service_type and service_type != "all":
+        # Calculate specific metrics for requested service
+        total_req = sum(d.get("trade_requirements", {}).get(service_type, {}).get("required", 0) for d in all_districts)
+        total_act = sum(d.get("trade_requirements", {}).get(service_type, {}).get("active", 0) for d in all_districts)
+        total_def = sum(d.get("trade_requirements", {}).get(service_type, {}).get("deficit", 0) for d in all_districts)
+        total_orders = sum(d.get("trade_requirements", {}).get(service_type, {}).get("monthly_orders", 0) for d in all_districts)
+        
+        # District with highest deficit for this trade
+        highest_deficit_dist = max(
+            all_districts,
+            key=lambda d: d.get("trade_requirements", {}).get(service_type, {}).get("deficit", 0)
+        )["district"]
+        
+        return {
+            "success": True,
+            "selected_service": service_type,
+            "districts": all_districts,
+            "summary": {
+                "service_name": service_type,
+                "total_required": total_req,
+                "total_active": total_act,
+                "total_deficit": total_def,
+                "total_monthly_demand": total_orders,
+                "highest_shortage_district": highest_deficit_dist,
+                "high_demand_districts": [d["district"] for d in all_districts if d["shortage"]]
+            }
+        }
+
+    # Consolidated report for all services
+    total_req_all = sum(d.get("required_workers", 50) for d in all_districts)
+    total_act_all = sum(d.get("active_workers", 40) for d in all_districts)
+    
     return {
         "success": True,
-        "districts": REGIONAL_DEMAND_DETAILED,
+        "selected_service": "all",
+        "districts": all_districts,
         "summary": {
-            "high_demand_districts": [d["district"] for d in REGIONAL_DEMAND_DETAILED if d["shortage"]],
-            "total_monthly_demand": sum(d["monthly_orders"] for d in REGIONAL_DEMAND_DETAILED),
+            "service_name": "all",
+            "total_required": total_req_all,
+            "total_active": total_act_all,
+            "total_deficit": max(0, total_req_all - total_act_all),
+            "high_demand_districts": [d["district"] for d in all_districts if d["shortage"]],
+            "total_monthly_demand": sum(int(d.get("monthly_orders", 0)) for d in all_districts),
             "top_deficit_trade": "electrician"
         }
     }
@@ -431,7 +475,7 @@ def worker_login(req: WorkerLoginRequest):
     matched = None
     clean_req_phone = req.phone.replace(" ", "").replace("-", "")
     for w in WORKERS:
-        clean_w_phone = w["phone"].replace(" ", "").replace("-", "")
+        clean_w_phone = str(w.get("phone", "")).replace(" ", "").replace("-", "")
         if clean_req_phone in clean_w_phone or clean_w_phone in clean_req_phone:
             matched = w
             break
@@ -465,7 +509,8 @@ def worker_onboard(req: WorkerOnboardRequest):
         image_base64_or_path=req.certificate_file or ""
     )
     
-    new_id = req.worker_id or (max([w["id"] for w in WORKERS], default=100) + 1)
+    existing_worker_ids = [int(w["id"]) for w in WORKERS if str(w.get("id", "")).isdigit()]
+    new_id = req.worker_id or (max(existing_worker_ids, default=100) + 1)
     
     # Register or update worker profile
     worker_entry = {

@@ -1,5 +1,5 @@
 """
-SahakarSeva Transparent Pricing Engine
+Seva Setu Transparent Pricing Engine
 Calculates explicit itemized bills with zero hidden commissions.
 """
 from typing import Dict, Any
@@ -13,7 +13,13 @@ TRADE_RATES = {
     "cleaning": {"hourly": 90.0, "daily": 550.0, "toolkit": 25.0},
     "driver": {"hourly": 130.0, "daily": 800.0, "toolkit": 0.0},
     "healthcare": {"hourly": 150.0, "daily": 900.0, "toolkit": 50.0},
-    "waste_management": {"hourly": 80.0, "daily": 500.0, "toolkit": 40.0}
+    "waste_management": {"hourly": 80.0, "daily": 500.0, "toolkit": 40.0},
+    "carpentry": {"hourly": 115.0, "daily": 680.0, "toolkit": 45.0},
+    "masonry": {"hourly": 110.0, "daily": 650.0, "toolkit": 40.0},
+    "pottery": {"hourly": 95.0, "daily": 550.0, "toolkit": 30.0},
+    "blacksmith": {"hourly": 120.0, "daily": 720.0, "toolkit": 50.0},
+    "tailoring": {"hourly": 90.0, "daily": 520.0, "toolkit": 25.0},
+    "painting": {"hourly": 105.0, "daily": 620.0, "toolkit": 35.0}
 }
 
 PLAN_MULTIPLIERS = {
@@ -78,7 +84,7 @@ def calculate_transparent_fare(
 
     final_total = round(subtotal - ngo_discount, 2)
 
-    # Commercial Aggregator Benchmark (Urban Company / Private Aggregators typically 2.4x higher)
+    # Commercial Aggregator Benchmark (Private Aggregators typically 2.4x higher)
     commercial_benchmark = round(final_total * 2.4, 2)
     customer_savings = round(commercial_benchmark - final_total, 2)
 

@@ -1,5 +1,6 @@
 /**
- * SahakarSeva (सहकार सेवा) Frontend Application Controller
+ * Seva Setu (सेवा सेतु) Frontend Application Controller
+ * Catchphrase: Seva Se Samriddhi (सेवा से समृद्धि)
  * Comprehensive multi-portal state management, Web Audio API sound generator,
  * Leaflet OpenStreetMap proximity tracker, Rapido fallback dispatch engine,
  * transparent pricing calculator, interactive payment gateway interface,
@@ -9,17 +10,18 @@
 
 /**
  * Dynamic API Base URL resolver:
- * 1. window.SAHAKAR_API_URL or window.API_BASE_URL (injected via config or window)
- * 2. localStorage.getItem("SAHAKAR_API_URL") (runtime override via browser console/UI)
+ * 1. window.SEVA_SETU_API_URL or window.API_BASE_URL (injected via config or window)
+ * 2. localStorage.getItem("SEVA_SETU_API_URL") (runtime override via browser console/UI)
  * 3. If hosted on localhost/127.0.0.1 without HTTPS, defaults to http://localhost:8000
  * 4. In production (Netlify), defaults to "" to avoid Mixed-Content security blocks
  */
 function resolveApiBaseUrl() {
   if (typeof window !== "undefined") {
+    if (window.SEVA_SETU_API_URL) return window.SEVA_SETU_API_URL;
     if (window.SAHAKAR_API_URL) return window.SAHAKAR_API_URL;
     if (window.API_BASE_URL) return window.API_BASE_URL;
     try {
-      const stored = localStorage.getItem("SAHAKAR_API_URL");
+      const stored = localStorage.getItem("SEVA_SETU_API_URL") || localStorage.getItem("SAHAKAR_API_URL");
       if (stored) return stored;
     } catch (e) {}
 
@@ -39,11 +41,12 @@ let API_BASE_URL = resolveApiBaseUrl();
 if (typeof window !== "undefined") {
   window.setBackendUrl = function(url) {
     if (!url) {
+      localStorage.removeItem("SEVA_SETU_API_URL");
       localStorage.removeItem("SAHAKAR_API_URL");
-      console.log("SahakarSeva: Cleared custom backend URL. Reverting to auto-detection.");
+      console.log("Seva Setu: Cleared custom backend URL. Reverting to auto-detection.");
     } else {
-      localStorage.setItem("SAHAKAR_API_URL", url);
-      console.log(`SahakarSeva: Custom backend URL set to: ${url}`);
+      localStorage.setItem("SEVA_SETU_API_URL", url);
+      console.log(`Seva Setu: Custom backend URL set to: ${url}`);
     }
     API_BASE_URL = resolveApiBaseUrl();
     if (typeof checkBackendHealth === "function") {
@@ -55,7 +58,7 @@ if (typeof window !== "undefined") {
 // Comprehensive Multilingual Translation Table (159 UI Keys)
 const TRANSLATIONS = {
   en: {
-    "ministry-subtitle": "Ministry of Cooperation, GoI • \"Sahakar Se Samriddhi\"",
+    "ministry-subtitle": "Ministry of Cooperation, GoI • \"Seva Se Samriddhi\"",
     "tab-client": "Citizen App",
     "tab-worker": "Worker Radar",
     "tab-ministry": "Ministry Cockpit",
@@ -113,7 +116,6 @@ const TRANSLATIONS = {
     "txt-lbl-platform-sub": "Insurance, worker healthcare & pension",
     "txt-lbl-ngo": "Verified NGO / Community Subsidy (-20%):",
     "txt-lbl-total": "Total Customer Payable:",
-    "txt-lbl-commercial": "Urban Company Benchmark:",
     "txt-lbl-savings-prefix": "Citizen Savings: ₹",
     "txt-lbl-savings-suffix": "(Aggregator fee eradicated)",
     "txt-btn-book": "Confirm & Proceed to Payment",
@@ -215,9 +217,9 @@ const TRANSLATIONS = {
     "passbook-th-status": "Status",
     "passbook-th-disbursed": "Disbursed",
     "passbook-btn-close": "Close",
-    "sub-card-title": "Sahakar Samriddhi Subscription Pass",
+    "sub-card-title": "Seva Setu Samriddhi Subscription Pass",
     "sub-card-sub": "Subscribe to unlock up to 30% discount offers, zero emergency fees & exclusive vouchers",
-    "sub-gateway-title": "Cooperative Samriddhi Pass Checkout",
+    "sub-gateway-title": "Seva Setu Samriddhi Pass Checkout",
     "reviews-heading": "Verified Citizen Reviews & Experiences",
     "reviews-subheading": "Public grassroots accountability • Authentic feedback from cooperative home service clients",
     "btn-write-review": "Write a Review",
@@ -229,10 +231,30 @@ const TRANSLATIONS = {
     "min-reviews-title": "Citizen Grievance & Worker Review Log",
     "min-reviews-sub": "Track complaints against technicians, positive commendations, and enforce federation discipline",
     "min-revenue-title": "Platform Revenue Generated & Cooperative Welfare Audit",
-    "min-revenue-sub": "Transparent public ledger: 100% worker wage pass-through + 3.5% non-profit social protection pool"
+    "min-revenue-sub": "Transparent public ledger: 100% worker wage pass-through + 3.5% non-profit social protection pool",
+    "txt-show-all-services": "Show All 12 Services",
+    "txt-show-less-services": "Show Less",
+    "txt-schedule-title": "Choose Service Date & Time Slot",
+    "txt-schedule-subtitle": "Instant emergency dispatch or scheduled future arrival by certified technician",
+    "opt-immediate-title": "Instant Dispatch",
+    "opt-immediate-desc": "Technician dispatched immediately (<30 min average arrival)",
+    "opt-scheduled-title": "Schedule for Later",
+    "opt-scheduled-desc": "Choose convenient date & preferred arrival window",
+    "lbl-choose-date": "1. Select Service Date:",
+    "lbl-up-to-7days": "Up to 7 days advance reservation",
+    "lbl-choose-slot": "2. Select Preferred Time Slot:",
+    "lbl-exact-time": "Or specify exact arrival time:",
+    "lbl-invoice-slot": "Scheduled Slot:",
+    "lbl-active-slot": "Confirmed Schedule:",
+    "btn-export-req-report": "Export Requirement Report",
+    "lbl-quick-service-filter": "Quick Trade Filter:",
+    "lbl-req-workforce": "Required Workforce",
+    "lbl-active-deployed": "Active Certified Deployed",
+    "lbl-net-deficit": "Workforce Deficit / Gap",
+    "lbl-monthly-demand": "Monthly Service Demand"
   },
   hi: {
-    "ministry-subtitle": "सहकारिता मंत्रालय, भारत सरकार • \"सहकार से समृद्धि\"",
+    "ministry-subtitle": "सहकारिता मंत्रालय, भारत सरकार • \"सेवा से समृद्धि\"",
     "tab-client": "नागरिक पोर्टल",
     "tab-worker": "श्रमिक रडार",
     "tab-ministry": "मंत्रालय डैशबोर्ड",
@@ -290,7 +312,6 @@ const TRANSLATIONS = {
     "txt-lbl-platform-sub": "बीमा, श्रमिक स्वास्थ्य एवं पेंशन",
     "txt-lbl-ngo": "सत्यापित एनजीओ सब्सिडी (-20%):",
     "txt-lbl-total": "कुल देय राशि:",
-    "txt-lbl-commercial": "अर्बन कंपनी तुलनात्मक दर:",
     "txt-lbl-savings-prefix": "नागरिक बचत: ₹",
     "txt-lbl-savings-suffix": "(बिचौलिया कमीशन समाप्त)",
     "txt-btn-book": "पुष्टि करें और भुगतान करें",
@@ -392,9 +413,9 @@ const TRANSLATIONS = {
     "passbook-th-status": "स्थिति",
     "passbook-th-disbursed": "हस्तांतरित",
     "passbook-btn-close": "बंद करें",
-    "sub-card-title": "सहकार समृद्धि सदस्यता पास",
+    "sub-card-title": "सेवा सेतु समृद्धि सदस्यता पास",
     "sub-card-sub": "30% तक छूट, शून्य आपातकालीन शुल्क और विशेष वाउचर अनलॉक करने के लिए सदस्यता लें",
-    "sub-gateway-title": "सहकारी समृद्धि पास चेकआउट",
+    "sub-gateway-title": "सेवा सेतु समृद्धि पास चेकआउट",
     "reviews-heading": "सत्यापित नागरिक समीक्षाएं और अनुभव",
     "reviews-subheading": "सार्वजनिक जवाबदेही • सहकारी घरेलू सेवा ग्राहकों से वास्तविक प्रतिक्रिया",
     "btn-write-review": "समीक्षा लिखें",
@@ -406,7 +427,27 @@ const TRANSLATIONS = {
     "min-reviews-title": "नागरिक शिकायत और श्रमिक समीक्षा लॉग",
     "min-reviews-sub": "तकनीशियनों के विरुद्ध शिकायतों, प्रशंसा समीक्षाओं पर नज़र रखें और अनुशासन लागू करें",
     "min-revenue-title": "प्लेटफॉर्म राजस्व एवं सहकारी कल्याण ऑडिट",
-    "min-revenue-sub": "पारदर्शी सार्वजनिक बहीखाता: 100% श्रमिक मजदूरी + 3.5% गैर-लाभकारी सामाजिक सुरक्षा निधि"
+    "min-revenue-sub": "पारदर्शी सार्वजनिक बहीखाता: 100% श्रमिक मजदूरी + 3.5% गैर-लाभकारी सामाजिक सुरक्षा निधि",
+    "txt-show-all-services": "सभी 12 सेवाएँ देखें",
+    "txt-show-less-services": "कम सेवाएँ देखें",
+    "txt-schedule-title": "सेवा की तिथि एवं समय स्लॉट चुनें",
+    "txt-schedule-subtitle": "त्वरित आपातकालीन प्रेषण या प्रमाणित तकनीशियन का अग्रिम समय निर्धारण",
+    "opt-immediate-title": "तुरंत प्रेषण",
+    "opt-immediate-desc": "तकनीशियन तुरंत रवाना होगा (औसतन <30 मिनट में आगमन)",
+    "opt-scheduled-title": "बाद के लिए समय तय करें",
+    "opt-scheduled-desc": "अपनी सुविधा अनुसार तारीख और आगमन समय चुनें",
+    "lbl-choose-date": "1. सेवा की तारीख चुनें:",
+    "lbl-up-to-7days": "7 दिन पहले तक का अग्रिम आरक्षण",
+    "lbl-choose-slot": "2. पसंदीदा समय स्लॉट चुनें:",
+    "lbl-exact-time": "या सटीक आगमन का समय लिखें:",
+    "lbl-invoice-slot": "तय समय स्लॉट:",
+    "lbl-active-slot": "पुष्ट समय स्लॉट:",
+    "btn-export-req-report": "आवश्यकता रिपोर्ट डाउनलोड करें",
+    "lbl-quick-service-filter": "त्वरित ट्रेड फ़िल्टर:",
+    "lbl-req-workforce": "आवश्यक कार्यबल",
+    "lbl-active-deployed": "सक्रिय प्रमाणित तकनीशियन",
+    "lbl-net-deficit": "कुल कार्यबल कमी",
+    "lbl-monthly-demand": "मासिक सेवा मांग"
   }
 };
 
@@ -701,6 +742,132 @@ const WORKERS = [
     completed_jobs: 63,
     total_earned: 28500.0,
     photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 108,
+    name: "Rameshwar Mistri",
+    phone: "+91 98188 44551",
+    skill: "carpentry",
+    coop_id: 1,
+    coop_name: "Delhi Central Labour Cooperative",
+    coords: [28.6310, 77.2140], // Connaught Place Inner Circle
+    is_available: true,
+    is_verified: true,
+    rating: 4.9,
+    aadhaar: "XXXX-XXXX-9901",
+    certificate: "ITI Carpentry & Joinery National Trade Certificate",
+    cert_title: "ITI Carpentry NTC (Grade A)",
+    cert_issuer: "NCVT Vetted",
+    today_wage: 2950.0,
+    coop_ac: "DCCB-PACS-9901234",
+    completed_jobs: 118,
+    total_earned: 58900.0,
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 109,
+    name: "Kailash Chand Prajapati",
+    phone: "+91 98711 77665",
+    skill: "pottery",
+    coop_id: 3,
+    coop_name: "NCR Technicians & Artisans Cooperative",
+    coords: [28.6250, 77.2280], // Mandi House / Pragati Maidan
+    is_available: true,
+    is_verified: true,
+    rating: 5.0,
+    aadhaar: "XXXX-XXXX-3382",
+    certificate: "KVIC Master Artisan Pottery & Terracotta Seal",
+    cert_title: "KVIC Master Terracotta Artisan",
+    cert_issuer: "Khadi & Village Industries Commission",
+    today_wage: 2400.0,
+    coop_ac: "NCRT-PACS-3382901",
+    completed_jobs: 84,
+    total_earned: 42100.0,
+    photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 110,
+    name: "Harishankar Lohar",
+    phone: "+91 98992 33441",
+    skill: "blacksmith",
+    coop_id: 1,
+    coop_name: "Delhi Central Labour Cooperative",
+    coords: [28.6380, 77.2100], // Paharganj
+    is_available: true,
+    is_verified: true,
+    rating: 4.8,
+    aadhaar: "XXXX-XXXX-6619",
+    certificate: "Labour Cooperative Metal Fabrication & Welding Guild",
+    cert_title: "Labour Metal Fabrication Guild",
+    cert_issuer: "Delhi Labour Board Attested",
+    today_wage: 2700.0,
+    coop_ac: "DCCB-PACS-6619430",
+    completed_jobs: 102,
+    total_earned: 51200.0,
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 111,
+    name: "Shanti Devi",
+    phone: "+91 98114 55667",
+    skill: "tailoring",
+    coop_id: 3,
+    coop_name: "NCR Technicians & Artisans Cooperative",
+    coords: [28.6200, 77.2180], // Janpath
+    is_available: true,
+    is_verified: true,
+    rating: 4.9,
+    aadhaar: "XXXX-XXXX-8822",
+    certificate: "Weavers Cooperative Federation Master Tailoring Certificate",
+    cert_title: "Weavers Federation Tailoring L4",
+    cert_issuer: "Handloom Development Board",
+    today_wage: 2200.0,
+    coop_ac: "NCRT-PACS-8822150",
+    completed_jobs: 91,
+    total_earned: 38400.0,
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 112,
+    name: "Manoj Kumar",
+    phone: "+91 98105 88992",
+    skill: "masonry",
+    coop_id: 2,
+    coop_name: "South Delhi Multi-Purpose Cooperative",
+    coords: [28.6400, 77.2250], // ITO
+    is_available: true,
+    is_verified: true,
+    rating: 4.9,
+    aadhaar: "XXXX-XXXX-4411",
+    certificate: "BOCW Board Master Mason & Tiling Trade Grade A",
+    cert_title: "BOCW Master Mason Grade A",
+    cert_issuer: "Building & Construction Workers Board",
+    today_wage: 3100.0,
+    coop_ac: "SDMC-PACS-4411200",
+    completed_jobs: 125,
+    total_earned: 63800.0,
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 113,
+    name: "Surender Pal",
+    phone: "+91 98119 22339",
+    skill: "painting",
+    coop_id: 1,
+    coop_name: "Delhi Central Labour Cooperative",
+    coords: [28.6350, 77.2050], // Shivaji Stadium
+    is_available: true,
+    is_verified: true,
+    rating: 4.8,
+    aadhaar: "XXXX-XXXX-5590",
+    certificate: "NSDC Decorative Wall Finishing & Surface Painting",
+    cert_title: "NSDC Painting & Decorating",
+    cert_issuer: "Paints and Coatings Skill Council",
+    today_wage: 2650.0,
+    coop_ac: "DCCB-PACS-5590112",
+    completed_jobs: 110,
+    total_earned: 49200.0,
+    photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=200&q=80"
   }
 ];
 
@@ -733,6 +900,19 @@ const SERVICES = [
     keywords: ["plumb", "pipe", "tap", "leak", "drain", "water", "tank", "washroom", "toilet", "nal", "pani", "नल", "पानी", "पाइप", "लीक", "टोंटी", "सीवर"]
   },
   {
+    id: "carpentry",
+    name: "Carpentry & Woodcraft",
+    name_hi: "बढ़ईगीरी एवं काष्ठकला",
+    icon: "hammer",
+    base: 115,
+    badge: "ITI Carpentry Certified",
+    badge_hi: "आईटीआई काष्ठकला प्रमाणित",
+    rating: 4.9,
+    time: "10 mins",
+    time_hi: "10 मिनट",
+    keywords: ["carpenter", "wood", "furniture", "table", "chair", "door", "window", "bed", "polish", "drill", "badhai", "lakdi", "almirah", "sofa", "बढ़ई", "लकड़ी", "फर्नीचर", "दरवाजा", "खिड़की", "मेज", "कुर्सी", "अलमारी", "सोफा", "काष्ठ"]
+  },
+  {
     id: "cleaning",
     name: "Deep Cleaning",
     name_hi: "गहन सफाई सेवा",
@@ -746,17 +926,17 @@ const SERVICES = [
     keywords: ["clean", "sweep", "dust", "mop", "wash", "sanit", "deep clean", "safai", "housekeeping", "सफाई", "धुलाई", "स्वच्छता", "झाड़ू", "पोछा", "किचन"]
   },
   {
-    id: "driver",
-    name: "Emergency Driver",
-    name_hi: "आपातकालीन चालक",
-    icon: "car",
-    base: 130,
-    badge: "Commercial PSV",
-    badge_hi: "वाणिज्यिक पीएसवी",
-    rating: 4.7,
-    time: "8 mins",
-    time_hi: "8 मिनट",
-    keywords: ["driv", "car", "taxi", "chauffeur", "ride", "auto", "ambulance", "gadi", "chalak", "चालक", "गाड़ी", "ड्राइवर", "ड्राइविंग", "सवारी"]
+    id: "painting",
+    name: "Painting & Wall Artisan",
+    name_hi: "रंगाई-पुताई एवं भित्ति शिल्प",
+    icon: "brush",
+    base: 105,
+    badge: "NSDC Decorative Finishing",
+    badge_hi: "एनएसडीसी पेंटिंग प्रमाणित",
+    rating: 4.9,
+    time: "15 mins",
+    time_hi: "15 मिनट",
+    keywords: ["paint", "color", "wall", "distemper", "whitewash", "waterproof", "texture", "rang", "rangai", "putai", "चित्रकार", "पेंट", "रंगाई", "पुताई", "सफेदी", "दीवार", "टेक्सचर"]
   },
   {
     id: "healthcare",
@@ -770,6 +950,71 @@ const SERVICES = [
     time: "12 mins",
     time_hi: "12 मिनट",
     keywords: ["health", "nurse", "elder", "medical", "patient", "care", "injection", "bp", "swasthya", "स्वास्थ्य", "बुजुर्ग", "नर्स", "दवा", "इलाज", "मरीज"]
+  },
+  {
+    id: "masonry",
+    name: "Masonry & Tile Artisan",
+    name_hi: "राजमिस्त्री एवं निर्माण शिल्प",
+    icon: "layers",
+    base: 110,
+    badge: "BOCW Board Certified",
+    badge_hi: "श्रम कल्याण बोर्ड प्रमाणित",
+    rating: 4.8,
+    time: "15 mins",
+    time_hi: "15 मिनट",
+    keywords: ["mason", "brick", "cement", "tile", "wall", "plaster", "floor", "construction", "mistri", "rajmistri", "grouting", "stone", "राजमिस्त्री", "मिस्त्री", "ईंट", "सीमेंट", "टाइल्स", "प्लास्टर", "फर्श", "दीवार"]
+  },
+  {
+    id: "pottery",
+    name: "Pottery & Terracotta Craft",
+    name_hi: "कुम्हार एवं मृत्तिका शिल्प",
+    icon: "package",
+    base: 95,
+    badge: "KVIC Khadi & Clay Vetted",
+    badge_hi: "खादी ग्रामोद्योग प्रमाणित",
+    rating: 5.0,
+    time: "18 mins",
+    time_hi: "18 मिनट",
+    keywords: ["potter", "clay", "terracotta", "matti", "matka", "diya", "pottery", "ceramic", "artisan", "kumhar", "gamla", "planter", "कुम्हार", "मिट्टी", "मटका", "दीया", "गमला", "टेराकोटा", "मृत्तिका", "हस्तशिल्प"]
+  },
+  {
+    id: "blacksmith",
+    name: "Blacksmith & Metalcraft",
+    name_hi: "लुहार एवं धातु शिल्प",
+    icon: "shield",
+    base: 120,
+    badge: "Labour Coop Guild Vetted",
+    badge_hi: "श्रम गिल्ड सत्यापित",
+    rating: 4.8,
+    time: "14 mins",
+    time_hi: "14 मिनट",
+    keywords: ["blacksmith", "iron", "metal", "grill", "gate", "weld", "welding", "loha", "luhar", "hinge", "shutter", "लुहार", "लोहा", "वेल्डिंग", "ग्रिल", "गेट", "कब्जा", "धातु", "शिल्प"]
+  },
+  {
+    id: "tailoring",
+    name: "Tailoring & Handloom Repair",
+    name_hi: "दर्जी एवं हथकरघा शिल्प",
+    icon: "scissors",
+    base: 90,
+    badge: "Weavers Federation Vetted",
+    badge_hi: "बुनकर संघ सत्यापित",
+    rating: 4.9,
+    time: "12 mins",
+    time_hi: "12 मिनट",
+    keywords: ["tailor", "sewing", "stitch", "clothes", "fabric", "alteration", "handloom", "darji", "silai", "curtain", "upholstery", "दर्जी", "सिलाई", "कपड़ा", "सूट", "हथकरघा", "पर्दा", "रफू"]
+  },
+  {
+    id: "driver",
+    name: "Emergency Driver",
+    name_hi: "आपातकालीन चालक",
+    icon: "car",
+    base: 130,
+    badge: "Commercial PSV",
+    badge_hi: "वाणिज्यिक पीएसवी",
+    rating: 4.7,
+    time: "8 mins",
+    time_hi: "8 मिनट",
+    keywords: ["driv", "car", "taxi", "chauffeur", "ride", "auto", "ambulance", "gadi", "chalak", "चालक", "गाड़ी", "ड्राइवर", "ड्राइविंग", "सवारी"]
   },
   {
     id: "waste_management",
@@ -837,7 +1082,14 @@ const state = {
   ministryGrievanceFilter: "all",
   ministryGrievances: [],
   regionalDemandData: [],
-  revenueData: null
+  revenueData: null,
+  showAllServices: false,
+  bookingScheduleType: "immediate", // "immediate" or "scheduled"
+  bookingDate: "",                  // "YYYY-MM-DD"
+  bookingTimeSlot: "09:00 AM - 12:00 PM",
+  bookingTimeSlotKey: "morning",
+  bookingCustomTime: "",
+  ministrySelectedService: "all"
 };
 
 // Runs an init step in isolation so a single failure (e.g. a blocked/slow CDN
@@ -855,11 +1107,13 @@ function safeInit(label, fn) {
 document.addEventListener("DOMContentLoaded", () => {
   safeInit("icons", safeCreateIcons);
   safeInit("service grid", initServiceGrid);
+  safeInit("booking scheduler", initBookingSchedule);
   safeInit("map", initLeafletMap);
   safeInit("subscriptions", initSubscriptionSystem);
   safeInit("reviews", initCitizenReviews);
   safeInit("worker onboarding", initWorkerOnboarding);
   safeInit("ministry telemetry", initMinistryExtensions);
+  safeInit("ministry requirements", initMinistryServiceRequirements);
   safeInit("live quote", calculateLiveQuote);
   safeInit("district table", renderDistrictTable);
   safeInit("backend health check", checkBackendHealth);
@@ -868,7 +1122,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(pushLiveTickerEvent, 14000);
 });
 
-// Check if FastAPI backend is online
+// Check if backend API is online
 async function checkBackendHealth() {
   // If no backend URL configured and not on localhost, stay cleanly in Autonomous Engine mode
   const isLocal = typeof window !== "undefined" && 
@@ -892,7 +1146,7 @@ async function checkBackendHealth() {
     });
     clearTimeout(timeoutId);
 
-    // Verify the response is genuinely FastAPI JSON and not Netlify's HTML fallback
+    // Verify the response is genuinely API JSON and not Netlify's HTML fallback
     const contentType = res.headers.get("content-type") || "";
     if (res.ok && contentType.includes("application/json")) {
       const data = await res.json();
@@ -911,17 +1165,9 @@ async function checkBackendHealth() {
 }
 
 function updateBackendStatusUI(isConnected) {
+  // Dev badge suppressed for citizen-facing interface
   const pill = document.getElementById("backend-status-badge");
-  const text = document.getElementById("backend-status-text");
-  if (!pill || !text) return;
-
-  if (isConnected) {
-    pill.className = "flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-blue-900/90 border border-blue-600 text-[11px] font-bold text-blue-200";
-    text.innerText = state.currentLanguage === "hi" ? "फास्ट-एपीआई सक्रिय" : "FastAPI Connected";
-  } else {
-    pill.className = "hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/80 border border-emerald-600/60 text-[11px] font-bold text-emerald-300";
-    text.innerText = state.currentLanguage === "hi" ? "स्वायत्त मोड" : "Autonomous Engine";
-  }
+  if (pill) pill.remove();
 }
 
 
@@ -989,8 +1235,8 @@ function toggleLanguage(lang) {
   const searchInput = document.getElementById("service-search-input");
   if (searchInput) {
     searchInput.placeholder = isHi 
-      ? "सेवा खोजें (उदा. इलेक्ट्रीशियन, प्लम्बर, आपातकालीन चालक, स्वास्थ्य)..." 
-      : "Type a trade (e.g. Electrician, Plumber, Emergency Nursing)...";
+      ? "सेवा खोजें (उदा. बढ़ई, कुम्हार, लोहार, इलेक्ट्रीशियन, प्लम्बर)..." 
+      : "Type a trade (e.g. Carpentry, Pottery, Blacksmith, Electrician, Plumber)...";
   }
 
   const startOtpInput = document.getElementById("input-start-otp");
@@ -1009,8 +1255,12 @@ function toggleLanguage(lang) {
   // 4. Update live price quote labels
   calculateLiveQuote();
 
-  // 5. Re-render district intelligence table
+  // 4b. Update booking schedule labels in selected language
+  updateBookingScheduleUI();
+
+  // 5. Re-render district intelligence table and ministry requirements
   renderDistrictTable();
+  initMinistryServiceRequirements();
 
   // 6. Update payment gateway button text if quote available
   if (state.lastQuoteData) {
@@ -1166,8 +1416,35 @@ function initServiceGrid(filteredList = null) {
   if (!grid) return;
   grid.innerHTML = "";
 
-  const list = filteredList || SERVICES;
+  const isSearchActive = filteredList !== null;
+  const rawList = filteredList || SERVICES;
   const isHi = state.currentLanguage === "hi";
+
+  // When not searching: show first 6 if !state.showAllServices, otherwise all services
+  const list = isSearchActive
+    ? rawList
+    : (state.showAllServices ? rawList : rawList.slice(0, 6));
+
+  // Sync toggle button visibility and text
+  const toggleContainer = document.getElementById("service-toggle-container");
+  const toggleBtnText = document.getElementById("txt-toggle-services");
+  const toggleIcon = document.getElementById("icon-toggle-services");
+
+  if (toggleContainer) {
+    if (isSearchActive) {
+      toggleContainer.style.display = "none";
+    } else {
+      toggleContainer.style.display = "flex";
+      if (toggleBtnText) {
+        toggleBtnText.innerText = state.showAllServices
+          ? (isHi ? "कम सेवाएँ देखें" : "Show Less")
+          : (isHi ? `सभी ${SERVICES.length} सेवाएँ देखें` : `Show All ${SERVICES.length} Services`);
+      }
+      if (toggleIcon) {
+        toggleIcon.setAttribute("data-lucide", state.showAllServices ? "chevron-up" : "chevron-down");
+      }
+    }
+  }
 
   if (list.length === 0) {
     // Helpful empty state with 1-click restore
@@ -1179,7 +1456,7 @@ function initServiceGrid(filteredList = null) {
       </div>
       <p class="font-black text-slate-900 text-sm mb-1">${isHi ? "कोई सहकारी सेवा नहीं मिली" : "No Cooperative Services Found"}</p>
       <p class="text-xs text-slate-500 max-w-sm mx-auto mb-3.5">
-        ${isHi ? "इलेक्ट्रीशियन, प्लम्बर, सफाई, चालक, स्वास्थ्य या कचरा प्रबंधन खोजें।" : "Try searching for Electrician, Plumber, Cleaner, Driver, Healthcare or Waste Management."}
+        ${isHi ? "बढ़ई, कुम्हार, लोहार, इलेक्ट्रीशियन, प्लम्बर, राजमिस्त्री या पेंटर खोजें।" : "Try searching for Carpentry, Pottery, Blacksmith, Electrician, Plumber, Masonry or Painting."}
       </p>
       <button onclick="clearSearch()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition btn-tactile">
         ${isHi ? "सभी सेवाएँ देखें" : "Show All Services"}
@@ -1233,8 +1510,21 @@ function initServiceGrid(filteredList = null) {
   safeCreateIcons();
 }
 
+function toggleShowAllServices() {
+  sfx.playClick();
+  state.showAllServices = !state.showAllServices;
+  initServiceGrid();
+}
+
 function selectService(serviceId) {
   state.selectedService = serviceId;
+
+  // Auto-expand services if selected service is outside the first 6
+  const first6 = SERVICES.slice(0, 6);
+  if (!state.showAllServices && !first6.some(s => s.id === serviceId)) {
+    state.showAllServices = true;
+  }
+
   initServiceGrid();
   
   // Find matching worker for this skill
@@ -1286,6 +1576,250 @@ function toggleEmergencyMode() {
   }
 
   calculateLiveQuote();
+}
+
+// ==========================================
+// 5B. Flexible Service Scheduling & Booking Slot System
+// ==========================================
+
+function initBookingSchedule() {
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+
+  // Default to tomorrow for scheduled mode
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+  state.bookingDate = tomorrowStr;
+  state.bookingScheduleType = "immediate";
+  state.bookingTimeSlot = "09:00 AM - 12:00 PM";
+  state.bookingTimeSlotKey = "morning";
+  state.bookingCustomTime = "";
+
+  const dateInput = document.getElementById("booking-date-input");
+  if (dateInput) {
+    dateInput.min = todayStr;
+    dateInput.value = tomorrowStr;
+  }
+
+  updateBookingScheduleUI();
+}
+
+function setBookingScheduleType(type) {
+  sfx.playClick();
+  state.bookingScheduleType = type;
+
+  const btnImm = document.getElementById("btn-mode-immediate");
+  const btnSch = document.getElementById("btn-mode-scheduled");
+  const details = document.getElementById("scheduled-picker-details");
+
+  if (type === "immediate") {
+    if (btnImm) {
+      btnImm.className = "p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20";
+    }
+    if (btnSch) {
+      btnSch.className = "p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs";
+    }
+    if (details) details.classList.add("hidden");
+  } else {
+    if (btnImm) {
+      btnImm.className = "p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs";
+    }
+    if (btnSch) {
+      btnSch.className = "p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20";
+    }
+    if (details) details.classList.remove("hidden");
+  }
+
+  updateBookingScheduleUI();
+}
+
+function selectQuickDay(dayKey) {
+  sfx.playClick();
+  const now = new Date();
+  let target = new Date(now);
+
+  if (dayKey === "today") {
+    // target is today
+  } else if (dayKey === "tomorrow") {
+    target.setDate(now.getDate() + 1);
+  } else if (dayKey === "day_after") {
+    target.setDate(now.getDate() + 2);
+  }
+
+  const dStr = target.toISOString().split("T")[0];
+  state.bookingDate = dStr;
+
+  const dateInput = document.getElementById("booking-date-input");
+  if (dateInput) dateInput.value = dStr;
+
+  ["today", "tomorrow", "day_after"].forEach(k => {
+    const chip = document.getElementById(`chip-day-${k}`);
+    if (chip) {
+      if (k === dayKey) {
+        chip.className = "px-3 py-1.5 rounded-xl border-2 border-blue-600 text-xs font-bold text-blue-900 bg-blue-50 transition btn-tactile shadow-xs";
+      } else {
+        chip.className = "px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile";
+      }
+    }
+  });
+
+  updateBookingScheduleUI();
+}
+
+function onBookingDateInputChange(val) {
+  if (!val) return;
+  state.bookingDate = val;
+
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+  const tmrw = new Date(now);
+  tmrw.setDate(now.getDate() + 1);
+  const tmrwStr = tmrw.toISOString().split("T")[0];
+  const dayAfter = new Date(now);
+  dayAfter.setDate(now.getDate() + 2);
+  const dayAfterStr = dayAfter.toISOString().split("T")[0];
+
+  ["today", "tomorrow", "day_after"].forEach(k => {
+    const chip = document.getElementById(`chip-day-${k}`);
+    if (chip) {
+      const match = (k === "today" && val === todayStr) ||
+                    (k === "tomorrow" && val === tmrwStr) ||
+                    (k === "day_after" && val === dayAfterStr);
+      if (match) {
+        chip.className = "px-3 py-1.5 rounded-xl border-2 border-blue-600 text-xs font-bold text-blue-900 bg-blue-50 transition btn-tactile shadow-xs";
+      } else {
+        chip.className = "px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile";
+      }
+    }
+  });
+
+  updateBookingScheduleUI();
+}
+
+function selectTimeSlot(slot, key) {
+  sfx.playClick();
+  state.bookingTimeSlot = slot;
+  state.bookingTimeSlotKey = key;
+  state.bookingCustomTime = "";
+
+  const customTimeInput = document.getElementById("booking-custom-time");
+  if (customTimeInput) customTimeInput.value = "";
+  const clearBtn = document.getElementById("btn-clear-custom-time");
+  if (clearBtn) clearBtn.classList.add("hidden");
+
+  ["morning", "afternoon", "evening", "night"].forEach(k => {
+    const btn = document.getElementById(`slot-btn-${k}`);
+    if (btn) {
+      if (k === key) {
+        btn.className = "p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-center transition btn-tactile shadow-xs";
+      } else {
+        btn.className = "p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile";
+      }
+    }
+  });
+
+  updateBookingScheduleUI();
+}
+
+function onCustomTimeChange(val) {
+  if (!val) return;
+  sfx.playClick();
+  state.bookingCustomTime = val;
+
+  // Unhighlight slot buttons
+  ["morning", "afternoon", "evening", "night"].forEach(k => {
+    const btn = document.getElementById(`slot-btn-${k}`);
+    if (btn) {
+      btn.className = "p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile opacity-60";
+    }
+  });
+
+  const clearBtn = document.getElementById("btn-clear-custom-time");
+  if (clearBtn) clearBtn.classList.remove("hidden");
+
+  updateBookingScheduleUI();
+}
+
+function clearCustomTime() {
+  sfx.playClick();
+  state.bookingCustomTime = "";
+  const customTimeInput = document.getElementById("booking-custom-time");
+  if (customTimeInput) customTimeInput.value = "";
+  const clearBtn = document.getElementById("btn-clear-custom-time");
+  if (clearBtn) clearBtn.classList.add("hidden");
+
+  selectTimeSlot(state.bookingTimeSlot || "09:00 AM - 12:00 PM", state.bookingTimeSlotKey || "morning");
+}
+
+function formatCustomTimeTo12Hr(time24) {
+  if (!time24) return "";
+  const parts = time24.split(":");
+  let hours = parseInt(parts[0], 10);
+  const minutes = parts[1];
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  return `${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
+}
+
+function getFormattedBookingSlot(isHi = false) {
+  if (state.bookingScheduleType === "immediate") {
+    return isHi ? "तुरंत प्रेषण (<30 मिनट)" : "Immediate Dispatch (<30 mins)";
+  }
+
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+  const tmrw = new Date(now);
+  tmrw.setDate(now.getDate() + 1);
+  const tmrwStr = tmrw.toISOString().split("T")[0];
+
+  let dateLabel = state.bookingDate;
+  if (state.bookingDate === todayStr) {
+    dateLabel = isHi ? "आज" : "Today";
+  } else if (state.bookingDate === tmrwStr) {
+    dateLabel = isHi ? "कल" : "Tomorrow";
+  } else if (state.bookingDate) {
+    try {
+      const parts = state.bookingDate.split("-");
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      dateLabel = d.toLocaleDateString(isHi ? "hi-IN" : "en-US", { month: "short", day: "numeric" });
+    } catch (e) {
+      dateLabel = state.bookingDate;
+    }
+  }
+
+  const timeLabel = state.bookingCustomTime 
+    ? formatCustomTimeTo12Hr(state.bookingCustomTime)
+    : state.bookingTimeSlot;
+
+  return `${dateLabel} • ${timeLabel}`;
+}
+
+function updateBookingScheduleUI() {
+  const isHi = state.currentLanguage === "hi";
+  const slotText = getFormattedBookingSlot(isHi);
+
+  // 1. Badge in Step 3 header
+  const badgeStatus = document.getElementById("badge-schedule-status");
+  if (badgeStatus) badgeStatus.innerText = slotText;
+
+  // 2. Confirmed display in schedule picker
+  const confirmedDisplay = document.getElementById("confirmed-slot-display");
+  if (confirmedDisplay) confirmedDisplay.innerText = slotText;
+
+  // 3. Invoice schedule line item
+  const invoiceSlot = document.getElementById("invoice-schedule-time");
+  if (invoiceSlot) invoiceSlot.innerText = slotText;
+
+  // 4. Payment modal order summary schedule line item
+  const payModalSlot = document.getElementById("pay-summary-slot-text");
+  if (payModalSlot) payModalSlot.innerText = slotText;
+
+  // 5. Active booking card schedule badge
+  const activeBookingSlot = document.getElementById("status-booking-slot");
+  if (activeBookingSlot) activeBookingSlot.innerText = slotText;
 }
 
 // 6. Leaflet OpenStreetMap Initialization
@@ -1431,21 +1965,16 @@ async function calculateLiveQuote() {
   let subtotal = labor + toolkit + transit + emergency + tax + platform;
   const ngo = state.isNgo ? Math.round(subtotal * 0.20 * 100) / 100 : 0.0;
   
-  // Apply Subscriber discount: 20% for monthly, 30% for annual, 25% for elder care
+  // Apply Subscriber discount: 20% for monthly, 30% for annual
   let subDiscountRate = 0.0;
   if (isSubscribed) {
     const pId = state.activeSubscription.plan_id;
     if (pId === "monthly_pass") subDiscountRate = 0.20;
     else if (pId === "annual_samriddhi") subDiscountRate = 0.30;
-    else if (pId === "elder_care_pass") subDiscountRate = 0.25;
-    else subDiscountRate = 0.25;
+    else subDiscountRate = 0.20;
   }
   const subDiscountAmount = isSubscribed ? Math.round((subtotal - ngo) * subDiscountRate * 100) / 100 : 0.0;
   const total = Math.max(10.0, Math.round((subtotal - ngo - subDiscountAmount) * 100) / 100);
-
-  // Commercial Aggregator Benchmark
-  const commercialBenchmark = Math.round((total * 2.4) * 100) / 100;
-  const customerSavings = Math.round((commercialBenchmark - total) * 100) / 100;
 
   const quoteData = {
     breakdown: {
@@ -1461,8 +1990,6 @@ async function calculateLiveQuote() {
     },
     distance_km: distance,
     total_amount: total,
-    commercial_benchmark: commercialBenchmark,
-    customer_savings: customerSavings,
     cooperative_wage_payout: Math.round((labor + transit) * 100) / 100
   };
 
@@ -1532,9 +2059,15 @@ function renderPriceQuote(data) {
     }
   }
 
-  // Urban Company Comparison
-  document.getElementById("quote-commercial").innerText = `₹${data.commercial_benchmark.toFixed(2)}`;
-  document.getElementById("quote-savings").innerText = data.customer_savings.toFixed(2);
+  // Optional legacy benchmark elements if present
+  const elCommercial = document.getElementById("quote-commercial");
+  if (elCommercial && data.commercial_benchmark) {
+    elCommercial.innerText = `₹${data.commercial_benchmark.toFixed(2)}`;
+  }
+  const elSavings = document.getElementById("quote-savings");
+  if (elSavings && data.customer_savings) {
+    elSavings.innerText = data.customer_savings.toFixed(2);
+  }
 }
 
 // 8. Demo Payment Gateway Interface (Interactive Breakdown & Escrow Authorization)
@@ -1559,6 +2092,11 @@ function openPaymentGatewayModal() {
   const summaryServiceEl = document.getElementById("pay-summary-service");
   if (summaryServiceEl) {
     summaryServiceEl.innerText = `${serviceName} (${planName}) - Connaught Place`;
+  }
+
+  const summarySlotEl = document.getElementById("pay-summary-slot-text");
+  if (summarySlotEl) {
+    summarySlotEl.innerText = getFormattedBookingSlot(isHi);
   }
   
   if (!state.lastQuoteData) {
@@ -1614,7 +2152,7 @@ function openPaymentGatewayModal() {
     // Dynamic QR URL with exact calculated amount
     const qrImg = document.getElementById("pay-qr-image");
     if (qrImg) {
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sahakarseva@dccb%26pn=SahakarSeva%20Ministry%20Cooperation%26am=${q.total_amount.toFixed(2)}%26cu=INR`;
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=sevasetu@dccb%26pn=SevaSetu%20Ministry%20Cooperation%26am=${q.total_amount.toFixed(2)}%26cu=INR`;
     }
 
     // Authorize button text
@@ -1819,10 +2357,14 @@ function executeBookingConfirmed() {
     wCoords[0], wCoords[1]
   );
 
+  const slotText = getFormattedBookingSlot(isHi);
+
   const bookingResult = {
     booking_id: 1001 + Math.floor(Math.random() * 50),
     customer_name: "Aarav Mehta",
     service_type: state.selectedService,
+    booking_date: state.bookingDate || "Today",
+    booking_time: slotText,
     status: "BROADCASTING",
     assigned_worker: state.activeWorker,
     start_otp: startOtp,
@@ -1833,8 +2375,8 @@ function executeBookingConfirmed() {
     },
     timeline: [
       isHi 
-        ? `${serviceObj.name_hi} (${state.selectedPlan}) हेतु सेवा अनुरोध दर्ज` 
-        : `Job initialized for ${state.selectedService.toUpperCase()} (${state.selectedPlan.toUpperCase()})`,
+        ? `${serviceObj.name_hi} (${state.selectedPlan}) हेतु सेवा अनुरोध दर्ज • स्लॉट: ${slotText}` 
+        : `Job initialized for ${state.selectedService.toUpperCase()} (${state.selectedPlan.toUpperCase()}) • Slot: ${slotText}`,
       isHi
         ? `निकटतम सहकारी तकनीशियन को रडार प्रेषण भेजा गया: ${state.activeWorker.name} (${distance} किमी)`
         : `Radar broadcast dispatched to nearest cooperative technician: ${state.activeWorker.name} (${distance} km)`
@@ -1853,6 +2395,9 @@ function executeBookingConfirmed() {
       ? `बुकिंग #${bookingResult.booking_id} सक्रिय` 
       : `Booking #${bookingResult.booking_id} Active`;
   }
+
+  const statusBookingSlot = document.getElementById("status-booking-slot");
+  if (statusBookingSlot) statusBookingSlot.innerText = slotText;
 
   const startOtpEl = document.getElementById("display-start-otp");
   if (startOtpEl) startOtpEl.innerText = bookingResult.start_otp;
@@ -1899,7 +2444,9 @@ function executeBookingConfirmed() {
         customer_name: bookingResult.customer_name,
         service_type: bookingResult.service_type,
         worker_id: bookingResult.assigned_worker.id,
-        pricing: bookingResult.pricing
+        pricing: bookingResult.pricing,
+        booking_date: bookingResult.booking_date,
+        booking_time: bookingResult.booking_time
       })
     }).catch(err => console.log("Backend booking call simulated or offline:", err.message));
   }
@@ -1947,7 +2494,10 @@ function triggerWorkerRadar(booking) {
   if (fallbackNotice) fallbackNotice.classList.add("hidden");
 
   const serviceTypeEl = document.getElementById("radar-service-type");
-  if (serviceTypeEl) serviceTypeEl.innerText = isHi ? `${sTitle} अनुरोध` : `${sTitle} Call`;
+  if (serviceTypeEl) {
+    const slotTag = booking.booking_time ? ` (${booking.booking_time})` : "";
+    serviceTypeEl.innerText = isHi ? `${sTitle} अनुरोध${slotTag}` : `${sTitle} Call${slotTag}`;
+  }
 
   const clientNameEl = document.getElementById("radar-client-name");
   if (clientNameEl) clientNameEl.innerText = booking.customer_name;
@@ -2387,7 +2937,7 @@ async function fetchMinistryAnalytics() {
         const saveEl = document.getElementById("m-savings-count");
         if (saveEl) saveEl.innerText = `₹${data.citizen_savings_vs_aggregators.toLocaleString()}`;
 
-        showToast("Ministry data refreshed live from FastAPI backend!", "success");
+        showToast(state.currentLanguage === "hi" ? "मंत्रालय डेटा और क्षेत्रीय आवश्यकताएं लाइव अपडेट हुईं!" : "Ministry telemetry and regional requirements refreshed live!", "success");
         return;
       }
     } catch (e) {}
@@ -2760,30 +3310,32 @@ function resetDemoState() {
 const SUBSCRIPTION_TIERS = {
   monthly_pass: {
     id: "monthly_pass",
-    name: "Cooperative Citizen Pass",
-    name_hi: "सहकारी नागरिक पास",
+    name: "Seva Setu Monthly Pass",
+    name_hi: "सेवा सेतु मासिक पास",
     duration: "1 Month",
     price: 199.0,
     discount_pct: 20,
-    perks: ["20% Flat Discount on all tasks", "Zero platform fee", "Priority emergency triage"]
+    perks: [
+      "20% Flat Discount on all tasks & repairs",
+      "Zero platform welfare fee (Saved 3.5%)",
+      "Priority emergency triage (<15 min dispatch)",
+      "Free monthly household safety audit"
+    ]
   },
   annual_samriddhi: {
     id: "annual_samriddhi",
-    name: "Annual Samriddhi Pass",
-    name_hi: "वार्षिक समृद्धि पास",
+    name: "Seva Setu Yearly Pass",
+    name_hi: "सेवा सेतु वार्षिक पास",
     duration: "12 Months",
-    price: 999.0,
+    price: 1999.0,
     discount_pct: 30,
-    perks: ["30% Flat Discount on all tasks", "Zero platform fee", "Priority family cover", "₹500 seasonal vouchers"]
-  },
-  elder_care_pass: {
-    id: "elder_care_pass",
-    name: "Seniors & Care Pass",
-    name_hi: "वरिष्ठ नागरिक देखभाल पास",
-    duration: "3 Months",
-    price: 499.0,
-    discount_pct: 25,
-    perks: ["25% Off elder nursing & medical transit", "Priority driver on standby", "Free weekly vitals visit"]
+    perks: [
+      "★ Includes ALL Monthly Pass Benefits",
+      "Enhanced 30% Flat Discount on all services & artisan crafts",
+      "Full Family Coverage (up to 4 members registered)",
+      "₹500 Seasonal Festival Voucher Pack",
+      "Dedicated PACS Artisan & Cooperative Concierge"
+    ]
   }
 };
 
@@ -2794,20 +3346,20 @@ function initSubscriptionSystem() {
 function selectSubTier(tierId) {
   sfx.playClick();
   state.selectedSubTier = tierId;
-  ["monthly_pass", "annual_samriddhi", "elder_care_pass"].forEach(t => {
+  ["monthly_pass", "annual_samriddhi"].forEach(t => {
     const card = document.getElementById(`tier-card-${t}`);
     if (card) {
       if (t === tierId) {
-        card.className = "p-3.5 rounded-2xl border-2 border-amber-500 bg-amber-50/70 relative cursor-pointer shadow-md transition btn-tactile ring-2 ring-amber-400/30";
+        card.className = "p-4 rounded-2xl border-2 border-amber-500 bg-amber-50/70 relative cursor-pointer shadow-md transition btn-tactile ring-2 ring-amber-400/30";
       } else {
-        card.className = "p-3.5 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile";
+        card.className = "p-4 rounded-2xl border border-slate-200 bg-white relative cursor-pointer hover:border-amber-400 transition btn-tactile shadow-sm";
       }
     }
   });
 
   const ctaDesc = document.getElementById("sub-cta-desc");
   if (ctaDesc) {
-    const tier = SUBSCRIPTION_TIERS[tierId];
+    const tier = SUBSCRIPTION_TIERS[tierId] || SUBSCRIPTION_TIERS.monthly_pass;
     ctaDesc.innerHTML = state.currentLanguage === "hi"
       ? `चेकआउट पर तुरंत वाउचर कोड <code class="font-bold bg-white px-1.5 py-0.5 rounded text-amber-700">SAMRIDDHI${tier.discount_pct}</code> और ${tier.discount_pct}% की छूट मिलेगी!`
       : `Instant voucher code <code class="font-bold bg-white px-1.5 py-0.5 rounded text-amber-700">SAMRIDDHI${tier.discount_pct}</code> generated upon checkout!`;
@@ -2848,6 +3400,7 @@ function simulateSubPaymentApproval() {
 
 async function confirmSubscriptionActivation() {
   const tier = SUBSCRIPTION_TIERS[state.selectedSubTier] || SUBSCRIPTION_TIERS.monthly_pass;
+  const isYearly = tier.id === "annual_samriddhi";
   
   try {
     const res = await fetch(`${API_BASE_URL}/api/subscriptions/subscribe`, {
@@ -2873,32 +3426,73 @@ async function confirmSubscriptionActivation() {
       plan_name: tier.name,
       price: tier.price,
       status: "active",
-      valid_until: "2027-03-31",
+      valid_until: isYearly ? "2027-03-31" : "2026-10-31",
       voucher_code: `SAMRIDDHI${tier.discount_pct}`
     };
-    state.activeOffers = [
-      {
-        code: `SAMRIDDHI${tier.discount_pct}`,
-        title: `${tier.discount_pct}% Flat Cooperative Voucher`,
-        description: `${tier.discount_pct}% discount applied automatically to all future cooperative bookings.`,
-        type: "flat_discount",
-        value: tier.discount_pct
-      },
-      {
-        code: "TRIAGEFREE",
-        title: "Emergency Priority Triage Waiver",
-        description: "Priority sub-15m emergency triage fee is 100% free for your household.",
-        type: "emergency_waiver",
-        value: 100
-      },
-      {
-        code: "COOPCARE100",
-        title: "Cooperative Preventive Health Credit",
-        description: "₹100 credit on preventative electrical wiring inspection & elder care visit.",
-        type: "wallet_credit",
-        value: 100
-      }
-    ];
+
+    if (isYearly) {
+      state.activeOffers = [
+        {
+          code: `SAMRIDDHI${tier.discount_pct}`,
+          title: "30% Flat Cooperative & Artisan Voucher",
+          description: "30% discount applied automatically across all standard tasks, carpentry, and artisan crafts.",
+          type: "flat_discount",
+          value: 30
+        },
+        {
+          code: "MONTHLY_PERKS_INCLUDED",
+          title: "All Monthly Pass Benefits Activated",
+          description: "Zero platform fee, priority triage, and free household audits are fully included in your yearly pass.",
+          type: "monthly_bundle",
+          value: 100
+        },
+        {
+          code: "FAMILYCARE4",
+          title: "Priority 4-Member Family Coverage",
+          description: "Emergency service coverage extended to up to 4 registered household members.",
+          type: "family_pass",
+          value: 100
+        },
+        {
+          code: "FESTIVAL500",
+          title: "₹500 Seasonal Festival Artisan Voucher",
+          description: "₹500 credit redeemable on home painting, carpentry renovation, and artisan terracotta decor.",
+          type: "wallet_credit",
+          value: 500
+        },
+        {
+          code: "TRIAGEFREE",
+          title: "Emergency Priority Triage Waiver",
+          description: "Priority sub-15m emergency triage fee is 100% free for your household.",
+          type: "emergency_waiver",
+          value: 100
+        }
+      ];
+    } else {
+      state.activeOffers = [
+        {
+          code: `SAMRIDDHI${tier.discount_pct}`,
+          title: `${tier.discount_pct}% Flat Cooperative Voucher`,
+          description: `${tier.discount_pct}% discount applied automatically to all future cooperative bookings.`,
+          type: "flat_discount",
+          value: tier.discount_pct
+        },
+        {
+          code: "TRIAGEFREE",
+          title: "Emergency Priority Triage Waiver",
+          description: "Priority sub-15m emergency triage fee is 100% free for your household.",
+          type: "emergency_waiver",
+          value: 100
+        },
+        {
+          code: "COOPCARE100",
+          title: "Cooperative Preventive Health Credit",
+          description: "₹100 credit on preventative electrical wiring inspection & elder care visit.",
+          type: "wallet_credit",
+          value: 100
+        }
+      ];
+    }
   }
 
   closeSubscriptionModal();
@@ -3056,7 +3650,7 @@ async function fetchReviews() {
       service_title: "Deep Kitchen & Floor Sanitation",
       rating: 5,
       type: "positive",
-      comment: "Pooja was meticulous and used eco-friendly cooperative sanitation chemicals. Saved over ₹400 compared to Urban Company!",
+      comment: "Pooja was meticulous and used eco-friendly cooperative sanitation chemicals. Honest transparent pricing with 100% direct fair wages to the worker!",
       verified_booking: true,
       timestamp: "3 days ago",
       status: "resolved",
@@ -3307,84 +3901,587 @@ async function initMinistryExtensions() {
   renderMinistryGrievances();
 }
 
-async function fetchRegionalDemandCharts() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/ministry/regional-demand`);
-    if (res.ok) {
-      const data = await res.json();
-      state.regionalDemandData = data.districts || [];
-      renderRegionalDemandCharts(state.regionalDemandData);
-      return;
+// 15. Comprehensive National Service Requirements & Regional Demand Reports
+const DEFAULT_REGIONAL_DEMAND = [
+  {
+    district: "Central Delhi",
+    district_hi: "मध्य दिल्ली",
+    demand_index: 94,
+    active_workers: 45,
+    required_workers: 76,
+    status: "Critical Shortage",
+    monthly_orders: 1420,
+    trade_demand: {
+      electrician: 98, plumber: 85, carpentry: 82, cleaning: 92, painting: 76,
+      healthcare: 78, masonry: 74, pottery: 68, blacksmith: 70, tailoring: 75,
+      driver: 88, waste_management: 80
+    },
+    trade_requirements: {
+      electrician: { required: 32, active: 18, deficit: 14, demand_score: 98, monthly_orders: 420 },
+      plumber: { required: 24, active: 15, deficit: 9, demand_score: 85, monthly_orders: 310 },
+      carpentry: { required: 18, active: 11, deficit: 7, demand_score: 82, monthly_orders: 240 },
+      cleaning: { required: 28, active: 20, deficit: 8, demand_score: 92, monthly_orders: 360 },
+      painting: { required: 16, active: 10, deficit: 6, demand_score: 76, monthly_orders: 190 },
+      healthcare: { required: 20, active: 14, deficit: 6, demand_score: 78, monthly_orders: 220 },
+      masonry: { required: 14, active: 8, deficit: 6, demand_score: 74, monthly_orders: 160 },
+      pottery: { required: 10, active: 6, deficit: 4, demand_score: 68, monthly_orders: 110 },
+      blacksmith: { required: 12, active: 7, deficit: 5, demand_score: 70, monthly_orders: 130 },
+      tailoring: { required: 15, active: 11, deficit: 4, demand_score: 75, monthly_orders: 150 },
+      driver: { required: 22, active: 16, deficit: 6, demand_score: 88, monthly_orders: 280 },
+      waste_management: { required: 16, active: 11, deficit: 5, demand_score: 80, monthly_orders: 180 }
     }
-  } catch (e) {
-    console.warn("Could not fetch regional demand from API, using default", e);
+  },
+  {
+    district: "South Delhi",
+    district_hi: "दक्षिण दिल्ली",
+    demand_index: 88,
+    active_workers: 52,
+    required_workers: 68,
+    status: "High Demand",
+    monthly_orders: 1850,
+    trade_demand: {
+      electrician: 84, plumber: 82, carpentry: 86, cleaning: 89, painting: 88,
+      healthcare: 96, masonry: 70, pottery: 74, blacksmith: 66, tailoring: 80,
+      driver: 85, waste_management: 78
+    },
+    trade_requirements: {
+      electrician: { required: 26, active: 22, deficit: 4, demand_score: 84, monthly_orders: 340 },
+      plumber: { required: 22, active: 18, deficit: 4, demand_score: 82, monthly_orders: 290 },
+      carpentry: { required: 20, active: 16, deficit: 4, demand_score: 86, monthly_orders: 260 },
+      cleaning: { required: 30, active: 25, deficit: 5, demand_score: 89, monthly_orders: 410 },
+      painting: { required: 18, active: 15, deficit: 3, demand_score: 88, monthly_orders: 230 },
+      healthcare: { required: 28, active: 24, deficit: 4, demand_score: 96, monthly_orders: 380 },
+      masonry: { required: 12, active: 10, deficit: 2, demand_score: 70, monthly_orders: 140 },
+      pottery: { required: 12, active: 10, deficit: 2, demand_score: 74, monthly_orders: 150 },
+      blacksmith: { required: 10, active: 8, deficit: 2, demand_score: 66, monthly_orders: 120 },
+      tailoring: { required: 16, active: 14, deficit: 2, demand_score: 80, monthly_orders: 200 },
+      driver: { required: 25, active: 22, deficit: 3, demand_score: 85, monthly_orders: 320 },
+      waste_management: { required: 15, active: 13, deficit: 2, demand_score: 78, monthly_orders: 170 }
+    }
+  },
+  {
+    district: "East Delhi",
+    district_hi: "पूर्वी दिल्ली",
+    demand_index: 76,
+    active_workers: 38,
+    required_workers: 46,
+    status: "Stable Supply",
+    monthly_orders: 980,
+    trade_demand: {
+      electrician: 75, plumber: 80, carpentry: 72, cleaning: 78, painting: 70,
+      healthcare: 65, masonry: 84, pottery: 86, blacksmith: 82, tailoring: 88,
+      driver: 70, waste_management: 82
+    },
+    trade_requirements: {
+      electrician: { required: 18, active: 16, deficit: 2, demand_score: 75, monthly_orders: 210 },
+      plumber: { required: 16, active: 14, deficit: 2, demand_score: 80, monthly_orders: 190 },
+      carpentry: { required: 14, active: 12, deficit: 2, demand_score: 72, monthly_orders: 160 },
+      cleaning: { required: 20, active: 18, deficit: 2, demand_score: 78, monthly_orders: 240 },
+      painting: { required: 12, active: 11, deficit: 1, demand_score: 70, monthly_orders: 130 },
+      healthcare: { required: 14, active: 13, deficit: 1, demand_score: 65, monthly_orders: 150 },
+      masonry: { required: 20, active: 16, deficit: 4, demand_score: 84, monthly_orders: 220 },
+      pottery: { required: 18, active: 14, deficit: 4, demand_score: 86, monthly_orders: 180 },
+      blacksmith: { required: 16, active: 12, deficit: 4, demand_score: 82, monthly_orders: 170 },
+      tailoring: { required: 22, active: 18, deficit: 4, demand_score: 88, monthly_orders: 250 },
+      driver: { required: 15, active: 13, deficit: 2, demand_score: 70, monthly_orders: 180 },
+      waste_management: { required: 18, active: 15, deficit: 3, demand_score: 82, monthly_orders: 190 }
+    }
+  },
+  {
+    district: "West Delhi",
+    district_hi: "पश्चिम दिल्ली",
+    demand_index: 82,
+    active_workers: 40,
+    required_workers: 56,
+    status: "Shortage Alert",
+    monthly_orders: 1210,
+    trade_demand: {
+      electrician: 90, plumber: 94, carpentry: 88, cleaning: 80, painting: 82,
+      healthcare: 72, masonry: 80, pottery: 70, blacksmith: 78, tailoring: 84,
+      driver: 76, waste_management: 74
+    },
+    trade_requirements: {
+      electrician: { required: 25, active: 17, deficit: 8, demand_score: 90, monthly_orders: 310 },
+      plumber: { required: 24, active: 14, deficit: 10, demand_score: 94, monthly_orders: 330 },
+      carpentry: { required: 18, active: 12, deficit: 6, demand_score: 88, monthly_orders: 220 },
+      cleaning: { required: 22, active: 18, deficit: 4, demand_score: 80, monthly_orders: 260 },
+      painting: { required: 16, active: 12, deficit: 4, demand_score: 82, monthly_orders: 180 },
+      healthcare: { required: 16, active: 13, deficit: 3, demand_score: 72, monthly_orders: 170 },
+      masonry: { required: 16, active: 12, deficit: 4, demand_score: 80, monthly_orders: 190 },
+      pottery: { required: 11, active: 8, deficit: 3, demand_score: 70, monthly_orders: 120 },
+      blacksmith: { required: 14, active: 10, deficit: 4, demand_score: 78, monthly_orders: 150 },
+      tailoring: { required: 18, active: 14, deficit: 4, demand_score: 84, monthly_orders: 210 },
+      driver: { required: 18, active: 15, deficit: 3, demand_score: 76, monthly_orders: 200 },
+      waste_management: { required: 14, active: 11, deficit: 3, demand_score: 74, monthly_orders: 160 }
+    }
+  },
+  {
+    district: "North Delhi",
+    district_hi: "उत्तर दिल्ली",
+    demand_index: 68,
+    active_workers: 30,
+    required_workers: 36,
+    status: "Balanced",
+    monthly_orders: 840,
+    trade_demand: {
+      electrician: 70, plumber: 66, carpentry: 68, cleaning: 72, painting: 64,
+      healthcare: 62, masonry: 72, pottery: 75, blacksmith: 74, tailoring: 70,
+      driver: 68, waste_management: 76
+    },
+    trade_requirements: {
+      electrician: { required: 15, active: 13, deficit: 2, demand_score: 70, monthly_orders: 170 },
+      plumber: { required: 14, active: 12, deficit: 2, demand_score: 66, monthly_orders: 150 },
+      carpentry: { required: 12, active: 10, deficit: 2, demand_score: 68, monthly_orders: 140 },
+      cleaning: { required: 16, active: 14, deficit: 2, demand_score: 72, monthly_orders: 180 },
+      painting: { required: 10, active: 9, deficit: 1, demand_score: 64, monthly_orders: 110 },
+      healthcare: { required: 12, active: 11, deficit: 1, demand_score: 62, monthly_orders: 130 },
+      masonry: { required: 14, active: 12, deficit: 2, demand_score: 72, monthly_orders: 150 },
+      pottery: { required: 14, active: 12, deficit: 2, demand_score: 75, monthly_orders: 140 },
+      blacksmith: { required: 12, active: 10, deficit: 2, demand_score: 74, monthly_orders: 130 },
+      tailoring: { required: 14, active: 12, deficit: 2, demand_score: 70, monthly_orders: 150 },
+      driver: { required: 14, active: 12, deficit: 2, demand_score: 68, monthly_orders: 160 },
+      waste_management: { required: 15, active: 13, deficit: 2, demand_score: 76, monthly_orders: 160 }
+    }
+  }
+];
+
+function initMinistryServiceRequirements() {
+  const container = document.getElementById("min-service-chips-container");
+  const select = document.getElementById("min-service-select");
+  if (!container && !select) return;
+
+  const isHi = state.currentLanguage === "hi";
+
+  // Build Filter Chips
+  if (container) {
+    const chipsHtml = [
+      `<button type="button" onclick="onMinistryServiceChange('all')" id="min-chip-all" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-xs">
+        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+        <span>${isHi ? "सभी 12 सेवाएँ" : "All 12 Services"}</span>
+      </button>`
+    ];
+
+    SERVICES.forEach(s => {
+      const sName = isHi ? s.name_hi : s.name;
+      chipsHtml.push(`
+        <button type="button" onclick="onMinistryServiceChange('${s.id}')" id="min-chip-${s.id}" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-xs">
+          <i data-lucide="${s.icon}" class="w-3.5 h-3.5"></i>
+          <span>${sName}</span>
+        </button>
+      `);
+    });
+
+    container.innerHTML = chipsHtml.join("");
+    safeCreateIcons();
   }
 
-  // Fallback data
-  state.regionalDemandData = [
-    { district: "Central Delhi", demand_index: 94, status: "Critical Shortage", trades: { electrician: 96, plumber: 88, healthcare: 92, cleaning: 80 } },
-    { district: "South Delhi", demand_index: 88, status: "High Demand", trades: { electrician: 82, plumber: 79, healthcare: 95, cleaning: 86 } },
-    { district: "West Delhi", demand_index: 82, status: "Shortage Alert", trades: { electrician: 89, plumber: 85, healthcare: 74, cleaning: 78 } },
-    { district: "East Delhi", demand_index: 76, status: "Stable Supply", trades: { electrician: 70, plumber: 75, healthcare: 68, cleaning: 82 } },
-    { district: "North Delhi", demand_index: 68, status: "Balanced", trades: { electrician: 62, plumber: 65, healthcare: 70, cleaning: 60 } }
-  ];
-  renderRegionalDemandCharts(state.regionalDemandData);
+  if (select) {
+    select.value = state.ministrySelectedService || "all";
+  }
+
+  updateMinistryServiceChipsUI();
+  fetchRegionalDemandCharts();
 }
 
-function renderRegionalDemandCharts(data) {
-  const grid = document.getElementById("ministry-demand-chart-grid");
-  if (!grid) return;
+function onMinistryServiceChange(serviceId) {
+  sfx.playClick();
+  state.ministrySelectedService = serviceId;
 
-  grid.innerHTML = data.map(d => {
-    const demandIndex = d.demand_index !== undefined ? d.demand_index : (d.overall_demand !== undefined ? d.overall_demand : 80);
-    const isCritical = demandIndex >= 85;
-    const badgeColor = isCritical ? "bg-red-100 text-red-800 border-red-300" : "bg-blue-100 text-blue-800 border-blue-200";
-    const trades = d.trades || d.trade_demand || {};
-    const statusText = d.status || (d.shortage ? "Critical Shortage" : "Balanced");
-    
-    const elec = trades.electrician || 80;
-    const plumb = trades.plumber || 70;
-    const health = trades.healthcare || 85;
-    const clean = trades.cleaning || 65;
+  const select = document.getElementById("min-service-select");
+  if (select) select.value = serviceId;
 
-    return `
-      <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="font-black text-slate-900 text-xs">${d.district}</span>
-          <span class="text-[10px] font-black px-2 py-0.5 rounded-full border ${badgeColor}">${demandIndex}% Demand</span>
-        </div>
+  updateMinistryServiceChipsUI();
+  fetchRegionalDemandCharts();
 
-        <!-- Mini Bar Visualization -->
-        <div class="h-28 flex items-end justify-between gap-1.5 pt-2 pb-1 border-b border-slate-100">
-          <div class="flex-1 flex flex-col items-center gap-1">
-            <span class="text-[9px] font-bold text-slate-500">${elec}%</span>
-            <div class="chart-bar w-full bg-blue-600 rounded-t-md" style="height: ${elec * 0.75}px;"></div>
-            <span class="text-[9px] font-bold text-slate-600">Elec</span>
-          </div>
-          <div class="flex-1 flex flex-col items-center gap-1">
-            <span class="text-[9px] font-bold text-slate-500">${plumb}%</span>
-            <div class="chart-bar w-full bg-indigo-500 rounded-t-md" style="height: ${plumb * 0.75}px;"></div>
-            <span class="text-[9px] font-bold text-slate-600">Plum</span>
-          </div>
-          <div class="flex-1 flex flex-col items-center gap-1">
-            <span class="text-[9px] font-bold text-slate-500">${health}%</span>
-            <div class="chart-bar w-full bg-pink-500 rounded-t-md" style="height: ${health * 0.75}px;"></div>
-            <span class="text-[9px] font-bold text-slate-600">Care</span>
-          </div>
-          <div class="flex-1 flex flex-col items-center gap-1">
-            <span class="text-[9px] font-bold text-slate-500">${clean}%</span>
-            <div class="chart-bar w-full bg-emerald-500 rounded-t-md" style="height: ${clean * 0.75}px;"></div>
-            <span class="text-[9px] font-bold text-slate-600">Cln</span>
-          </div>
-        </div>
+  const isHi = state.currentLanguage === "hi";
+  let label = isHi ? "सभी 12 सेवाएँ" : "All 12 Services";
+  if (serviceId !== "all") {
+    const s = SERVICES.find(x => x.id === serviceId);
+    if (s) label = isHi ? s.name_hi : s.name;
+  }
+  showToast(isHi ? `सेवा आवश्यकता रिपोर्ट सक्रिय: ${label}` : `Service Requirement Report: ${label}`, "info");
+}
 
-        <div class="text-[11px] flex justify-between items-center text-slate-500 font-medium">
-          <span>Status:</span>
-          <strong class="${isCritical ? "text-red-600 font-bold" : "text-slate-800"}">${statusText}</strong>
-        </div>
-      </div>
+function updateMinistryServiceChipsUI() {
+  const current = state.ministrySelectedService || "all";
+  
+  // All chip
+  const allChip = document.getElementById("min-chip-all");
+  if (allChip) {
+    if (current === "all") {
+      allChip.className = "px-3.5 py-1.5 rounded-xl border border-blue-600 bg-blue-600 text-white text-xs font-black transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-sm";
+    } else {
+      allChip.className = "px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-slate-300 text-xs font-bold transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-xs";
+    }
+  }
+
+  SERVICES.forEach(s => {
+    const chip = document.getElementById(`min-chip-${s.id}`);
+    if (chip) {
+      if (current === s.id) {
+        chip.className = "px-3.5 py-1.5 rounded-xl border border-blue-600 bg-blue-600 text-white text-xs font-black transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-sm";
+      } else {
+        chip.className = "px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-slate-300 text-xs font-bold transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-xs";
+      }
+    }
+  });
+}
+
+async function fetchRegionalDemandCharts() {
+  const currentService = state.ministrySelectedService || "all";
+
+  if (state.hasBackendConnection) {
+    try {
+      const url = currentService !== "all" 
+        ? `${API_BASE_URL}/api/ministry/regional-demand?service_type=${currentService}`
+        : `${API_BASE_URL}/api/ministry/regional-demand`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        state.regionalDemandData = data.districts || DEFAULT_REGIONAL_DEMAND;
+        renderMinistryServiceRequirements(state.regionalDemandData, currentService, data.summary);
+        return;
+      }
+    } catch (e) {
+      console.warn("Could not fetch regional demand from API, falling back to local dataset", e);
+    }
+  }
+
+  if (!state.regionalDemandData || state.regionalDemandData.length === 0) {
+    state.regionalDemandData = DEFAULT_REGIONAL_DEMAND;
+  }
+  renderMinistryServiceRequirements(state.regionalDemandData, currentService);
+}
+
+function renderMinistryServiceRequirements(districts, serviceId = "all", apiSummary = null) {
+  const data = districts || DEFAULT_REGIONAL_DEMAND;
+  const isHi = state.currentLanguage === "hi";
+  const selectedService = serviceId || state.ministrySelectedService || "all";
+  const serviceObj = SERVICES.find(s => s.id === selectedService);
+  const serviceName = serviceObj ? (isHi ? serviceObj.name_hi : serviceObj.name) : (isHi ? "सभी 12 सेवाएँ" : "All 12 Services");
+
+  // 1. Calculate Aggregated Requirement Metrics
+  let totalReq = 0;
+  let totalAct = 0;
+  let totalDef = 0;
+  let totalOrders = 0;
+
+  if (selectedService === "all") {
+    totalReq = data.reduce((acc, d) => acc + (d.required_workers || 50), 0);
+    totalAct = data.reduce((acc, d) => acc + (d.active_workers || 40), 0);
+    totalDef = Math.max(0, totalReq - totalAct);
+    totalOrders = data.reduce((acc, d) => acc + (d.monthly_orders || 1000), 0);
+  } else {
+    data.forEach(d => {
+      const reqInfo = (d.trade_requirements && d.trade_requirements[selectedService]) 
+        ? d.trade_requirements[selectedService] 
+        : { required: 20, active: 15, deficit: 5, monthly_orders: 220 };
+      totalReq += reqInfo.required;
+      totalAct += reqInfo.active;
+      totalDef += reqInfo.deficit;
+      totalOrders += reqInfo.monthly_orders;
+    });
+  }
+
+  // 2. Update 4 KPI Cards
+  const totalReqEl = document.getElementById("min-req-total");
+  const reqSubEl = document.getElementById("min-req-sub");
+  const activeEl = document.getElementById("min-req-active");
+  const activeSubEl = document.getElementById("min-req-active-sub");
+  const deficitEl = document.getElementById("min-req-deficit");
+  const deficitSubEl = document.getElementById("min-req-deficit-sub");
+  const deficitCard = document.getElementById("min-card-deficit");
+  const ordersEl = document.getElementById("min-req-orders");
+  const ordersSubEl = document.getElementById("min-req-orders-sub");
+
+  if (totalReqEl) totalReqEl.innerText = `${totalReq} ${isHi ? "तकनीशियन" : "Technicians"}`;
+  if (reqSubEl) reqSubEl.innerText = `${serviceName} • 5 Districts`;
+
+  if (activeEl) activeEl.innerText = `${totalAct} ${isHi ? "सक्रिय" : "Active"}`;
+  if (activeSubEl) activeSubEl.innerText = isHi ? "100% आईटीआई / एनसीवीटी सत्यापित" : "100% ITI / NCVT Verified";
+
+  if (deficitEl) {
+    if (totalDef > 0) {
+      deficitEl.innerText = `-${totalDef} ${isHi ? "कमी" : "Deficit"}`;
+      if (deficitSubEl) deficitSubEl.innerText = isHi ? "लक्षित पैक्स भर्ती प्राथमिकता" : "Target for PACS Recruitment";
+      if (deficitCard) deficitCard.className = "p-4 rounded-2xl bg-red-50/80 border border-red-200 shadow-xs";
+    } else {
+      deficitEl.innerText = `✓ ${isHi ? "संतुलित आपूर्ति" : "Balanced Supply"}`;
+      if (deficitSubEl) deficitSubEl.innerText = isHi ? "पर्याप्त कुशल कार्यबल" : "Optimal Skilled Capacity";
+      if (deficitCard) deficitCard.className = "p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-xs";
+    }
+  }
+
+  const fulfillmentRate = totalReq > 0 ? Math.min(100, Math.round((totalAct / totalReq) * 100)) : 80;
+  if (ordersEl) ordersEl.innerText = `${totalOrders.toLocaleString()} ${isHi ? "मासिक ऑर्डर" : "Monthly Orders"}`;
+  if (ordersSubEl) ordersSubEl.innerText = `${isHi ? "पूर्ति दर" : "Fulfillment Rate"}: ${fulfillmentRate}%`;
+
+  // 3. Update Chart Heading & Subtext
+  const chartHeading = document.getElementById("min-chart-heading");
+  if (chartHeading) {
+    chartHeading.innerHTML = `
+      <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-blue-600"></i>
+      <span>${isHi ? `क्षेत्रीय आवश्यकता चार्ट: ${serviceName}` : `District Requirement Charts: ${serviceName}`}</span>
     `;
-  }).join("");
+  }
+
+  // 4. Render Chart Grid (5 District Cards)
+  const chartGrid = document.getElementById("ministry-demand-chart-grid");
+  if (chartGrid) {
+    chartGrid.innerHTML = data.map(d => {
+      const distName = isHi ? (d.district_hi || d.district) : d.district;
+      
+      let reqCount = 0;
+      let actCount = 0;
+      let demandScore = 0;
+      let statusText = d.status || "Balanced";
+
+      if (selectedService === "all") {
+        reqCount = d.required_workers || 50;
+        actCount = d.active_workers || 40;
+        demandScore = d.demand_index || d.overall_demand || 75;
+      } else {
+        const tr = (d.trade_requirements && d.trade_requirements[selectedService]) 
+          ? d.trade_requirements[selectedService] 
+          : { required: 18, active: 12, deficit: 6, demand_score: 80 };
+        reqCount = tr.required;
+        actCount = tr.active;
+        demandScore = tr.demand_score;
+        statusText = tr.deficit > 5 ? (isHi ? "गंभीर कमी" : "Critical Deficit") : (tr.deficit > 0 ? (isHi ? "कमी चेतावनी" : "Shortage Alert") : (isHi ? "संतुलित" : "Optimal"));
+      }
+
+      const isCritical = demandScore >= 85 || (reqCount - actCount) >= 8;
+      const badgeColor = isCritical ? "bg-red-100 text-red-800 border-red-300" : "bg-blue-100 text-blue-800 border-blue-200";
+      
+      const reqBarH = Math.min(80, Math.max(16, reqCount * 2.2));
+      const actBarH = Math.min(80, Math.max(12, actCount * 2.2));
+
+      return `
+        <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-slate-900 text-xs">${distName}</span>
+            <span class="text-[10px] font-black px-2 py-0.5 rounded-full border ${badgeColor}">${demandScore}% ${isHi ? "मांग" : "Demand"}</span>
+          </div>
+
+          <!-- Comparative Requirement Bar Chart: Required vs Active -->
+          <div class="h-28 flex items-end justify-around gap-2 pt-2 pb-1 border-b border-slate-100 bg-slate-50/50 rounded-xl px-2">
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] font-bold text-blue-800">${reqCount}</span>
+              <div class="chart-bar w-full bg-blue-600 rounded-t-md shadow-xs" style="height: ${reqBarH}px;" title="Required: ${reqCount}"></div>
+              <span class="text-[9px] font-bold text-slate-600">${isHi ? "आवश्यक" : "Need"}</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] font-bold text-emerald-800">${actCount}</span>
+              <div class="chart-bar w-full bg-emerald-500 rounded-t-md shadow-xs" style="height: ${actBarH}px;" title="Active: ${actCount}"></div>
+              <span class="text-[9px] font-bold text-slate-600">${isHi ? "सक्रिय" : "Active"}</span>
+            </div>
+          </div>
+
+          <div class="text-[11px] flex justify-between items-center text-slate-500 font-medium">
+            <span>${isHi ? "स्थिति:" : "Status:"}</span>
+            <strong class="${isCritical ? "text-red-600 font-bold" : "text-emerald-700 font-bold"}">${statusText}</strong>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // 5. Render District Breakdown Table
+  const tableBody = document.getElementById("ministry-service-req-table-body");
+  const tableTitle = document.getElementById("min-table-title");
+  if (tableTitle) {
+    tableTitle.innerText = `${isHi ? "जिला-वार आवश्यकता विश्लेषण" : "District-Wise Requirement & Allocation Audit"} (${serviceName})`;
+  }
+
+  if (tableBody) {
+    tableBody.innerHTML = data.map((d, idx) => {
+      const distName = isHi ? (d.district_hi || d.district) : d.district;
+      let reqCount = 0;
+      let actCount = 0;
+      let deficitCount = 0;
+      let demandScore = 0;
+      let statusBadge = "";
+
+      if (selectedService === "all") {
+        reqCount = d.required_workers || 50;
+        actCount = d.active_workers || 40;
+        deficitCount = Math.max(0, reqCount - actCount);
+        demandScore = d.demand_index || d.overall_demand || 75;
+      } else {
+        const tr = (d.trade_requirements && d.trade_requirements[selectedService])
+          ? d.trade_requirements[selectedService]
+          : { required: 18, active: 12, deficit: 6, demand_score: 80 };
+        reqCount = tr.required;
+        actCount = tr.active;
+        deficitCount = tr.deficit;
+        demandScore = tr.demand_score;
+      }
+
+      if (deficitCount >= 7) {
+        statusBadge = `<span class="bg-red-100 text-red-900 px-2.5 py-0.5 rounded-full text-[10px] font-black border border-red-200 flex items-center gap-1 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></span> ${isHi ? "गंभीर कमी" : "Critical Shortage"}</span>`;
+      } else if (deficitCount > 0) {
+        statusBadge = `<span class="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full text-[10px] font-black border border-amber-200 w-fit">${isHi ? "कमी चेतावनी" : "Shortage Alert"}</span>`;
+      } else {
+        statusBadge = `<span class="bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-full text-[10px] font-black border border-emerald-200 w-fit">${isHi ? "संतुलित क्षमता" : "Optimal Capacity"}</span>`;
+      }
+
+      return `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full ${deficitCount > 5 ? 'bg-red-500' : 'bg-emerald-500'}"></span>
+            <span>${distName}</span>
+          </td>
+          <td class="p-3">
+            <div class="flex items-center space-x-2">
+              <div class="w-16 bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div class="${demandScore >= 85 ? 'bg-red-500' : 'bg-blue-600'} h-full" style="width: ${demandScore}%"></div>
+              </div>
+              <span class="font-bold text-slate-800">${demandScore}%</span>
+            </div>
+          </td>
+          <td class="p-3 font-extrabold text-blue-900">${reqCount} ${isHi ? "तकनीशियन" : "Workers"}</td>
+          <td class="p-3 font-semibold text-emerald-800">${actCount} ${isHi ? "सक्रिय" : "Active"}</td>
+          <td class="p-3 font-black ${deficitCount > 0 ? 'text-red-600' : 'text-emerald-700'}">
+            ${deficitCount > 0 ? `-${deficitCount}` : `✓ 0`}
+          </td>
+          <td class="p-3">${statusBadge}</td>
+          <td class="p-3 text-right">
+            <button onclick="deployPacsGuildForService(${idx}, '${selectedService}')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-[11px] border border-blue-200 transition btn-tactile shadow-2xs">
+              ${isHi ? "पैक्स दल तैनात करें (+5)" : "Deploy PACS Guild (+5)"}
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  safeCreateIcons();
+}
+
+function deployPacsGuildForService(districtIndex, serviceId) {
+  sfx.playSuccessFanfare();
+  const d = state.regionalDemandData[districtIndex];
+  if (!d) return;
+
+  const isHi = state.currentLanguage === "hi";
+  const distName = isHi ? (d.district_hi || d.district) : d.district;
+
+  if (serviceId === "all") {
+    d.active_workers = (d.active_workers || 40) + 5;
+    d.demand_index = Math.max(50, (d.demand_index || 80) - 10);
+  } else {
+    if (d.trade_requirements && d.trade_requirements[serviceId]) {
+      const tr = d.trade_requirements[serviceId];
+      tr.active += 5;
+      tr.deficit = Math.max(0, tr.required - tr.active);
+      tr.demand_score = Math.max(50, tr.demand_score - 12);
+    }
+    d.active_workers = (d.active_workers || 40) + 5;
+  }
+
+  renderMinistryServiceRequirements(state.regionalDemandData, serviceId);
+  showToast(isHi ? `✓ ${distName} में 5 प्रमाणित पैक्स तकनीशियन तैनात किए गए!` : `✓ 5 Certified PACS Technicians deployed to ${distName}!`, "success");
+}
+
+function downloadServiceRequirementReport() {
+  sfx.playClick();
+  const isHi = state.currentLanguage === "hi";
+  const selectedService = state.ministrySelectedService || "all";
+  const serviceObj = SERVICES.find(s => s.id === selectedService);
+  const serviceName = serviceObj ? serviceObj.name.toUpperCase() : "ALL 12 COOPERATIVE SERVICES";
+
+  const districts = state.regionalDemandData || DEFAULT_REGIONAL_DEMAND;
+
+  let totalReq = 0;
+  let totalAct = 0;
+  let totalDef = 0;
+  let totalOrders = 0;
+
+  const districtLines = districts.map(d => {
+    let req = 0;
+    let act = 0;
+    let def = 0;
+    let score = 0;
+    let orders = 0;
+
+    if (selectedService === "all") {
+      req = d.required_workers || 50;
+      act = d.active_workers || 40;
+      def = Math.max(0, req - act);
+      score = d.demand_index || d.overall_demand || 75;
+      orders = d.monthly_orders || 1000;
+    } else {
+      const tr = (d.trade_requirements && d.trade_requirements[selectedService])
+        ? d.trade_requirements[selectedService]
+        : { required: 20, active: 15, deficit: 5, demand_score: 80, monthly_orders: 220 };
+      req = tr.required;
+      act = tr.active;
+      def = tr.deficit;
+      score = tr.demand_score;
+      orders = tr.monthly_orders;
+    }
+
+    totalReq += req;
+    totalAct += act;
+    totalDef += def;
+    totalOrders += orders;
+
+    const status = def > 5 ? "CRITICAL SHORTAGE" : (def > 0 ? "SHORTAGE ALERT" : "BALANCED");
+    return `${d.district.padEnd(16)} | Req: ${String(req).padStart(3)} | Act: ${String(act).padStart(3)} | Deficit: ${String(def).padStart(3)} | Demand: ${String(score).padStart(3)}% | Monthly Orders: ${String(orders).padStart(5)} | Status: ${status}`;
+  }).join("\n");
+
+  const text = `===============================================================
+MINISTRY OF COOPERATION, GOVERNMENT OF INDIA
+NATIONAL COOPERATIVE GIG & SKILL PLATFORM - SEVA SETU
+OFFICIAL WORKFORCE REQUIREMENT & DEMAND ALLOCATION REPORT
+Reference: #GOI-COOP-REQ-2026-Q1 | Generated: ${new Date().toLocaleString()}
+Selected Domain: ${serviceName}
+===============================================================
+
+1. APEX NATIONAL TELEMETRY & REQUIREMENT SUMMARY
+----------------------------------------------------------------
+Service Category:           ${serviceName}
+Total Required Workforce:   ${totalReq} Certified Technicians
+Active Verified Deployment: ${totalAct} Technicians in Field
+Net Workforce Deficit:      ${totalDef} Technicians (${totalDef > 0 ? "URGENT HIRING TRIGGERED" : "SUPPLY OPTIMAL"})
+Estimated Monthly Demand:   ${totalOrders.toLocaleString()} Service Tasks
+Average Supply Health:      ${totalReq > 0 ? Math.round((totalAct / totalReq) * 100) : 80}%
+
+2. DISTRICT-WISE REQUIREMENT BREAKDOWN
+----------------------------------------------------------------
+District         | Workforce Deployment & Shortage Metrics
+----------------------------------------------------------------
+${districtLines}
+----------------------------------------------------------------
+
+3. MINISTRY POLICY DIRECTIVES & PACS ALLOCATION INSTRUCTIONS
+----------------------------------------------------------------
+* Priority Mobilization: Direct Primary Agricultural Credit Societies (PACS)
+  to sponsor emergency vocational batches via NCVT/ITI skill centers.
+* Zero Intermediary Mandate: Disburse 100% of fair-wage earnings directly
+  via Direct Benefit Transfer (DBT) to attested technician bank accounts.
+* Grassroots Skill Expansion: Extend Khadi & Village Industries (KVIC) master
+  artisan stipends to regional pottery, blacksmith, and carpentry clusters.
+
+===============================================================
+Digitally Certified & Sealed by:
+Shri Amit Shah, Hon'ble Union Minister of Cooperation
+Ministry of Cooperation, Government of India
+Atal Akshay Urja Bhawan, New Delhi - 110003
+===============================================================
+`;
+
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Seva_Setu_Service_Requirement_Report_${selectedService}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  showToast(isHi ? `✓ सेवा आवश्यकता रिपोर्ट सफलतापूर्वक डाउनलोड की गई!` : `✓ Official Requirement Report for ${serviceName} downloaded!`, "success");
 }
 
 async function fetchMinistryRevenue() {

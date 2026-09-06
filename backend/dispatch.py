@@ -48,7 +48,9 @@ def create_booking(
     service_type: str,
     plan: str,
     is_emergency: bool = False,
-    is_ngo: bool = False
+    is_ngo: bool = False,
+    booking_date: Optional[str] = None,
+    booking_time: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Initializes a new booking, finds the primary nearest worker,
@@ -79,6 +81,8 @@ def create_booking(
         is_ngo=is_ngo
     )
 
+    schedule_desc = f"{booking_date} at {booking_time}" if (booking_date and booking_time) else (booking_time or "Immediate Dispatch")
+
     booking_record = {
         "booking_id": booking_id,
         "customer_name": customer_name,
@@ -88,6 +92,8 @@ def create_booking(
         "plan": plan,
         "is_emergency": is_emergency,
         "is_ngo": is_ngo,
+        "booking_date": booking_date or "Today",
+        "booking_time": booking_time or "Immediate (<30 mins)",
         "status": "BROADCASTING", # BROADCASTING -> ACCEPTED -> IN_PROGRESS -> COMPLETED / CANCELLED
         "assigned_worker": primary_worker,
         "pricing": pricing,
@@ -97,7 +103,7 @@ def create_booking(
         "end_otp_verified": False,
         "proof_of_work_url": None,
         "timeline": [
-            f"Job request initialized for {service_type.capitalize()} ({plan.capitalize()} Plan)",
+            f"Job request initialized for {service_type.capitalize()} ({plan.capitalize()} Plan) • Slot: {schedule_desc}",
             f"Broadcast dispatched to nearest cooperative worker: {primary_worker['name']} ({primary_worker['distance_km']} km away)"
         ]
     }

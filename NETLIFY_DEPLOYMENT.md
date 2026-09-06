@@ -1,4 +1,4 @@
-# 🚀 Deploying SahakarSeva on Netlify
+# 🚀 Deploying Seva Setu on Netlify
 
 This repository is fully configured and ready for one-click deployment on **Netlify**.
 
@@ -13,7 +13,7 @@ You don't even need a Git repository or command line to deploy!
 3. Drag and drop either:
    - The **`frontend`** folder directly (**Recommended**), OR
    - The entire **`Seva Setu App`** project folder (our root redirect fallback will route it automatically).
-4. Netlify will instantly provision your live HTTPS URL (e.g. `https://sahakarseva-xyz.netlify.app`)!
+4. Netlify will instantly provision your live HTTPS URL (e.g. `https://sevasetu-xyz.netlify.app`)!
 
 ---
 
