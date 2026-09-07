@@ -1,15 +1,12 @@
 {
-  "name": "sahakar-seva",
+  "name": "seva-setu",
   "version": "1.0.0",
-  "description": "Decentralized Cooperative Gig Platform - Ministry of Cooperation",
+  "description": "Seva Setu (सेवा सेतु) - Decentralized Cooperative Gig Platform - Ministry of Cooperation",
   "scripts": {
-    "build": "node -e \"console.log('SahakarSeva build: frontend ready for Netlify deployment.');\"",
+    "build": "node -e \"console.log('Seva Setu build: frontend ready for Netlify deployment.');\"",
     "start": "npx -y serve frontend -p 3000",
     "preview": "npx -y serve frontend -p 3000",
     "test": "node verify_netlify_setup.js",
     "validate": "node verify_netlify_setup.js"
-  },
-  "devDependencies": {
-    "jsdom": "^30.0.1"
   }
 }

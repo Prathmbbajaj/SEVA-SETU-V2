@@ -1,10 +1,16 @@
-# SahakarSeva (सहकार सेवा) - Netlify Production Configuration
+# ==============================================================================
+# Seva Setu (सेवा सेतु) - Netlify Production Configuration
+# Ministry of Cooperation, Government of India
+# ==============================================================================
 
 [build]
   # Directory that contains index.html, style.css, and app.js
   publish = "frontend"
   # Standard build command to signal successful build in Netlify CI
   command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 # Single Page Application (SPA) routing:
 # Directs all page navigation back to index.html with 200 OK
@@ -19,7 +25,7 @@
 #
 # [[redirects]]
 #   from = "/api/*"
-#   to = "https://your-sahakarseva-backend.onrender.com/api/:splat"
+#   to = "https://your-sevasetu-backend.onrender.com/api/:splat"
 #   status = 200
 #   force = true
 

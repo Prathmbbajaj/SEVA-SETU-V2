@@ -1,99 +1,126 @@
-# 🚀 Deploying Seva Setu on Netlify
+# 🚀 Deploying Seva Setu (सेवा सेतु) on Netlify via GitHub
 
-This repository is fully configured and ready for one-click deployment on **Netlify**.
-
----
-
-## ⚡ Option 1: Instant Drag & Drop (Zero Setup, 30 Seconds)
-
-You don't even need a Git repository or command line to deploy!
-
-1. Log into your **[Netlify Dashboard](https://app.netlify.com/)**.
-2. Go to the **Sites** tab and scroll down to the **"Want to deploy a new site without connecting to Git? Drag and drop your site output folder here"** area (or go directly to **[app.netlify.com/drop](https://app.netlify.com/drop)**).
-3. Drag and drop either:
-   - The **`frontend`** folder directly (**Recommended**), OR
-   - The entire **`Seva Setu App`** project folder (our root redirect fallback will route it automatically).
-4. Netlify will instantly provision your live HTTPS URL (e.g. `https://sevasetu-xyz.netlify.app`)!
+This repository is fully configured and ready for automated Continuous Deployment on **Netlify** directly from your **GitHub** repository.
 
 ---
 
-## 🔗 Option 2: Continuous Deployment via GitHub (Recommended)
+## 📋 Pre-Configured Netlify Build Specifications
 
-When you push your code to GitHub, Netlify can automatically build and update your site on every commit:
+Because of [`netlify.toml`](./netlify.toml), Netlify will automatically detect and apply all necessary settings:
 
-1. Push this project to your GitHub repository:
-   ```bash
-   git add .
-   git commit -m "feat: configure netlify production deployment"
-   git push origin main
-   ```
-2. In your **Netlify Dashboard**, click **"Add new site"** → **"Import an existing project"**.
-3. Choose **GitHub** and select your repository.
-4. Netlify will **automatically detect `netlify.toml`**:
-   - **Base directory**: `.` (Root)
-   - **Build command**: `npm run build`
-   - **Publish directory**: `frontend`
-5. Click **"Deploy site"**. Your site is now live with automated CI/CD!
+| Setting | Value | Explanation |
+| :--- | :--- | :--- |
+| **Build Command** | `npm run build` | Light CI verification step |
+| **Publish Directory** | `frontend` | Directory containing `index.html`, `app.js`, `style.css` |
+| **Node Version** | `20` (LTS) | Specified via `[build.environment]` |
+| **SPA Fallback** | `/* -> /index.html (200)` | Supports deep links & client-side navigation |
+| **Security Headers** | Enabled | `X-Frame-Options`, `nosniff`, `Referrer-Policy`, etc. |
+| **Asset Caching** | Enabled | 24-hour cache for `*.css` and `*.js` bundles |
 
 ---
 
-## 💻 Option 3: Deploy via Netlify CLI
+## ⚡ Step-by-Step: Upload to GitHub & Deploy to Netlify
 
-If you prefer using the terminal:
+### Step 1: Commit and Push Changes to GitHub
+
+In your project directory terminal (PowerShell or Bash), run:
 
 ```bash
-# 1. Install Netlify CLI globally or use npx
-npx netlify-cli login
+# 1. Check git status to ensure only clean code and configs are staged
+git status
 
-# 2. Deploy a preview draft
-npx netlify-cli deploy --dir=frontend
+# 2. Stage all prepared configuration files (.gitignore protects large files)
+git add .
 
-# 3. Deploy to production
-npx netlify-cli deploy --prod --dir=frontend
+# 3. Commit the changes
+git commit -m "feat: prepare project for Netlify production deployment"
+
+# 4. Push to your GitHub repository
+git push origin main
 ```
+
+> [!NOTE]
+> **GitHub File Limits Protected**: A comprehensive `.gitignore` is in place. Large demo video files (`.mp4`), python caches (`__pycache__`), and `node_modules/` are automatically excluded to prevent hitting GitHub's 100MB file limit.
+
+---
+
+### Step 2: Connect Repository to Netlify
+
+1. Go to your **[Netlify Dashboard](https://app.netlify.com/)** and log in (using your GitHub account is recommended).
+2. Click **"Add new site"** (top right) → select **"Import an existing project"**.
+3. Under *Connect to Git provider*, click **GitHub**.
+4. Authorize Netlify and choose the repository: **`Prathmbbajaj/Seva-Setu`** (or your active repository fork).
+5. In the **Site configuration** screen:
+   - **Branch to deploy**: `main`
+   - **Base directory**: *(Leave blank — root)*
+   - **Build command**: `npm run build` *(Auto-detected from netlify.toml)*
+   - **Publish directory**: `frontend` *(Auto-detected from netlify.toml)*
+6. Click **"Deploy Seva Setu"**!
+
+Netlify will build and publish your site in less than 30 seconds, generating a production HTTPS URL (e.g. `https://seva-setu-xyz.netlify.app`).
+
+---
+
+### Step 3: Custom Domain & Site Name (Optional)
+
+1. In your site dashboard on Netlify, navigate to **Site configuration** → **Site details**.
+2. Click **"Change site name"** to set a memorable name like `seva-setu-coop.netlify.app`.
+3. If you have a custom government or organizational domain (e.g., `sevasetu.gov.in`), click **Domain management** → **Add a custom domain**.
 
 ---
 
 ## ⚙️ How the Architecture Works on Netlify
 
 ### 1. Autonomous In-Browser Engine (Default)
-When hosted on Netlify, the application runs in **Autonomous Mode** (`Autonomous Engine` badge).
-- **100% Client-Side Interactive**: Complete quote calculation, OpenStreetMap Leaflet proximity radar, Rapido-style job broadcast, Dual-OTP settlement, NGO subsidies, and Ministry analytics work out of the box without needing any external server.
+When hosted on Netlify, the application runs with full interactivity in **Autonomous Mode**:
+- **100% Client-Side Interactive**:
+  - OpenStreetMap (Leaflet) proximity radar and worker radius matching
+  - Transparent itemized quote calculations (base wage + toolkit wear + transit fare)
+  - Rapido-style job broadcast & worker acceptance simulation
+  - Dual-OTP flow (`START_OTP` and `END_OTP` with completion photo proof)
+  - Interactive payment gateway simulation (UPI QR, Cooperative DCCB Bank transfer)
+  - NGO DARPAN 20% subsidy verification form
+  - Ministry Cockpit district analytics and verified review moderation
+  - Bidirectional English/Hindi translation engine (159 UI keys)
 - **Zero Mixed-Content Warnings**: Safe for HTTPS with no insecure HTTP requests.
 
+---
+
 ### 2. (Optional) Connecting a Live FastAPI Backend
-If you deploy your Python FastAPI backend (`backend/main.py`) to a cloud provider like **[Render.com](https://render.com/)**, **[Railway.app](https://railway.app/)**, or **[Fly.io](https://fly.io/)**:
+If you deploy the Python FastAPI backend (`backend/main.py`) to a cloud container service like **[Render.com](https://render.com/)**, **[Railway.app](https://railway.app/)**, or **[Fly.io](https://fly.io/)**:
 
 #### Method A: Netlify API Proxy (Recommended)
-Open `netlify.toml` and uncomment the proxy rule:
+Open [`netlify.toml`](./netlify.toml) and uncomment the proxy redirect block:
 ```toml
 [[redirects]]
   from = "/api/*"
-  to = "https://your-backend-app.onrender.com/api/:splat"
+  to = "https://your-sevasetu-backend.onrender.com/api/:splat"
   status = 200
   force = true
 ```
-This proxies all `/api/...` calls through your Netlify domain, eliminating CORS and mixed-content issues.
+Push to GitHub, and Netlify will proxy all `/api/...` calls through your Netlify domain, completely eliminating CORS issues!
 
-#### Method B: Browser Runtime Override
-You can test with any backend URL directly in the live browser console without redeploying:
+#### Method B: Browser Console Override (For Testing)
+You can point your live Netlify site to any backend directly in the browser DevTools console:
 ```javascript
-// In browser DevTools Console:
-setBackendUrl("https://your-backend-app.onrender.com");
+// Point to your live backend:
+setBackendUrl("https://your-backend-api.onrender.com");
 
-// To revert back to autonomous engine:
+// Revert back to Autonomous Engine:
 setBackendUrl(null);
 ```
 
 ---
 
-## 📁 Deployment Files Reference
+## 📁 Key Deployment Files
 
-| File | Role |
+| File | Purpose |
 | :--- | :--- |
-| [`netlify.toml`](./netlify.toml) | Primary Netlify CI/CD config specifying `publish = "frontend"`, SPA redirects, and security headers. |
-| [`frontend/_redirects`](./frontend/_redirects) | Fallback SPA routing rule (`/* /index.html 200`) for direct folder uploads. |
-| [`frontend/_headers`](./frontend/_headers) | Security & caching headers for static assets. |
-| [`index.html`](./index.html) | Root fallback redirect in case the root directory is dragged into Netlify Drop. |
-| [`_redirects`](./_redirects) | Root redirect rules for transparent routing. |
-| [`package.json`](./package.json) | Build scripts for Netlify CI compatibility. |
+| [`netlify.toml`](./netlify.toml) | Primary Netlify config: `publish = "frontend"`, Node 20 LTS, SPA routing rules, security headers. |
+| [`.gitignore`](./.gitignore) | Blocks large media (`*.mp4`), `node_modules/`, `.venv/`, and pycache to guarantee successful GitHub pushes. |
+| [`frontend/_redirects`](./frontend/_redirects) | Fallback SPA rule (`/* /index.html 200`) for folder-based builds. |
+| [`frontend/_headers`](./frontend/_headers) | Content security headers and caching policy. |
+| [`_redirects`](./_redirects) | Root redirect rules ensuring `/` and assets route properly if deployed from root. |
+| [`index.html`](./index.html) | Root fallback page that automatically redirects to `/frontend/`. |
+| [`package.json`](./package.json) | Clean build and verification scripts (`npm run build`, `npm run validate`). |
+| [`verify_netlify_setup.js`](./verify_netlify_setup.js) | Automated pre-flight check script to test the entire deployment configuration. |
