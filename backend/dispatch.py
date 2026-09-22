@@ -3,7 +3,8 @@ Rapido-Style Dispatch & Fallback State Machine with Dual OTP Lifecycle.
 """
 from typing import List, Dict, Any, Optional
 from geopy.distance import geodesic
-from seed_data import WORKERS
+import datetime
+from seed_data import WORKERS, DEBARRED_CUSTOMERS, WORKER_REJECTIONS_LOG
 from pricing import calculate_transparent_fare
 
 # In-memory storage for prototype bookings and rejection tracking
@@ -19,13 +20,17 @@ def find_nearest_workers(
 ) -> List[Dict[str, Any]]:
     """
     Finds and ranks all available workers matching service_type within max_radius_km,
-    excluding workers who have already declined.
+    excluding workers who have already declined or are under disciplinary suspension/fired.
     """
     exclude = set(exclude_worker_ids or [])
     matches = []
 
     for w in WORKERS:
         if w["id"] in exclude or not w["is_available"]:
+            continue
+        if w.get("disciplinary_status") in ["FIRED", "SUSPENDED"]:
+            continue
+        if not w.get("is_verified", True):
             continue
         if w["skill"].lower() != service_type.lower():
             continue
@@ -53,9 +58,28 @@ def create_booking(
     booking_time: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Initializes a new booking, finds the primary nearest worker,
+    Initializes a new booking, checks customer debarment status, finds the primary nearest worker,
     calculates transparent fare, and broadcasts the job alert.
     """
+    # 1. Check Customer Debarment Status
+    clean_cust = (customer_name or "").strip()
+    clean_svc = (service_type or "").strip().lower()
+    for deb_name, deb_info in DEBARRED_CUSTOMERS.items():
+        if deb_info.get("status") == "DEBARRED" and deb_name.lower() == clean_cust.lower():
+            debarred_services = [s.lower() for s in deb_info.get("services", ["all"])]
+            if "all" in debarred_services or clean_svc in debarred_services:
+                rep_workers = ", ".join(deb_info.get("reporting_worker_names", ["Certified Technicians"]))
+                svc_desc = "all cooperative services" if "all" in debarred_services else f"'{service_type}' service"
+                return {
+                    "success": False,
+                    "status": "CUSTOMER_DEBARRED",
+                    "debarred_services": deb_info.get("services", ["ALL"]),
+                    "message": (
+                        f"Citizen '{customer_name}' is DEBARRED from booking {svc_desc} by the Ministry of Cooperation. "
+                        f"Reason: {deb_info.get('reason', 'Multiple escalated incident complaints')} ({rep_workers})."
+                    )
+                }
+
     global BOOKING_COUNTER
     BOOKING_COUNTER += 1
     booking_id = BOOKING_COUNTER
@@ -116,8 +140,8 @@ def create_booking(
 def worker_respond_to_job(booking_id: int, worker_id: int, accept: bool) -> Dict[str, Any]:
     """
     Handles worker accept or reject (Rapido-style fallback engine).
-    If a worker rejects (either initially or after accepting), it triggers immediate fallback
-    to the next closest candidate.
+    If a worker rejects (either initially or after accepting), it tracks the rejection count,
+    logs the event for the Ministry of Cooperation, and triggers immediate fallback to the next candidate.
     """
     booking = BOOKINGS_DB.get(booking_id)
     if not booking:
@@ -125,16 +149,54 @@ def worker_respond_to_job(booking_id: int, worker_id: int, accept: bool) -> Dict
 
     if accept:
         booking["status"] = "ACCEPTED"
-        booking["timeline"].append(f"Worker {booking['assigned_worker']['name']} accepted the job. En route to customer.")
+        assigned = booking.get("assigned_worker")
+        w_name = assigned["name"] if assigned else "Technician"
+        booking["timeline"].append(f"Worker {w_name} accepted the job. En route to customer.")
         return {
             "success": True,
             "status": "ACCEPTED",
-            "message": f"Job accepted by {booking['assigned_worker']['name']}.",
-            "booking": booking
+            "message": f"Job accepted by {w_name}.",
+            "booking": booking,
+            "worker": assigned,
+            "start_otp": booking.get("start_otp"),
+            "end_otp": booking.get("end_otp")
         }
     else:
-        # Worker rejected -> Activate Fallback Reassignment Engine
-        BOOKING_REJECTIONS[booking_id].append(worker_id)
+        # Worker rejected -> Track rejection for Ministry disciplinary audit
+        declined_worker = booking.get("assigned_worker") or {"id": worker_id, "name": "Cooperative Technician"}
+        for w in WORKERS:
+            if w["id"] == worker_id or w["id"] == declined_worker.get("id"):
+                w["rejection_count"] = w.get("rejection_count", 0) + 1
+                curr_count = w["rejection_count"]
+                
+                now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                rejection_entry = {
+                    "id": len(WORKER_REJECTIONS_LOG) + 801,
+                    "worker_id": w["id"],
+                    "worker_name": w["name"],
+                    "booking_id": booking_id,
+                    "service_type": booking.get("service_type", "general"),
+                    "timestamp": now_str,
+                    "reason": "Declined automated cooperative dispatch",
+                    "total_worker_rejections": curr_count,
+                    "severity": "CRITICAL" if curr_count >= 3 else ("WARNING" if curr_count == 2 else "NORMAL")
+                }
+                WORKER_REJECTIONS_LOG.append(rejection_entry)
+
+                if curr_count >= 3:
+                    w["disciplinary_status"] = "UNDER_REVIEW"
+                    w.setdefault("disciplinary_history", []).append({
+                        "action": "FLAGGED_FOR_MINISTRY_REVIEW",
+                        "reason": f"Accumulated {curr_count} rejections. Ministry termination/show-cause protocol activated.",
+                        "timestamp": now_str
+                    })
+                    booking["timeline"].append(
+                        f"⚠️ Worker {w['name']} reached {curr_count} dispatches declined. Worker flagged to Ministry Cockpit for disciplinary review."
+                    )
+                break
+
+        # Activate Fallback Reassignment Engine
+        BOOKING_REJECTIONS.setdefault(booking_id, []).append(worker_id)
         booking["timeline"].append(f"Worker {booking['assigned_worker']['name']} declined/cancelled the job.")
         
         customer_coords = (booking["customer_lat"], booking["customer_lng"])
@@ -143,6 +205,7 @@ def worker_respond_to_job(booking_id: int, worker_id: int, accept: bool) -> Dict
             service_type=booking["service_type"],
             exclude_worker_ids=BOOKING_REJECTIONS[booking_id]
         )
+
 
         if remaining_candidates:
             fallback_worker = remaining_candidates[0]

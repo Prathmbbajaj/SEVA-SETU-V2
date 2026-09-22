@@ -7,6 +7,11 @@
   <meta name="description" content="Decentralized cooperative gig platform with fair-wage transparency, dual-OTP settlement, and verified PACS credentials. Ministry of Cooperation, GoI." />
   <meta name="theme-color" content="#0f172a" />
 
+  <!-- Cache Control to prevent stale browser assets -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <!-- Open Graph / Social Previews for Netlify URL sharing -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Seva Setu (सेवा सेतु) - Cooperative Gig Platform" />
@@ -39,7 +44,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2.7.0" />
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-900 pb-24">
 
@@ -63,7 +68,7 @@
             <h1 class="text-xl font-black tracking-tight text-white flex items-center gap-1.5">
               Seva Setu <span class="text-amber-400 font-bold text-base">(सेवा सेतु)</span>
             </h1>
-            <span class="bg-blue-900/80 text-blue-200 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-700">SIH 2026</span>
+            <span class="bg-blue-900/80 text-blue-200 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-700">Deployable Prototype</span>
           </div>
           <p class="text-xs text-blue-200 flex items-center gap-1.5 font-medium" id="header-ministry-title">
             <span data-i18n="ministry-subtitle">Ministry of Cooperation, GoI &bull; "Seva Se Samriddhi"</span>
@@ -137,8 +142,71 @@
         </div>
       </div>
 
+      <!-- Citizen Persona Switcher & Authentication Entrypoint -->
+      <div class="glass-card rounded-2xl p-3 px-4 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs bg-gradient-to-r from-white via-slate-50 to-blue-50/40 shadow-xs">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse flex-shrink-0"></span>
+          <span class="font-black text-slate-700 uppercase tracking-wider text-[10px]">Active Citizen Profile:</span>
+          <select id="citizen-persona-select" onchange="changeCitizenPersona(this.value)" class="bg-white px-3 py-1.5 rounded-xl font-bold text-slate-800 border border-slate-300 outline-none cursor-pointer text-xs shadow-xs focus:ring-2 focus:ring-blue-600">
+            <option value="Aarav Mehta">Aarav Mehta (In Good Standing • Full Service Access)</option>
+            <option value="Rohan Verma">Rohan Verma (Debarred from Electrician Service Only)</option>
+            <option value="Vikas Malhotra">Vikas Malhotra (Permanently Debarred from All Services)</option>
+          </select>
+          <button type="button" onclick="openCitizenAuthModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition btn-tactile">
+            <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+            <span>Authenticate Citizen</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2">
+          <div id="citizen-location-badge" class="flex items-center gap-1 text-[11px] font-bold text-slate-700 bg-white px-2.5 py-1 rounded-full border border-slate-200 shadow-xs">
+            <i data-lucide="map-pin" class="w-3 h-3 text-blue-600"></i>
+            <span id="citizen-location-text">Connaught Place, New Delhi</span>
+          </div>
+          <div id="citizen-persona-badge" class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-100/80 px-3 py-1 rounded-full border border-emerald-300 shadow-xs">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Verified Citizen • Full Access</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debarred Citizen Alert Banner (Dynamic) -->
+      <div id="citizen-debarred-alert" class="p-5 bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-500 rounded-3xl text-red-950 hidden space-y-3 shadow-lg">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-2 font-black text-red-800 text-sm sm:text-base">
+            <span class="w-7 h-7 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-xs">
+              <i data-lucide="shield-x" class="w-4 h-4"></i>
+            </span>
+            <span>🚫 SERVICE RESTRICTION ENFORCED — MINISTRY DEBARMENT</span>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider shadow-xs">
+            Ministry Order Active
+          </span>
+        </div>
+        <p class="text-xs text-red-900 leading-relaxed" id="citizen-debarred-alert-text">
+          Your account has been officially debarred from booking cooperative services due to multiple escalated incident complaints from independent certified technicians.
+        </p>
+        <!-- Itemized Debarred Services Chips -->
+        <div id="citizen-debarred-services-container" class="p-3 bg-white/80 rounded-2xl border border-red-200 text-xs">
+          <span class="font-bold text-slate-600 block text-[10px] uppercase tracking-wider mb-1.5">Enforced Restricted Services:</span>
+          <div class="flex flex-wrap items-center gap-1.5" id="citizen-debarred-services-list">
+            <!-- Injected via JS e.g. Electrician or All Services -->
+          </div>
+        </div>
+        <div class="pt-1 flex items-center justify-between flex-wrap gap-2 text-xs">
+          <span class="font-bold text-red-700 flex items-center gap-1">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+            <span>Other non-restricted services remain available to you.</span>
+          </span>
+          <button type="button" onclick="switchPortal('ministry')" class="text-blue-700 font-black underline hover:text-blue-900 flex items-center gap-1">
+            <span>Inspect Ministry Escalations Register</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
       <!-- Top Search & Emergency Triage Card -->
       <div class="glass-card rounded-3xl p-6 border-indigo-100" id="search-triage-card">
+
         <div class="flex flex-col lg:flex-row items-center justify-between gap-5">
           
           <!-- Left: Voice & Working Real-Time Search Bar -->
@@ -252,179 +320,7 @@
             </div>
           </div>
 
-          <!-- Pricing Horizon Plan Selector -->
-          <div class="glass-card rounded-3xl p-6">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-              <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">2</span>
-                <span id="txt-select-pricing" data-i18n="txt-select-pricing">Select Engagement Horizon</span>
-              </h2>
-              <span class="text-xs text-slate-500 font-medium" data-i18n="txt-pricing-subtitle">Fair to technician & citizen</span>
-            </div>
-            
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <label class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-2xl p-3.5 text-center transition relative btn-tactile shadow-sm" id="plan-hourly-label">
-                <input type="radio" name="plan_type" value="hourly" checked onchange="selectPlan('hourly')" class="sr-only" />
-                <div class="font-extrabold text-slate-900 text-sm" data-i18n="plan-hourly-title">Hourly Task</div>
-                <div class="text-xs text-slate-500 mt-0.5" data-i18n="plan-hourly-desc">1 hour quick repair</div>
-              </label>
 
-              <label class="cursor-pointer border border-slate-200 rounded-2xl p-3.5 text-center transition hover:border-blue-400 relative btn-tactile" id="plan-daily-label">
-                <input type="radio" name="plan_type" value="daily" onchange="selectPlan('daily')" class="sr-only" />
-                <div class="font-extrabold text-slate-900 text-sm" data-i18n="plan-daily-title">Full Day</div>
-                <div class="text-xs text-slate-500 mt-0.5" data-i18n="plan-daily-desc">8 hours shift</div>
-              </label>
-
-              <label class="cursor-pointer border border-slate-200 rounded-2xl p-3.5 text-center transition hover:border-blue-400 relative btn-tactile" id="plan-weekly-label">
-                <input type="radio" name="plan_type" value="weekly" onchange="selectPlan('weekly')" class="sr-only" />
-                <span class="absolute -top-2.5 right-2 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase shadow" data-i18n="plan-weekly-badge">5% Off</span>
-                <div class="font-extrabold text-slate-900 text-sm" data-i18n="plan-weekly-title">Weekly</div>
-                <div class="text-xs text-emerald-700 font-bold mt-0.5" data-i18n="plan-weekly-desc">5 days project</div>
-              </label>
-
-              <label class="cursor-pointer border border-amber-300 bg-amber-50/30 rounded-2xl p-3.5 text-center transition hover:border-amber-500 relative btn-tactile" id="plan-monthly-label">
-                <input type="radio" name="plan_type" value="monthly" onchange="selectPlan('monthly')" class="sr-only" />
-                <span class="absolute -top-2.5 right-2 bg-amber-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase shadow" data-i18n="plan-monthly-badge">15% Off</span>
-                <div class="font-extrabold text-amber-950 text-sm" data-i18n="plan-monthly-title">Subscription</div>
-                <div class="text-xs text-amber-800 font-bold mt-0.5" data-i18n="plan-monthly-desc">22 days / month</div>
-              </label>
-            </div>
-
-            <!-- NGO / Non-Profit Social Subsidy Checkbox & Verification Action -->
-            <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3" id="ngo-selection-container">
-              <div class="flex items-center space-x-2.5">
-                <input type="checkbox" id="ngo-checkbox" onchange="handleNgoCheckboxChange(this)" class="w-4 h-4 accent-blue-600 rounded cursor-pointer" />
-                <label for="ngo-checkbox" class="text-xs font-extrabold text-slate-800 cursor-pointer flex items-center gap-1.5">
-                  <span data-i18n="txt-ngo-label">Non-Profit / NGO / Community Care (20% Social Subsidy)</span>
-                </label>
-              </div>
-
-              <!-- Verified Status Pill (Initially Hidden or shows 'Requires Verification') -->
-              <div id="ngo-verified-pill" class="hidden text-[11px] font-bold text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <i data-lucide="badge-check" class="w-4 h-4 text-emerald-600"></i>
-                <span id="ngo-verified-label">DARPAN Verified (20% Subsidy Active)</span>
-                <button onclick="openNgoVerificationModal()" class="text-blue-700 hover:underline ml-1 font-bold">Edit</button>
-              </div>
-
-              <div id="ngo-unverified-hint" class="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200 flex items-center gap-1">
-                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-600"></i>
-                <span data-i18n="txt-ngo-hint">Requires NGO DARPAN Verification</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Service Schedule & Booking Slot -->
-          <div class="glass-card rounded-3xl p-6 border-blue-200 shadow-sm" id="booking-schedule-section">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2 mb-4">
-              <div>
-                <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                  <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-bold">3</span>
-                  <span id="txt-schedule-title" data-i18n="txt-schedule-title">Choose Service Date & Time Slot</span>
-                </h2>
-                <p class="text-xs text-slate-500 mt-0.5" data-i18n="txt-schedule-subtitle">Instant emergency dispatch or scheduled future arrival by certified technician</p>
-              </div>
-              <span class="text-[11px] font-black text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
-                <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
-                <span id="badge-schedule-status">Immediate Dispatch (<30 mins)</span>
-              </span>
-            </div>
-
-            <!-- Booking Mode: Instant vs Scheduled -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-              <button type="button" onclick="setBookingScheduleType('immediate')" id="btn-mode-immediate" class="p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-black text-blue-950 flex items-center gap-1.5">
-                    <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
-                    <span data-i18n="opt-immediate-title">Instant Dispatch</span>
-                  </span>
-                  <span class="text-[9px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Fastest</span>
-                </div>
-                <p class="text-[11px] text-slate-600 mt-1" data-i18n="opt-immediate-desc">Technician dispatched immediately (<30 min average arrival)</p>
-              </button>
-
-              <button type="button" onclick="setBookingScheduleType('scheduled')" id="btn-mode-scheduled" class="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                    <i data-lucide="calendar-clock" class="w-4 h-4 text-blue-600"></i>
-                    <span data-i18n="opt-scheduled-title">Schedule for Later</span>
-                  </span>
-                  <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Advance Booking</span>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1" data-i18n="opt-scheduled-desc">Choose convenient date & preferred arrival window</p>
-              </button>
-            </div>
-
-            <!-- Schedule Detail Picker (Revealed when 'scheduled' is active) -->
-            <div id="scheduled-picker-details" class="space-y-4 pt-3 border-t border-slate-100 hidden">
-              <!-- Date Picker & Quick Chips -->
-              <div>
-                <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2 flex items-center justify-between">
-                  <span data-i18n="lbl-choose-date">1. Select Service Date:</span>
-                  <span class="text-[11px] font-medium text-slate-400" data-i18n="lbl-up-to-7days">Up to 7 days advance reservation</span>
-                </label>
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                  <button type="button" onclick="selectQuickDay('today')" id="chip-day-today" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile">
-                    Today
-                  </button>
-                  <button type="button" onclick="selectQuickDay('tomorrow')" id="chip-day-tomorrow" class="px-3 py-1.5 rounded-xl border-2 border-blue-600 text-xs font-bold text-blue-900 bg-blue-50 transition btn-tactile shadow-xs">
-                    Tomorrow
-                  </button>
-                  <button type="button" onclick="selectQuickDay('day_after')" id="chip-day-day_after" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile">
-                    Day After
-                  </button>
-                  <div class="relative flex-1 min-w-[160px]">
-                    <input type="date" id="booking-date-input" onchange="onBookingDateInputChange(this.value)" class="w-full px-3 py-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer" />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Time Slot Picker -->
-              <div>
-                <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2" data-i18n="lbl-choose-slot">
-                  2. Select Preferred Time Slot:
-                </label>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
-                  <button type="button" onclick="selectTimeSlot('09:00 AM - 12:00 PM', 'morning')" id="slot-btn-morning" class="p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-center transition btn-tactile shadow-xs">
-                    <span class="text-xs font-black text-blue-950 block">🌅 Morning</span>
-                    <span class="text-[10px] text-blue-700 font-medium">9 AM - 12 PM</span>
-                  </button>
-                  <button type="button" onclick="selectTimeSlot('12:00 PM - 03:00 PM', 'afternoon')" id="slot-btn-afternoon" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
-                    <span class="text-xs font-black text-slate-800 block">☀️ Afternoon</span>
-                    <span class="text-[10px] text-slate-500 font-medium">12 PM - 3 PM</span>
-                  </button>
-                  <button type="button" onclick="selectTimeSlot('03:00 PM - 06:00 PM', 'evening')" id="slot-btn-evening" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
-                    <span class="text-xs font-black text-slate-800 block">🌆 Evening</span>
-                    <span class="text-[10px] text-slate-500 font-medium">3 PM - 6 PM</span>
-                  </button>
-                  <button type="button" onclick="selectTimeSlot('06:00 PM - 09:00 PM', 'night')" id="slot-btn-night" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
-                    <span class="text-xs font-black text-slate-800 block">🌙 Night</span>
-                    <span class="text-[10px] text-slate-500 font-medium">6 PM - 9 PM</span>
-                  </button>
-                </div>
-
-                <!-- Custom exact arrival time -->
-                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                  <span class="text-xs text-slate-700 font-semibold flex items-center gap-1.5">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-600"></i>
-                    <span data-i18n="lbl-exact-time">Or specify exact arrival time:</span>
-                  </span>
-                  <div class="flex items-center gap-2">
-                    <input type="time" id="booking-custom-time" onchange="onCustomTimeChange(this.value)" class="px-2.5 py-1 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer" />
-                    <button type="button" onclick="clearCustomTime()" id="btn-clear-custom-time" class="text-[10px] text-slate-400 hover:text-slate-700 underline hidden font-semibold">Reset to Slot</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Confirmation Summary Banner -->
-              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-xs text-emerald-900 font-bold">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="calendar-check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
-                  <span>Selected Schedule: <strong id="confirmed-slot-display" class="font-black text-emerald-950">Tomorrow • 09:00 AM - 12:00 PM</strong></span>
-                </div>
-                <span class="text-[10px] bg-emerald-200/90 text-emerald-900 px-2.5 py-0.5 rounded-full font-black uppercase">Confirmed Slot</span>
-              </div>
-            </div>
-          </div>
 
           <!-- Cooperative Samriddhi Pass / Subscription Card -->
           <div class="glass-card rounded-3xl p-6 border-amber-200 relative overflow-hidden" id="subscription-feature-card">
@@ -514,7 +410,7 @@
           </div>
 
           <!-- Active Booking Live Status Card (Revealed upon booking) -->
-          <div id="booking-status-card" class="glass-card rounded-3xl p-6 border-blue-300 bg-gradient-to-br from-blue-50/80 to-indigo-50/70 hidden space-y-4 shadow-lg">
+          <div id="booking-status-card" class="glass-card rounded-3xl p-6 border-blue-300 bg-gradient-to-br from-blue-50/80 to-indigo-50/70 hidden space-y-4 shadow-lg" style="display: none;">
             <div class="flex items-center justify-between pb-3 border-b border-blue-200">
               <div class="flex items-center space-x-2.5">
                 <span class="relative flex h-3.5 w-3.5">
@@ -526,6 +422,27 @@
               <span id="booking-badge-status" class="bg-blue-600 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                 Broadcasting
               </span>
+            </div>
+
+            <!-- Worker Accepted & Live OTP Banner (Revealed when worker accepts) -->
+            <div id="citizen-worker-accepted-banner" class="p-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 border border-emerald-400/50 hidden animate-fade-in">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="bell-ring" class="w-5 h-5 text-amber-300 animate-bounce"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">Technician Dispatched</span>
+                    <span class="text-xs font-bold text-emerald-100" id="citizen-worker-accepted-time">Just now</span>
+                  </div>
+                  <h4 class="font-black text-sm text-white mt-0.5" id="citizen-worker-accepted-title">Technician Accepted Your Request!</h4>
+                  <p class="text-xs text-emerald-100" id="citizen-worker-accepted-sub">Worker details & Arrival OTP are now active below. Share OTP upon arrival.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 bg-slate-950/30 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/20 flex-shrink-0">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-200">START_OTP:</span>
+                <span class="text-xl font-black font-mono tracking-widest text-amber-300" id="banner-start-otp-val">----</span>
+              </div>
             </div>
 
             <!-- Scheduled Booking Slot Banner -->
@@ -583,6 +500,18 @@
               </div>
             </div>
 
+            <!-- Job Completed & Reset Radar Action Bar (Revealed when job is finished) -->
+            <div id="booking-completed-action-bar" class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-xs hidden">
+              <div class="flex items-center gap-2 text-emerald-900 font-bold">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                <span>Job Completed & 100% Wage Settled. Proximity radar map reset.</span>
+              </div>
+              <button type="button" onclick="closeCompletedBookingCard()" class="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-black text-xs transition shadow-xs flex items-center gap-1.5 btn-tactile">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+                <span>Book Another Service</span>
+              </button>
+            </div>
+
             <!-- Demo Shortcut Action Bar -->
             <div class="flex flex-wrap items-center justify-between bg-blue-100/70 p-3 rounded-xl gap-2 text-xs">
               <span class="font-bold text-blue-950" data-i18n="txt-demo-shortcuts">Demo Shortcuts:</span>
@@ -615,93 +544,53 @@
             </div>
           </div>
 
-          <!-- 100% Transparent Price Breakdown Card -->
-          <div class="glass-card rounded-3xl p-6 border-blue-200" id="transparent-invoice-box">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+          <!-- Cooperative Direct Fair-Wage & Booking Guidance Card -->
+          <div class="glass-card rounded-3xl p-5 border-blue-100 bg-gradient-to-br from-blue-50/70 to-indigo-50/50 space-y-4 shadow-sm">
+            <div class="flex items-center space-x-2.5 pb-2 border-b border-blue-200/60">
+              <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold shadow-sm">
+                <i data-lucide="shield-check" class="w-5 h-5 text-amber-300"></i>
+              </div>
               <div>
-                <h3 class="font-black text-slate-900 text-base" data-i18n="txt-invoice-title">Transparent Invoice</h3>
-                <p class="text-[11px] text-slate-500" data-i18n="txt-invoice-subtitle">Grassroots fair-wage calculation</p>
+                <h4 class="font-black text-slate-900 text-sm">How Seva Setu Booking Works</h4>
+                <p class="text-[11px] text-slate-500 font-medium">100% Direct Fair Wage to Cooperative Technicians</p>
               </div>
-              <span class="text-xs bg-emerald-100 text-emerald-900 font-black px-2.5 py-1 rounded-full border border-emerald-200" data-i18n="txt-invoice-badge">
-                0% Exploitative Cut
-              </span>
             </div>
 
-            <!-- Itemized Receipt with reduced prices -->
-            <div class="space-y-2.5 py-4 text-xs">
-              <div class="flex items-center justify-between text-slate-700 bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="flex items-center gap-1.5 font-bold text-slate-700">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
-                  <span data-i18n="lbl-invoice-slot">Scheduled Slot:</span>
-                </span>
-                <span class="font-black text-blue-900" id="invoice-schedule-time">Immediate (<30 mins)</span>
-              </div>
-              <div class="flex justify-between text-slate-600">
-                <span><span data-i18n="txt-lbl-labor">Direct Fair Labor</span> (<span id="lbl-quote-service" class="font-bold text-slate-800">ELECTRICIAN</span>):</span>
-                <span class="font-bold text-slate-900" id="quote-labor">₹120.00</span>
-              </div>
-              <div class="flex justify-between text-slate-600">
-                <span data-i18n="txt-lbl-toolkit">Certified Toolkit Charge:</span>
-                <span class="font-bold text-slate-900" id="quote-toolkit">₹40.00</span>
-              </div>
-              <div class="flex justify-between text-slate-600">
-                <span><span data-i18n="txt-lbl-transit">Direct Transit Tariff</span> (<span id="quote-dist" class="font-semibold text-blue-700">1.2 km</span>):</span>
-                <span class="font-bold text-slate-900" id="quote-transit">₹20.00</span>
-              </div>
-              <div class="flex justify-between text-red-600" id="row-emergency" style="display:none;">
-                <span class="font-semibold flex items-center gap-1">
-                  <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                  <span data-i18n="txt-lbl-emergency">Emergency Priority Surcharge:</span>
-                </span>
-                <span class="font-bold" id="quote-emergency">+₹60.00</span>
-              </div>
-              <div class="flex justify-between text-slate-600">
-                <span data-i18n="txt-lbl-tax">Statutory GST (5%):</span>
-                <span class="font-bold text-slate-900" id="quote-tax">₹6.00</span>
-              </div>
-              <div class="flex justify-between text-blue-900 bg-blue-50/80 p-2 rounded-xl border border-blue-100">
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Click any of the <strong>12 Certified Trades</strong> in the catalogue to open the <strong>Interactive Booking Pop-up</strong>. Choose your specific task, pick instant or advance scheduling, and get real-time transparent tariffs!
+            </p>
+
+            <div class="space-y-2.5 text-xs text-slate-700 pt-1">
+              <div class="flex items-start gap-2.5 p-2 rounded-xl bg-white/80 border border-blue-100">
+                <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
                 <div>
-                  <span class="font-bold block" data-i18n="txt-lbl-platform">Cooperative Welfare Fund (3.5%):</span>
-                  <span class="text-[10px] text-blue-600 font-normal" data-i18n="txt-lbl-platform-sub">Insurance, worker healthcare & pension</span>
+                  <strong class="text-slate-900 block">Click Any Trade Card</strong>
+                  <span class="text-slate-500 text-[11px]">Instant pop-up menu opens showing specific sub-services (e.g. Electrician fan fitting, short circuit fix, etc.).</span>
                 </div>
-                <span class="font-black text-blue-900" id="quote-platform">₹4.20</span>
               </div>
-              <div class="flex justify-between text-emerald-700 font-bold bg-emerald-50 p-2 rounded-xl border border-emerald-200" id="row-ngo" style="display:none;">
-                <span class="flex items-center gap-1">
-                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
-                  <span data-i18n="txt-lbl-ngo">Verified NGO / Community Subsidy (-20%):</span>
-                </span>
-                <span id="quote-ngo">-₹0.00</span>
+              <div class="flex items-start gap-2.5 p-2 rounded-xl bg-white/80 border border-blue-100">
+                <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                <div>
+                  <strong class="text-slate-900 block">Choose Dispatch & Schedule Mode</strong>
+                  <span class="text-slate-500 text-[11px]">Choose between Instant SOS (&lt;30 min dispatch) or Schedule for later with custom arrival windows.</span>
+                </div>
               </div>
-              <div class="flex justify-between text-amber-900 font-bold bg-amber-50 p-2 rounded-xl border border-amber-300" id="row-subscriber-discount" style="display:none;">
-                <span class="flex items-center gap-1">
-                  <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600"></i>
-                  <span id="lbl-subscriber-discount">Samriddhi VIP Discount (25%):</span>
-                </span>
-                <span id="quote-subscriber-discount">-₹0.00</span>
+              <div class="flex items-start gap-2.5 p-2 rounded-xl bg-white/80 border border-blue-100">
+                <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                <div>
+                  <strong class="text-slate-900 block">Dual-OTP Protected Arrival & Pay</strong>
+                  <span class="text-slate-500 text-[11px]">100% transparent invoice with zero aggregator cut and safe NPCI cooperative escrow.</span>
+                </div>
               </div>
             </div>
 
-            <!-- Total Amount -->
-            <div class="pt-3 border-t border-slate-200">
-              <div class="flex justify-between items-baseline mb-3">
-                <span class="text-sm font-black text-slate-900" data-i18n="txt-lbl-total">Total Customer Payable:</span>
-                <span class="text-3xl font-black text-blue-900 tracking-tight" id="quote-total">₹190.20</span>
-              </div>
-
-              <!-- Direct Fair-Wage Transparency Reassurance -->
-              <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 py-2.5 px-3 rounded-xl mb-4 text-center">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
-                <span class="font-bold text-slate-700">100% Direct Fair Wage to Cooperative Technician &bull; Zero Hidden Deductions</span>
-              </div>
-
-              <!-- Book Now Button -> Opens Payment Gateway -->
-              <button id="btn-book-service" onclick="openPaymentGatewayModal()" class="w-full py-4 bg-gradient-to-r from-blue-700 via-indigo-700 to-coopblue-900 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-sm rounded-2xl shadow-xl transition flex items-center justify-center space-x-2 btn-tactile">
-                <i data-lucide="credit-card" class="w-5 h-5 text-amber-400"></i>
-                <span id="txt-btn-book" data-i18n="txt-btn-book">Confirm & Proceed to Payment</span>
-              </button>
+            <div class="pt-2 border-t border-blue-200/60 flex items-center justify-between text-xs">
+              <span class="text-slate-500 font-semibold flex items-center gap-1">
+                <i data-lucide="headphones" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Toll-Free Helpline:</span>
+              </span>
+              <strong class="text-blue-900 font-mono font-black">1800-200-SEVA</strong>
             </div>
-
           </div>
 
         </div>
@@ -816,29 +705,126 @@
             </div>
           </div>
 
-          <form onsubmit="handleWorkerStep1Submit(event)" class="space-y-4 text-xs">
-            <div>
-              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Technician Full Name *</label>
-              <input type="text" id="worker-login-name" required placeholder="e.g. Rajesh Kumar" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+          <!-- Multi-Worker Profile Selector -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px]">Select Worker Persona (Multiple Trades Auth)</label>
+              <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">5 Cooperative Trades Ready</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="worker-login-persona-grid">
+              <button type="button" onclick="selectWorkerLoginPersona('rajesh')" class="worker-auth-tile p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50/80 text-left transition btn-tactile shadow-xs" data-persona="rajesh">
+                <div class="font-black text-slate-900 text-xs flex items-center justify-between">
+                  <span>Rajesh Kumar</span>
+                  <span class="text-[9px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-mono">#101</span>
+                </div>
+                <div class="text-[10px] text-emerald-800 font-bold mt-0.5">⚡ Electrician (Delhi Central)</div>
+              </button>
+
+              <button type="button" onclick="selectWorkerLoginPersona('aslam')" class="worker-auth-tile p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-left transition btn-tactile shadow-xs" data-persona="aslam">
+                <div class="font-black text-slate-900 text-xs flex items-center justify-between">
+                  <span>Mohammad Aslam</span>
+                  <span class="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-mono">#102</span>
+                </div>
+                <div class="text-[10px] text-blue-700 font-bold mt-0.5">🔧 Plumber (Delhi Central)</div>
+              </button>
+
+              <button type="button" onclick="selectWorkerLoginPersona('sunita')" class="worker-auth-tile p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-left transition btn-tactile shadow-xs" data-persona="sunita">
+                <div class="font-black text-slate-900 text-xs flex items-center justify-between">
+                  <span>Sunita Sharma</span>
+                  <span class="text-[9px] bg-purple-600 text-white px-1.5 py-0.2 rounded font-mono">#103</span>
+                </div>
+                <div class="text-[10px] text-purple-700 font-bold mt-0.5">🩺 Healthcare (South Delhi)</div>
+              </button>
+
+              <button type="button" onclick="selectWorkerLoginPersona('vikram')" class="worker-auth-tile p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-left transition btn-tactile shadow-xs" data-persona="vikram">
+                <div class="font-black text-slate-900 text-xs flex items-center justify-between">
+                  <span>Vikram Singh</span>
+                  <span class="text-[9px] bg-amber-600 text-white px-1.5 py-0.2 rounded font-mono">#104</span>
+                </div>
+                <div class="text-[10px] text-amber-700 font-bold mt-0.5">🚗 Driver (South Delhi)</div>
+              </button>
+
+              <button type="button" onclick="selectWorkerLoginPersona('amit')" class="worker-auth-tile p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-left transition btn-tactile shadow-xs col-span-2 sm:col-span-1" data-persona="amit">
+                <div class="font-black text-slate-900 text-xs flex items-center justify-between">
+                  <span>Amit Verma</span>
+                  <span class="text-[9px] bg-teal-600 text-white px-1.5 py-0.2 rounded font-mono">#106</span>
+                </div>
+                <div class="text-[10px] text-teal-700 font-bold mt-0.5">⚡ Backup Electrician</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multi-Layer Authentication Flow -->
+          <form onsubmit="handleWorkerStep1Submit(event)" class="space-y-4 text-xs pt-1 border-t border-slate-100">
+            <!-- Layer 1: Mobile & Instant OTP Challenge -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="font-black text-slate-900 flex items-center gap-1.5">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                  <span>Layer 1: Mobile & UIDAI OTP Challenge</span>
+                </span>
+                <span id="worker-otp-status-badge" class="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded-full border border-emerald-300">
+                  OTP Verified ✓
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-600 text-[10px] uppercase mb-1">Technician Name</label>
+                  <input type="text" id="worker-login-name" required placeholder="e.g. Rajesh Kumar" value="Rajesh Kumar" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-600 text-[10px] uppercase mb-1">Mobile Number (Aadhaar Linked)</label>
+                  <div class="flex items-center gap-1.5">
+                    <input type="text" id="worker-login-phone" required placeholder="+91 98765 43210" value="+91 98765 43210" class="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-mono font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+                    <button type="button" onclick="sendWorkerOtp()" id="btn-send-worker-otp" class="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-[11px] whitespace-nowrap btn-tactile">
+                      Resend OTP
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- OTP Verification Input Box -->
+              <div class="p-2.5 bg-white border border-emerald-200 rounded-xl flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-bold text-slate-500 uppercase">Enter 4-Digit OTP:</span>
+                  <input type="text" id="worker-login-otp" maxlength="4" value="4821" class="w-20 px-2 py-1 bg-emerald-50 border border-emerald-400 rounded-lg text-xs font-mono font-black text-center tracking-widest text-emerald-950 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="autofillWorkerOtp()" class="px-2.5 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-lg font-bold text-[10px] btn-tactile">
+                    ⚡ Auto-Fill Demo OTP (4821)
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Mobile Number (Aadhaar Linked) *</label>
-              <input type="text" id="worker-login-phone" required placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
+            <!-- Layer 2: Cooperative Federation & Member Registry ID -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+              <span class="font-black text-slate-900 flex items-center gap-1.5">
+                <i data-lucide="building-2" class="w-4 h-4 text-blue-600"></i>
+                <span>Layer 2: Cooperative Federation & PACS Registry ID</span>
+              </span>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-600 text-[10px] uppercase mb-1">Affiliated Society</label>
+                  <select id="worker-login-coop" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+                    <option value="Delhi Central Labour Cooperative">Delhi Central Labour Cooperative Federation</option>
+                    <option value="South Delhi Multi-Purpose Cooperative">South Delhi Multi-Purpose Cooperative Society</option>
+                    <option value="NCR Technicians Cooperative">NCR Technicians & Artisans Cooperative</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-600 text-[10px] uppercase mb-1">PACS Cooperative ID</label>
+                  <input type="text" id="worker-coop-id-input" readonly value="DL/PACS/2026/101" class="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-700 cursor-not-allowed" />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Affiliated Cooperative Society</label>
-              <select id="worker-login-coop" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
-                <option value="Delhi Central Labour Cooperative">Delhi Central Labour Cooperative Federation</option>
-                <option value="South Delhi Multi-Purpose Cooperative">South Delhi Multi-Purpose Cooperative Society</option>
-                <option value="NCR Technicians Cooperative">NCR Technicians & Artisans Cooperative</option>
-              </select>
-            </div>
-
-            <div class="pt-3 flex justify-end">
+            <div class="pt-2 flex items-center justify-between">
+              <span class="text-[11px] text-slate-500 font-medium">Next: Trade Category & AI Attestation</span>
               <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-md transition flex items-center gap-2 btn-tactile">
-                <span>Continue to Trade Category Selection</span>
+                <span>Verify Credentials & Proceed to Step 2</span>
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </button>
             </div>
@@ -1059,6 +1045,16 @@
               </div>
             </div>
 
+            <!-- Disciplinary Compliance Badge -->
+            <div id="worker-compliance-pill" class="bg-slate-100 px-3.5 py-3 rounded-2xl border border-slate-200 text-xs flex flex-col justify-center">
+              <span class="text-[9px] font-black uppercase text-slate-500 tracking-wider">Duty Acceptance</span>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500" id="worker-compliance-dot"></span>
+                <span class="font-black text-slate-800" id="worker-compliance-status">Active Duty</span>
+              </div>
+              <span class="text-[10px] font-bold text-slate-500 mt-0.5" id="worker-rejection-count-badge">Declined: 0 / 3 SLA</span>
+            </div>
+
             <!-- Log Out / Re-onboard Button -->
             <button onclick="logoutWorkerToOnboard()" title="Log out or re-verify credentials" class="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-200 transition btn-tactile text-xs font-bold flex items-center gap-1">
               <i data-lucide="log-out" class="w-4 h-4"></i>
@@ -1069,8 +1065,53 @@
 
         </div>
 
-      <!-- Main Worker Workspace: Radar & Dual OTP Actions -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Worker Disciplinary Alert / Revocation Banner (Revealed if Fired or Under Review) -->
+      <div id="worker-disciplinary-banner" class="hidden p-4 rounded-3xl border-2 transition-all shadow-md">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+
+      <!-- ================= WORKER MODE CONTROL & DUTY SWITCHER (PERSISTENT & ACCESSIBLE) ================= -->
+      <div id="worker-mode-control-bar" class="glass-card rounded-3xl p-4 sm:p-5 border-slate-200/90 bg-white/95 shadow-sm transition-all duration-300">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          <!-- Mode Status & Badges -->
+          <div class="flex items-center space-x-3.5">
+            <div id="worker-duty-badge" class="px-3.5 py-1.5 rounded-2xl bg-blue-100 text-blue-900 border border-blue-300 font-black text-xs flex items-center gap-2 shadow-xs transition-all">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
+              <span id="worker-duty-badge-text">COOPERATIVE SHIFT (09:00 - 17:00)</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="worker-duty-text" class="text-sm font-black text-slate-900">Cooperative On-Duty Shift (09:00 - 17:00)</h3>
+                <span id="worker-mode-indicator-pill" class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider">Normal Job Mode</span>
+              </div>
+              <p id="worker-duty-subtext" class="text-xs text-slate-500 font-medium mt-0.5">
+                Standard cooperative radar dispatch with 3.5% welfare pool reserve
+              </p>
+            </div>
+          </div>
+
+          <!-- Dual Mode Toggle Buttons -->
+          <div class="flex items-center bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 gap-1.5 shadow-inner">
+            <button type="button" id="btn-mode-coop" onclick="setWorkerDutyMode('COOP_SHIFT')" class="px-4 py-2.5 rounded-xl font-black text-xs transition flex items-center gap-2 btn-tactile bg-blue-700 text-white shadow-sm ring-2 ring-blue-500/20">
+              <i data-lucide="shield" class="w-4 h-4"></i>
+              <span>Normal Job Mode (Coop Shift)</span>
+            </button>
+            <button type="button" id="btn-mode-freelance" onclick="setWorkerDutyMode('FREELANCE')" class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-600 hover:text-slate-900 transition flex items-center gap-2 btn-tactile hover:bg-white/80">
+              <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+              <span>Freelance Mode (Post-5 PM)</span>
+              <span id="freelance-mode-badge-count" class="bg-indigo-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full ml-0.5">4 Gigs</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= WORKER COMPONENT: NORMAL JOB RADAR & DUAL OTP DESK ================= -->
+      <div id="worker-normal-job-section" class="space-y-6">
+        <!-- Main Worker Workspace: Radar & Dual OTP Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
         
         <!-- Left: Incoming Job Radar Alert (Rapido Style) -->
         <div class="glass-card rounded-3xl p-6 border-blue-100 relative overflow-hidden">
@@ -1084,8 +1125,8 @@
             </span>
           </div>
 
-          <!-- Radar Scanner Visual Background -->
-          <div class="relative h-64 w-full bg-gradient-to-b from-slate-900 to-indigo-950 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800 mb-4">
+          <!-- Radar Scanner Visual Background (Idle / Searching State) -->
+          <div id="worker-radar-scanner" class="relative h-64 w-full bg-gradient-to-b from-slate-900 to-indigo-950 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800 mb-4">
             <!-- Concentric Circles -->
             <div class="radar-ring" style="width: 80px; height: 80px;"></div>
             <div class="radar-ring" style="width: 150px; height: 150px;"></div>
@@ -1104,6 +1145,37 @@
             <!-- Idle Radar Message -->
             <div id="radar-idle-msg" class="absolute bottom-3 text-center text-xs text-blue-300 font-medium z-10 bg-slate-950/80 px-4 py-1 rounded-full border border-blue-800/60" data-i18n="txt-radar-idle">
               Scanning cooperative broadcast frequency...
+            </div>
+          </div>
+
+          <!-- Radar Navigation Map Container (Revealed upon Job Acceptance / Navigation) -->
+          <div id="worker-radar-map-container" class="relative h-72 w-full rounded-2xl overflow-hidden border-2 border-blue-500/80 mb-4 shadow-lg hidden">
+            <!-- Live Leaflet Navigation Map -->
+            <div id="worker-radar-map" class="w-full h-full"></div>
+
+            <!-- Live HUD Navigation Overlay -->
+            <div class="absolute top-2 left-2 right-2 z-[1000] flex items-center justify-between bg-slate-950/90 backdrop-blur-md px-3 py-2 rounded-xl border border-blue-500/40 text-xs shadow-md">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <div>
+                  <span class="font-black text-white text-[11px] block" id="radar-nav-dest-title">Navigating to Client Destination</span>
+                  <span class="text-[10px] text-blue-300" id="radar-nav-dest-eta">Live GPS Route • Optimal Transit</span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <button type="button" onclick="toggleWorkerRadarView()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-200 text-[10px] font-bold rounded-lg border border-slate-700 transition flex items-center gap-1" title="Toggle back to radar animation">
+                  <i data-lucide="radar" class="w-3 h-3"></i>
+                  <span>Scanner</span>
+                </button>
+                <a id="btn-radar-external-nav" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition flex items-center gap-1 shadow-sm">
+                  <i data-lucide="compass" class="w-3 h-3"></i>
+                  <span>Directions</span>
+                </a>
+                <button type="button" onclick="openWorkerWithdrawModal()" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-bold rounded-lg transition flex items-center gap-1 shadow-sm" title="Emergency Withdrawal & Instant Fallback Reassignment">
+                  <i data-lucide="alert-triangle" class="w-3 h-3 text-amber-300"></i>
+                  <span>Withdraw / Reassign</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1146,7 +1218,14 @@
                 <span data-i18n="txt-btn-accept">Accept & Navigate</span>
               </button>
             </div>
+
+            <!-- Worker Incident Escalation Trigger -->
+            <button onclick="openWorkerEscalationModal()" type="button" class="w-full py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs rounded-xl transition border border-amber-300 flex items-center justify-center gap-1.5 btn-tactile">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+              <span>🚨 Escalate Customer Incident (Overtime Delay / Misbehavior)</span>
+            </button>
           </div>
+
 
         </div>
 
@@ -1176,6 +1255,15 @@
               <input type="text" id="input-start-otp" maxlength="6" placeholder="Enter START_OTP (e.g. 4821)" class="flex-1 px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-blue-600 focus:outline-none" />
               <button onclick="autoFillStartOtp()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl transition" title="Auto-fill for demo">Auto-Fill</button>
               <button onclick="submitStartOtp()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition btn-tactile" data-i18n="txt-btn-verify-start">Verify Start</button>
+            </div>
+
+            <!-- Emergency Reassign Shortcut -->
+            <div class="pt-2 mt-2 flex items-center justify-between border-t border-slate-100">
+              <span class="text-[11px] text-slate-500 font-medium">Vehicle breakdown or en-route transit emergency?</span>
+              <button type="button" onclick="openWorkerWithdrawModal()" class="text-red-700 hover:text-red-900 text-[11px] font-bold underline flex items-center gap-1">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-red-600"></i>
+                <span>Emergency Withdraw & Reassign</span>
+              </button>
             </div>
           </div>
 
@@ -1211,6 +1299,15 @@
                 <input type="text" id="input-end-otp" maxlength="6" placeholder="Enter END_OTP (e.g. 7914)" class="flex-1 px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
                 <button onclick="autoFillEndOtp()" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-xl transition" title="Auto-fill for demo">Auto-Fill</button>
                 <button onclick="submitEndOtp()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition btn-tactile" data-i18n="txt-btn-release">Release Payout</button>
+              </div>
+
+              <!-- Incident Escalation Shortcut -->
+              <div class="pt-2 flex items-center justify-between border-t border-slate-100">
+                <span class="text-[11px] text-slate-500 font-medium">Delays exceeding booking or customer misbehavior?</span>
+                <button type="button" onclick="openWorkerEscalationModal()" class="text-amber-800 hover:text-amber-950 text-[11px] font-bold underline flex items-center gap-1">
+                  <i data-lucide="alert-octagon" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span>Report Customer Incident</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1253,7 +1350,344 @@
         </div>
 
       </div>
+
+        <!-- Switch to Freelance Mode Quick-Action Banner -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-indigo-50/90 via-purple-50/70 to-indigo-100/60 border border-indigo-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center gap-3 text-xs">
+            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+              <i data-lucide="sparkles" class="w-5 h-5 text-amber-300"></i>
+            </div>
+            <div>
+              <span class="font-black text-indigo-950 block">Want to earn with zero federation cuts during off-hours?</span>
+              <span class="text-indigo-700 text-[11px]">Direct citizen freelance gigs are open right now for direct 100% UPI payouts with custom hours.</span>
+            </div>
+          </div>
+          <button type="button" onclick="setWorkerDutyMode('FREELANCE')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition shadow-sm btn-tactile flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-300"></i>
+            <span>Switch to Freelance Mode →</span>
+          </button>
+        </div>
       </div>
+
+      <!-- ================= WORKER COMPONENT: FREELANCING PLATFORM & POST-SHIFT GIG HUB ================= -->
+      <div id="worker-freelance-section" class="glass-card rounded-3xl p-6 border-indigo-200 space-y-5 bg-gradient-to-br from-white via-indigo-50/25 to-purple-50/20 shadow-md">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-indigo-100 gap-4">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">Post-Shift Freelancing Hub</span>
+              <span class="text-indigo-700 text-xs font-bold">100% Direct Take-Home • 0% Federation Cut</span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 mt-1">Independent Freelance Gigs & Custom Hours</h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Beyond reserved cooperative shift hours (9 AM - 5 PM), choose your own working time and claim direct freelance gigs with zero intermediary cuts.
+            </p>
+          </div>
+
+          <!-- Duty Mode Switcher Toggle -->
+          <div class="flex items-center gap-2 bg-slate-900/90 p-1.5 rounded-2xl border border-indigo-900 shadow-inner">
+            <button type="button" id="btn-duty-coop" onclick="setWorkerDutyMode('COOP_SHIFT')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md flex items-center gap-1.5 btn-tactile">
+              <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+              <span>Coop Shift (9 AM - 5 PM)</span>
+            </button>
+            <button type="button" id="btn-duty-freelance" onclick="setWorkerDutyMode('FREELANCE')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition text-indigo-200 hover:text-white hover:bg-indigo-800/60 flex items-center gap-1.5 btn-tactile">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Freelance Mode (Post-5 PM)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Direct Payout Highlights & Custom Slots Bar -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <!-- Direct Freelance Wallet -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-coopblue-950 text-white shadow-md flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-bold text-indigo-200 uppercase tracking-wider block">Direct Freelance Earnings (100% UPI)</span>
+              <div class="text-2xl font-black mt-0.5" id="worker-freelance-earned-display">₹0.00</div>
+              <span class="text-[10px] text-emerald-300 font-semibold mt-0.5 block">✓ 0% Federation Commission Deducted</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-amber-300 shadow-sm">
+              <i data-lucide="banknote" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <!-- Working Slots Selector -->
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs md:col-span-2 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase tracking-wider text-slate-500">Your Chosen Freelance Availability Slots:</span>
+              <span class="text-[11px] text-indigo-600 font-bold" id="freelance-active-slot-hint">Evening 17:00 - 21:00 Active</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2" id="freelance-slot-chips">
+              <button type="button" onclick="toggleFreelanceSlot('17:00 - 21:00 (Evening)', this)" class="slot-chip px-3 py-1.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-950 font-bold text-xs transition btn-tactile shadow-xs">
+                🌅 Evening (5 PM - 9 PM)
+              </button>
+              <button type="button" onclick="toggleFreelanceSlot('21:00 - 23:30 (Night Owl)', this)" class="slot-chip px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 text-slate-700 font-bold text-xs transition btn-tactile">
+                🌙 Night Owl (9 PM - 11:30 PM)
+              </button>
+              <button type="button" onclick="toggleFreelanceSlot('Weekend Full Flexible', this)" class="slot-chip px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 text-slate-700 font-bold text-xs transition btn-tactile">
+                📅 Weekend Flexible
+              </button>
+              <button type="button" onclick="toggleFreelanceSlot('Early Morning (6 AM - 9 AM)', this)" class="slot-chip px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 text-slate-700 font-bold text-xs transition btn-tactile">
+                ☕ Morning (6 AM - 9 AM)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVE FREELANCE GIG EXECUTION STATION (Direct P2P Dual-OTP Desk) -->
+        <div id="freelance-active-station" class="hidden bg-slate-950 text-white rounded-3xl p-5 border-2 border-indigo-500/80 shadow-xl space-y-4">
+          <!-- Station Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-indigo-900/80 gap-2">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="bg-indigo-600/80 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Active Direct Freelance Booking
+              </span>
+              <span class="text-xs text-amber-300 font-bold hidden sm:inline">P2P Escrow Protection (Zero Govt Cess)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span id="fl-active-status-badge" class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase">
+                En Route to Site
+              </span>
+              <button type="button" onclick="cancelFreelanceBooking()" class="px-2.5 py-1 bg-red-950/60 hover:bg-red-900 text-red-300 hover:text-white rounded-xl text-[11px] font-bold border border-red-800/60 transition btn-tactile">
+                Cancel Gig
+              </button>
+            </div>
+          </div>
+
+          <!-- Dual-Column Layout: Left (Gig Info & Leaflet Map) | Right (Dual-OTP Desk) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <!-- Left Column: Gig Details, Route Map, & Direct Fee Structure -->
+            <div class="lg:col-span-6 space-y-3">
+              <!-- Gig Metadata Card -->
+              <div class="bg-slate-900/90 border border-indigo-900/60 rounded-2xl p-4 space-y-2.5">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block" id="fl-active-category">Direct Citizen Contract</span>
+                    <h4 class="text-base font-black text-white" id="fl-active-title">Commercial Office 3-Phase Server UPS Wiring</h4>
+                    <p class="text-xs text-slate-300 mt-0.5">
+                      Client: <span class="font-bold text-white" id="fl-active-client">Vikram Malhotra</span> &bull; <span id="fl-active-phone" class="font-mono text-blue-300">+91 98110 44231</span>
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block">Direct Net Payout</span>
+                    <span class="text-xl font-black text-emerald-400" id="fl-active-payout">₹550.00</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 text-xs text-slate-300 pt-1 border-t border-slate-800">
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span id="fl-active-loc">Connaught Place Inner Circle, Block C</span>
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span id="fl-active-slot">Evening 18:00 - 20:30</span>
+                  </span>
+                  <span class="flex items-center gap-1 text-emerald-300 font-bold" id="fl-active-dist">
+                    📍 1.2 km away
+                  </span>
+                </div>
+              </div>
+
+              <!-- Interactive Freelance Leaflet Map -->
+              <div class="relative h-52 w-full rounded-2xl overflow-hidden border border-indigo-800/80 shadow-inner">
+                <div id="freelance-nav-leaflet" class="w-full h-full"></div>
+
+                <!-- Leaflet HUD Overlay -->
+                <div class="absolute top-2 left-2 right-2 z-[1000] flex items-center justify-between bg-slate-950/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-indigo-500/40 text-xs">
+                  <div class="flex items-center space-x-1.5">
+                    <i data-lucide="navigation-2" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span class="font-bold text-white text-[11px]" id="fl-map-hud-title">En Route: Connaught Place</span>
+                  </div>
+                  <a id="fl-external-nav" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black rounded-lg transition flex items-center gap-1 shadow-xs">
+                    <i data-lucide="compass" class="w-3 h-3"></i>
+                    <span>Directions</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Transparent Direct P2P Financial Breakdown (No Govt Cess) -->
+              <div class="p-3.5 rounded-2xl bg-indigo-950/40 border border-indigo-900/60 text-xs space-y-2">
+                <div class="flex items-center justify-between text-[11px] font-bold text-indigo-300">
+                  <span>Direct P2P Escrow Settlement Architecture:</span>
+                  <span class="text-emerald-400 font-black">100% Direct Worker Take-Home</span>
+                </div>
+                <div class="space-y-1 text-slate-300 text-[11px]">
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Agreed Gig Labor Value:</span>
+                    <span class="font-bold text-white" id="fl-calc-base">₹550.00</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Platform Tech & Matching Fee (Matches normal mode):</span>
+                    <span class="font-bold text-amber-300" id="fl-calc-platform">₹20.00</span>
+                  </div>
+                  <div class="flex justify-between items-center text-emerald-300 font-bold">
+                    <span class="flex items-center gap-1">
+                      <span>Govt Welfare Cess / PACS Association:</span>
+                      <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">EXEMPT</span>
+                    </span>
+                    <span>₹0.00 (0% Intermediary)</span>
+                  </div>
+                  <div class="flex justify-between pt-1 border-t border-indigo-900/60 text-xs font-black text-white">
+                    <span>Net Credited to Worker Freelance Wallet:</span>
+                    <span class="text-emerald-400 text-sm" id="fl-calc-net">₹550.00</span>
+                  </div>
+                </div>
+                <p class="text-[10px] text-slate-400 italic">
+                  * Freelance gigs are direct bilateral agreements between citizen and skilled worker. Ministry of Cooperation PACS cess is not levied in freelance mode.
+                </p>
+              </div>
+            </div>
+
+            <!-- Right Column: Dual-OTP Execution & Verification Desk -->
+            <div class="lg:col-span-6 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <h5 class="text-xs font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
+                  <i data-lucide="key-round" class="w-4 h-4 text-indigo-400"></i>
+                  <span>Direct Dual-OTP Verification Desk</span>
+                </h5>
+                <span class="text-[10px] text-slate-400 font-semibold">Client Direct Authentication</span>
+              </div>
+
+              <!-- STEP 1: START OTP -->
+              <div class="p-3.5 bg-slate-900/90 border border-indigo-900/70 rounded-2xl space-y-2 shadow-sm" id="fl-box-step-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-black text-white flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                    <span>STEP 1: Enter Customer Arrival START_OTP</span>
+                  </span>
+                  <span id="fl-badge-step-1" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase">
+                    Awaiting Site Arrival
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-400">
+                  Ask client for the 4-digit START_OTP upon reaching their premises to start work clock.
+                </p>
+                <div class="flex space-x-2">
+                  <input type="text" id="fl-input-start-otp" maxlength="6" placeholder="Enter START_OTP (e.g. 5821)" class="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                  <button type="button" onclick="autoFillFreelanceStartOtp()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-[11px] font-bold rounded-xl border border-slate-700 transition" title="Auto-fill for demo">Auto-Fill</button>
+                  <button type="button" onclick="submitFreelanceStartOtp()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition btn-tactile shadow-sm">Verify Start</button>
+                </div>
+              </div>
+
+              <!-- STEP 2: Proof of Work (Photo) -->
+              <div class="p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl space-y-2 opacity-60" id="fl-box-step-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-black text-white flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-slate-700 text-slate-300 text-[10px] flex items-center justify-center font-bold" id="fl-num-step-2">2</span>
+                    <span>STEP 2: Attach Work Completion Proof (Optional)</span>
+                  </span>
+                  <span id="fl-badge-step-2" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase">
+                    Locked (Needs Step 1)
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-400">
+                  Snap or select a photo of completed job to attach to the direct P2P receipt.
+                </p>
+                <div class="flex items-center gap-2">
+                  <input type="file" id="fl-proof-file" accept="image/*" onchange="handleFreelanceProofUpload(event)" disabled class="block w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-indigo-900/50 file:text-indigo-300 hover:file:bg-indigo-800 cursor-pointer disabled:opacity-50" />
+                  <button type="button" id="fl-btn-simulate-proof" onclick="simulateFreelanceProof()" disabled class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 whitespace-nowrap disabled:opacity-50">Sample Proof</button>
+                </div>
+                <!-- Thumbnail Preview -->
+                <div id="fl-proof-preview-container" class="hidden p-2 bg-slate-950 rounded-xl border border-indigo-900/50 flex items-center gap-3">
+                  <img id="fl-proof-preview-img" src="" class="w-10 h-10 object-cover rounded-lg border border-indigo-700" alt="Work Proof" />
+                  <div class="text-[11px]">
+                    <p class="font-bold text-emerald-400">✓ Proof of Work Attached</p>
+                    <p class="text-slate-400 text-[10px]">Client verified completion snapshot</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- STEP 3: END OTP Verification & Release Payout -->
+              <div class="p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl space-y-2 opacity-60" id="fl-box-step-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-black text-white flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-slate-700 text-slate-300 text-[10px] flex items-center justify-center font-bold" id="fl-num-step-3">3</span>
+                    <span>STEP 3: Enter Completion OTP (END_OTP)</span>
+                  </span>
+                  <span id="fl-badge-step-3" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase">
+                    Locked
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-400">
+                  Client enters this 4-digit code after job inspection to release 100% UPI payout.
+                </p>
+                <div class="flex space-x-2">
+                  <input type="text" id="fl-input-end-otp" maxlength="6" placeholder="Enter END_OTP (e.g. 8419)" disabled class="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-50" />
+                  <button type="button" id="fl-btn-autofill-end" onclick="autoFillFreelanceEndOtp()" disabled class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold rounded-xl border border-slate-700 transition disabled:opacity-50" title="Auto-fill for demo">Auto-Fill</button>
+                  <button type="button" id="fl-btn-submit-end" onclick="submitFreelanceEndOtp()" disabled class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition btn-tactile shadow-sm disabled:opacity-50">Release Payout</button>
+                </div>
+              </div>
+
+              <!-- SETTLEMENT SUCCESS CARD (Revealed after End OTP Verified) -->
+              <div id="fl-settlement-card" class="hidden bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 border-2 border-emerald-500 rounded-2xl p-4 text-white space-y-3 shadow-lg">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
+                    <i data-lucide="check-check" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-black text-emerald-300 uppercase tracking-wider">Direct P2P Escrow Released!</h5>
+                    <p class="text-[11px] text-slate-300">100% Payout credited directly to your UPI Freelance Balance.</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 bg-slate-950/80 p-2.5 rounded-xl border border-emerald-900/60 text-xs">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Amount Settled</span>
+                    <span class="text-base font-black text-emerald-400" id="fl-settled-amount">₹550.00</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Transaction Ref</span>
+                    <span class="text-[10px] font-mono text-slate-300 truncate block" id="fl-settled-tx">UPI-P2P-98412847</span>
+                  </div>
+                </div>
+
+                <button type="button" onclick="dismissFreelanceSettlement()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl transition btn-tactile shadow-sm flex items-center justify-center gap-1.5">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  <span>Close Station & Return to Freelance Board</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Freelance Marketplace Job Board -->
+        <div class="space-y-3 pt-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="briefcase" class="w-4 h-4 text-indigo-600"></i>
+              <span>Open Citizen Freelance Gig Board (Post-Shift)</span>
+            </h4>
+            <div class="flex items-center gap-2">
+              <span id="freelance-jobs-count-badge" class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-[10px] font-black">4 Available Gigs</span>
+              <span class="text-[11px] text-slate-500 font-medium">Claim jobs directly • Immediate client UPI settlement</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="freelance-jobs-grid">
+            <!-- Populated dynamically via app.js -->
+          </div>
+        </div>
+
+        <!-- Return to Normal Job Mode Banner -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-emerald-50/60 border border-blue-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs mt-4">
+          <div class="flex items-center gap-3 text-xs">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+              <i data-lucide="shield" class="w-5 h-5 text-emerald-300"></i>
+            </div>
+            <div>
+              <span class="font-black text-slate-900 block">Cooperative Shift Hours (9:00 AM - 5:00 PM)?</span>
+              <span class="text-slate-600 text-[11px]">Switch to Normal Job Mode for live cooperative radar dispatch and 3.5% welfare pool reserve.</span>
+            </div>
+          </div>
+          <button type="button" onclick="setWorkerDutyMode('COOP_SHIFT')" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-black rounded-xl transition shadow-sm btn-tactile flex items-center gap-1.5 flex-shrink-0">
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-300"></i>
+            <span>Switch to Normal Job Mode (Coop Shift) →</span>
+          </button>
+        </div>
+      </div>
+      </div>
+
 
     </section>
 
@@ -1280,7 +1714,220 @@
         </div>
       </div>
 
-      <!-- National KPI Cards with Animated Counters -->
+      <!-- Ministry Sub-Navigation Bar -->
+      <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-1.5" id="ministry-subnav-buttons">
+          <button type="button" id="min-subtab-overview" onclick="switchMinistrySubTab('overview')" class="px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 btn-tactile bg-blue-700 text-white shadow-sm ring-2 ring-blue-500/20">
+            <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+            <span>Overview & National KPIs</span>
+          </button>
+          <button type="button" id="min-subtab-growth" onclick="switchMinistrySubTab('growth')" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-2 btn-tactile relative">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Regional Growth Analytics</span>
+            <span class="px-1.5 py-0.2 bg-gradient-to-r from-amber-500 to-red-500 text-white text-[9px] font-black rounded-full uppercase tracking-wider animate-pulse">NEW</span>
+          </button>
+          <button type="button" id="min-subtab-workforce" onclick="switchMinistrySubTab('workforce')" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-2 btn-tactile">
+            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Workforce Demand & Gaps</span>
+          </button>
+          <button type="button" id="min-subtab-discipline" onclick="switchMinistrySubTab('discipline')" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-2 btn-tactile">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-600"></i>
+            <span>Discipline & Rejection Audit</span>
+          </button>
+          <button type="button" id="min-subtab-revenue" onclick="switchMinistrySubTab('revenue')" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-2 btn-tactile">
+            <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Revenue & Welfare Ledger</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] text-slate-500 font-semibold px-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>Apex Governance Analytics Active</span>
+        </div>
+      </div>
+
+      <!-- ================= MINISTRY COMPONENT: REGIONAL GROWTH ANALYTICS ENGINE ================= -->
+      <div id="min-growth-analytics-section" class="glass-card rounded-3xl p-6 border-blue-200 space-y-6 bg-gradient-to-br from-white via-blue-50/20 to-indigo-50/25 shadow-md">
+        <!-- Growth Cockpit Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-slate-200 gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold shadow-sm">
+                <i data-lucide="line-chart" class="w-4 h-4"></i>
+              </span>
+              <div>
+                <h3 class="font-black text-slate-900 text-base sm:text-lg">Regional Workforce Deployment & Growth Velocity Engine</h3>
+                <p class="text-xs text-slate-500">Telemetry tracking worker deployments, citizen service demand requests, and gross revenue growth per regional cluster</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls: Region Selector, Time Horizon, and Export -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Region Dropdown -->
+            <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-2xl px-3 py-1.5 shadow-xs">
+              <i data-lucide="map-pin" class="w-4 h-4 text-blue-600"></i>
+              <label for="growth-region-select" class="sr-only">Select Region</label>
+              <select id="growth-region-select" onchange="updateGrowthRegion(this.value)" class="bg-transparent text-xs font-black text-slate-800 outline-none cursor-pointer pr-2">
+                <option value="ncr_consolidated">🏛️ Consolidated NCR (All 5 Districts)</option>
+                <option value="central_delhi">📍 Central Delhi (Connaught Place, Barakhamba)</option>
+                <option value="south_delhi">📍 South Delhi (Hauz Khas, Saket, GK)</option>
+                <option value="new_delhi">📍 New Delhi (Chanakyapuri, India Gate)</option>
+                <option value="north_delhi">📍 North Delhi (Civil Lines, Model Town)</option>
+                <option value="west_delhi">📍 West Delhi (Rajouri Garden, Janakpuri)</option>
+              </select>
+            </div>
+
+            <!-- Time Horizon Buttons -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs">
+              <button type="button" id="horizon-btn-6m" onclick="updateGrowthHorizon('6m')" class="px-2.5 py-1 rounded-xl font-bold bg-white text-blue-900 shadow-xs">6 Months</button>
+              <button type="button" id="horizon-btn-30d" onclick="updateGrowthHorizon('30d')" class="px-2.5 py-1 rounded-xl font-bold text-slate-600 hover:text-slate-900">30 Days</button>
+              <button type="button" id="horizon-btn-ytd" onclick="updateGrowthHorizon('ytd')" class="px-2.5 py-1 rounded-xl font-bold text-slate-600 hover:text-slate-900">FY 25-26</button>
+            </div>
+
+            <button type="button" onclick="downloadGrowthAnalyticsReport()" class="px-3.5 py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white rounded-xl text-xs font-black transition shadow-sm flex items-center gap-1.5 btn-tactile">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-blue-200"></i>
+              <span>Export Analytics Data</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Growth Highlight KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-blue-700 tracking-wider block">Regional Deployments</span>
+              <span id="growth-kpi-dep-badge" class="px-1.5 py-0.2 bg-blue-200 text-blue-900 text-[10px] font-black rounded-md">+24.8% MoM</span>
+            </div>
+            <div class="text-2xl font-black text-blue-950 mt-1" id="growth-kpi-deployments">145 Active</div>
+            <span class="text-[11px] text-blue-700 font-semibold mt-0.5 block" id="growth-kpi-dep-sub">Certified Technicians on Duty</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-purple-700 tracking-wider block">Citizen Requests</span>
+              <span id="growth-kpi-req-badge" class="px-1.5 py-0.2 bg-purple-200 text-purple-900 text-[10px] font-black rounded-md">98.4% Fulfilled</span>
+            </div>
+            <div class="text-2xl font-black text-purple-950 mt-1" id="growth-kpi-requests">785 Orders</div>
+            <span class="text-[11px] text-purple-700 font-semibold mt-0.5 block" id="growth-kpi-req-sub">Sub-25 min avg response</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-emerald-800 tracking-wider block">Regional Gross Revenue</span>
+              <span id="growth-kpi-rev-badge" class="px-1.5 py-0.2 bg-emerald-200 text-emerald-900 text-[10px] font-black rounded-md">+32.1% YoY</span>
+            </div>
+            <div class="text-2xl font-black text-emerald-950 mt-1" id="growth-kpi-revenue">₹7,25,000</div>
+            <span class="text-[11px] text-emerald-700 font-semibold mt-0.5 block" id="growth-kpi-rev-sub">100% Direct DBT Payout</span>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-amber-800 tracking-wider block">Cooperative Welfare Pool</span>
+              <span class="px-1.5 py-0.2 bg-amber-200 text-amber-900 text-[10px] font-black rounded-md">3.5% Reserve</span>
+            </div>
+            <div class="text-2xl font-black text-amber-950 mt-1" id="growth-kpi-welfare">₹25,375</div>
+            <span class="text-[11px] text-amber-700 font-semibold mt-0.5 block" id="growth-kpi-welfare-sub">Dedicated Worker Healthcare & Safety</span>
+          </div>
+        </div>
+
+        <!-- Metric Toggles / Series Visibility Switches -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-black uppercase tracking-wider text-slate-700 mr-1">Active Series:</span>
+            <button type="button" id="toggle-series-deployments" onclick="toggleGrowthSeries('deployments')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border-2 border-blue-500 bg-blue-50 text-blue-900 shadow-xs">
+              <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+              <span>Worker Deployments</span>
+            </button>
+            <button type="button" id="toggle-series-requests" onclick="toggleGrowthSeries('requests')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border-2 border-purple-500 bg-purple-50 text-purple-900 shadow-xs">
+              <span class="w-3 h-3 rounded-full bg-purple-600 inline-block"></span>
+              <span>Citizen Requests</span>
+            </button>
+            <button type="button" id="toggle-series-revenue" onclick="toggleGrowthSeries('revenue')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border-2 border-emerald-500 bg-emerald-50 text-emerald-900 shadow-xs">
+              <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
+              <span>Revenue Generated (₹)</span>
+            </button>
+          </div>
+          <span class="text-[11px] text-slate-400 font-medium italic">* Hover over graph nodes for interactive breakdown</span>
+        </div>
+
+        <!-- SVG Line Graph Container with Interactive Tooltip -->
+        <div class="relative bg-slate-950 rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-xl overflow-hidden" id="growth-chart-wrapper">
+          <!-- Graph Title Header -->
+          <div class="flex items-center justify-between text-xs pb-3 mb-2 border-b border-slate-800 text-slate-400">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
+              <span class="font-black text-white" id="growth-chart-title">Central Delhi: Deployment, Demand & Revenue Velocity</span>
+            </div>
+            <div class="flex items-center gap-4 text-[11px]">
+              <span class="text-blue-400 font-bold">Deployments (Left Axis)</span>
+              <span class="text-purple-400 font-bold">Requests (Left Axis)</span>
+              <span class="text-emerald-400 font-bold">Revenue in ₹ (Right Axis)</span>
+            </div>
+          </div>
+
+          <!-- SVG Canvas Area -->
+          <div class="w-full relative" id="ministry-growth-chart-container" style="min-height: 290px;">
+            <svg id="ministry-growth-svg" viewBox="0 0 850 320" class="w-full h-auto overflow-visible select-none">
+              <!-- Rendered dynamically via renderMinistryGrowthChart() -->
+            </svg>
+
+            <!-- Floating Interactive Tooltip -->
+            <div id="growth-chart-tooltip" class="absolute hidden pointer-events-none z-30 bg-slate-900/95 text-white border border-blue-500/50 backdrop-blur-md rounded-2xl p-3.5 shadow-2xl text-xs space-y-1.5 min-w-[190px]">
+              <div class="font-black text-blue-300 text-xs border-b border-slate-800 pb-1" id="tt-period">August 2026</div>
+              <div class="text-[11px] text-slate-300 font-medium" id="tt-region">Central Delhi District</div>
+              <div class="space-y-1 pt-1 text-[11px]">
+                <div class="flex justify-between items-center text-blue-400 font-bold">
+                  <span>Deployments:</span>
+                  <span id="tt-deployments">118 Workers</span>
+                </div>
+                <div class="flex justify-between items-center text-purple-400 font-bold">
+                  <span>Citizen Requests:</span>
+                  <span id="tt-requests">610 Calls</span>
+                </div>
+                <div class="flex justify-between items-center text-emerald-400 font-black">
+                  <span>Gross Revenue:</span>
+                  <span id="tt-revenue">₹5,60,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Granular Monthly Trajectory Table -->
+        <div class="space-y-3 pt-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="table-2" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span id="growth-table-heading">Historical Monthly Trajectory Table</span>
+            </h4>
+            <span class="text-[11px] font-semibold text-slate-500">Certified PACS Telemetry Log</span>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+            <table class="w-full text-left text-xs text-slate-600">
+              <thead class="bg-slate-100 text-slate-700 font-black uppercase tracking-wider">
+                <tr>
+                  <th class="p-3">Period</th>
+                  <th class="p-3">District Cluster</th>
+                  <th class="p-3 text-blue-700">Worker Deployments</th>
+                  <th class="p-3 text-purple-700">Citizen Requests</th>
+                  <th class="p-3 text-emerald-700">Gross Revenue (₹)</th>
+                  <th class="p-3 text-amber-700">Welfare Pool (3.5%)</th>
+                  <th class="p-3 text-right">Deployment Velocity</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium bg-white" id="growth-trajectory-table-body">
+                <!-- Dynamically populated via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overview Section Wrapper -->
+      <div id="min-overview-section" class="space-y-6">
+
+        <!-- National KPI Cards with Animated Counters -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div class="glass-card rounded-3xl p-5 border-blue-100">
@@ -1406,9 +2053,10 @@
         </div>
 
       </div>
+      </div> <!-- End min-overview-section -->
 
       <!-- ================= MINISTRY COMPONENT 1: NATIONAL SERVICE REQUIREMENTS & REGIONAL DEMAND REPORTS ================= -->
-      <div class="glass-card rounded-3xl p-6 border-blue-200 space-y-6">
+      <div id="min-workforce-section" class="glass-card rounded-3xl p-6 border-blue-200 space-y-6">
         <!-- Section Header with Service Selection Dropdown & Export Button -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-slate-200 gap-4">
           <div>
@@ -1574,8 +2222,100 @@
         </div>
       </div>
 
+      <!-- ================= MINISTRY COMPONENT 2B: WORKER INCIDENT ESCALATION & CUSTOMER DEBARMENT REGISTER ================= -->
+      <div id="ministry-customer-debarment-desk" class="glass-card rounded-3xl p-6 border-red-200 space-y-5 bg-gradient-to-br from-white via-red-50/20 to-orange-50/20 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-red-100 gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold shadow-xs">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+              </span>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="min-debarment-title">Worker Incident Escalation & Customer Debarment Register</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5" data-i18n="min-debarment-sub">Zero-tolerance enforcement: If multiple certified technicians report delays, misbehavior, or unpaid work, customer is barred from booking services.</p>
+          </div>
+
+          <!-- Debarment Metrics Badges -->
+          <div class="flex items-center gap-2 text-xs flex-wrap">
+            <span class="px-3 py-1 bg-red-100 text-red-800 font-black rounded-xl border border-red-200 flex items-center gap-1">
+              <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+              <span>Debarred Citizens: <strong id="min-debarred-count">1 Active</strong></span>
+            </span>
+            <span class="px-3 py-1 bg-amber-100 text-amber-800 font-bold rounded-xl border border-amber-200">
+              Total Escalations: <strong id="min-escalations-count">1 Logged</strong>
+            </span>
+          </div>
+        </div>
+
+        <!-- Debarment Escalation Table -->
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-100 text-slate-700 font-black uppercase tracking-wider">
+              <tr>
+                <th class="p-3">Ticket ID</th>
+                <th class="p-3">Reported Citizen</th>
+                <th class="p-3">Reporting Worker & Trade</th>
+                <th class="p-3">Incident Category</th>
+                <th class="p-3">Incident Evidence / Delay</th>
+                <th class="p-3">Debarment Status</th>
+                <th class="p-3 text-right">Ministry Enforcement</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium bg-white" id="ministry-escalations-table-body">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= MINISTRY COMPONENT 2C: WORKFORCE DISCIPLINE & REJECTION AUDIT DESK ================= -->
+      <div id="min-discipline-section" class="glass-card rounded-3xl p-6 border-indigo-200 space-y-5 bg-gradient-to-br from-white via-indigo-50/20 to-blue-50/20 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-indigo-100 gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold shadow-xs">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+              </span>
+              <h3 class="font-black text-slate-900 text-base" data-i18n="min-discipline-title">Workforce Discipline & Service Rejection Audit Desk</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5" data-i18n="min-discipline-sub">Enforce cooperative service delivery SLAs. Workers rejecting multiple broadcasts are flagged for show-cause notice or official termination.</p>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs flex-wrap">
+            <span class="px-3 py-1 bg-amber-100 text-amber-900 font-black rounded-xl border border-amber-300 flex items-center gap-1">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-700"></i>
+              <span>Under Review: <strong id="min-flagged-workers-count">1 Worker</strong></span>
+            </span>
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 font-bold rounded-xl border border-slate-200">
+              Threshold: <strong>3 Rejections</strong>
+            </span>
+          </div>
+        </div>
+
+        <!-- Worker Discipline Table -->
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-100 text-slate-700 font-black uppercase tracking-wider">
+              <tr>
+                <th class="p-3">Worker ID & Name</th>
+                <th class="p-3">Trade & Cooperative</th>
+                <th class="p-3">Completed Jobs</th>
+                <th class="p-3">Declined Dispatches</th>
+                <th class="p-3">Disciplinary Status</th>
+                <th class="p-3">Ministry Action History</th>
+                <th class="p-3 text-right">Administrative Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium bg-white" id="ministry-discipline-table-body">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- ================= MINISTRY COMPONENT 3: APP REVENUE & WELFARE AUDIT ================= -->
-      <div class="glass-card rounded-3xl p-6 border-emerald-200 space-y-5 bg-gradient-to-br from-white to-emerald-50/30">
+      <div id="min-revenue-section" class="glass-card rounded-3xl p-6 border-emerald-200 space-y-5 bg-gradient-to-br from-white to-emerald-50/30">
+
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200 gap-3">
           <div>
             <div class="flex items-center gap-2">
@@ -1637,49 +2377,427 @@
 
   </main>
 
-  <!-- ================= GUIDED DEMO CONTROLLER BAR (SIH EVALUATOR MODE) ================= -->
-  <aside class="fixed bottom-3 inset-x-0 max-w-5xl mx-auto px-4 z-40">
-    <div class="bg-slate-950/95 text-white backdrop-blur-xl border border-blue-600/40 rounded-2xl shadow-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+  <!-- ================= MODAL: SERVICE BOOKING & DISPATCH WORKFLOW POP-UP ================= -->
+  <div id="modal-service-booking" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[100] flex items-center justify-center p-3 sm:p-4 hidden animate-fade-in" style="display: none;">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto relative">
       
-      <!-- Label -->
-      <div class="flex items-center space-x-2.5">
-        <span class="flex h-3 w-3 relative">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-        </span>
-        <div>
-          <span class="text-xs font-black tracking-wide uppercase text-amber-400" data-i18n="scenario-title">SIH Hackathon Scenario Runner</span>
-          <span class="hidden md:inline text-[11px] text-slate-300 ml-1">&bull; <span data-i18n="scenario-sub">1-Click Interactive Demonstration</span></span>
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-black shadow-md border border-blue-400" id="booking-modal-service-icon-box">
+            <i data-lucide="zap" class="w-6 h-6 text-amber-300" id="booking-modal-service-icon"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-black text-slate-900 text-lg" id="booking-modal-title">Electrician Services</h3>
+              <span class="bg-emerald-100 text-emerald-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-emerald-300" id="booking-modal-badge">ITI Certified</span>
+            </div>
+            <p class="text-xs text-slate-500" id="booking-modal-subtitle">100% Direct Fair Wage to Cooperative Technician • Zero Hidden Cut</p>
+          </div>
+        </div>
+
+        <button onclick="closeServiceBookingModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition btn-tactile" title="Close">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Step Indicator Bar -->
+      <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs">
+        <button type="button" onclick="goToBookingStep(1)" id="step-btn-1" class="flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-black bg-blue-600 text-white shadow-xs transition">
+          <span class="w-5 h-5 rounded-full bg-white text-blue-700 text-[11px] flex items-center justify-center font-black">1</span>
+          <span id="step-txt-1">Select Specific Task</span>
+        </button>
+        <div class="w-6 h-0.5 bg-slate-300 mx-1"></div>
+        <button type="button" onclick="goToBookingStep(2)" id="step-btn-2" class="flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-bold text-slate-500 hover:text-slate-800 transition">
+          <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[11px] flex items-center justify-center font-black">2</span>
+          <span id="step-txt-2">Schedule & Tariff Workflow</span>
+        </button>
+      </div>
+
+      <!-- ================= STEP 1: SUB-SERVICES SELECTION ================= -->
+      <div id="booking-step-1" class="space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h4 class="text-sm font-black text-slate-900" id="txt-subservice-heading">What tasks do you need completed?</h4>
+            <p class="text-xs text-slate-500 mt-0.5" id="txt-subservice-subheading">Select <strong>one or more tasks</strong> below. You can book multiple services in a single request.</p>
+          </div>
+          <span class="text-[11px] text-blue-700 font-bold bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full flex items-center gap-1">
+            <i data-lucide="check-square" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Multi-Task Selection Enabled</span>
+          </span>
+        </div>
+
+        <!-- Dynamic Grid of Sub-Services -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="modal-subservices-grid">
+          <!-- Populated dynamically via app.js with checkboxes -->
+        </div>
+
+        <!-- Multi-Service Selection Summary Bar & Review Trigger -->
+        <div id="subservices-action-bar" class="p-4 bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-blue-700/50">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-400 text-slate-950 flex items-center justify-center text-xs font-black" id="selected-subservices-count">0</span>
+              <span class="font-black text-xs sm:text-sm" id="selected-subservices-label">No services selected</span>
+            </div>
+            <p class="text-[11px] text-blue-200 mt-0.5" id="selected-subservices-subtotal">Choose 1 or more options above</p>
+          </div>
+          <button type="button" id="btn-proceed-subservices" onclick="openSatisfactionReviewModal()" disabled class="px-5 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 btn-tactile">
+            <span>Review Selection & Confirm Satisfaction</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- In-Menu Satisfaction Review Panel (Displays directly within this modal menu) -->
+        <div id="in-menu-satisfaction-panel" class="p-5 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl border-2 border-emerald-500 shadow-2xl space-y-4 hidden animate-in fade-in zoom-in duration-200">
+          <div class="flex items-start justify-between border-b border-blue-800/60 pb-3">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 flex items-center justify-center font-black">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase font-black tracking-wider text-emerald-400 block">Quality & Satisfaction Verification Gate</span>
+                <h4 class="text-sm sm:text-base font-black text-white">Are you satisfied with your selected tasks?</h4>
+              </div>
+            </div>
+            <button type="button" onclick="backToSubServicesSelection()" class="text-xs text-blue-300 hover:text-white flex items-center gap-1 font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl transition btn-tactile">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              <span>Modify Selection</span>
+            </button>
+          </div>
+
+          <div class="text-xs text-blue-200">
+            Please verify all tasks below before moving to scheduling & tariff. All tasks are backed by certified cooperative fair wages with zero hidden commission.
+          </div>
+
+          <!-- Itemized Task List -->
+          <div class="bg-slate-950/60 rounded-2xl p-3.5 border border-blue-900/60 space-y-2.5">
+            <div class="flex items-center justify-between text-xs font-bold text-blue-300 pb-1.5 border-b border-blue-900/40">
+              <span class="uppercase tracking-wider text-[10px]">Selected Tasks (<span id="in-menu-task-count" class="font-mono text-emerald-400">0</span> items)</span>
+              <span class="text-[11px] text-emerald-300 font-semibold">Cooperative Fair Wage Rates</span>
+            </div>
+            <div id="in-menu-satisfaction-items" class="max-h-56 overflow-y-auto space-y-2 pr-1 divide-y divide-blue-900/30">
+              <!-- Populated dynamically via app.js -->
+            </div>
+          </div>
+
+          <!-- Tariff Summary & Confirmation Actions -->
+          <div class="p-3.5 bg-blue-950/60 rounded-2xl border border-blue-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-blue-300 block">Combined Base Fair Wage:</span>
+              <span class="text-2xl font-black text-emerald-400 font-mono" id="in-menu-satisfaction-total">₹0.00</span>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button type="button" onclick="backToSubServicesSelection()" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition btn-tactile">
+                ← Modify Tasks
+              </button>
+              <button type="button" onclick="confirmSatisfactionAndProceed()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-1.5 btn-tactile">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-200"></i>
+                <span>Yes, I am Satisfied — Continue</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- 5 Quick Scenario Buttons -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="runScenario('booking')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
-          <span data-i18n="scenario-btn-1">⚡ 1. Standard Booking</span>
-        </button>
-        <button onclick="runScenario('payment')" class="px-3 py-1.5 bg-purple-700 hover:bg-purple-600 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
-          <span data-i18n="scenario-btn-2">💳 2. Payment Gateway</span>
-        </button>
-        <button onclick="runScenario('ngo')" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
-          <span data-i18n="scenario-btn-3">🤝 3. NGO Verification</span>
-        </button>
-        <button onclick="runScenario('fallback')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
-          <span data-i18n="scenario-btn-4">🚨 4. Emergency & Fallback</span>
-        </button>
-        <button onclick="runScenario('otp')" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm btn-tactile">
-          <span data-i18n="scenario-btn-5">🛡️ 5. Dual-OTP Closure</span>
-        </button>
-        <button onclick="resetDemoState()" title="Reset All Data" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition text-xs btn-tactile">
-          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-        </button>
+      <!-- ================= STEP 2: DISPATCH MODE, SCHEDULE & INVOICE WORKFLOW ================= -->
+      <div id="booking-step-2" class="space-y-5 hidden">
+        
+        <!-- Breadcrumb / Selected Sub-Service Card -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-3.5 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold" id="step2-sub-icon">
+              <i data-lucide="wrench" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-blue-700 block" id="step2-service-label">SELECTED TRADE</span>
+              <h4 class="text-xs font-black text-slate-900" id="step2-sub-title">Fan & Lighting Installation</h4>
+            </div>
+          </div>
+          <button type="button" onclick="goToBookingStep(1)" class="text-xs text-blue-700 hover:text-blue-900 font-bold hover:underline flex items-center gap-1 btn-tactile">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Change Task</span>
+          </button>
+        </div>
+
+        <!-- 1. Booking Mode: Instant vs Scheduled -->
+        <div class="glass-card rounded-2xl p-4 border border-blue-200">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+            <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
+              <span id="txt-dispatch-mode-title">1. Choose Dispatch Mode</span>
+            </h4>
+            <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full" id="badge-schedule-status">Immediate Dispatch (&lt;30 mins)</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <button type="button" onclick="setBookingScheduleType('immediate')" id="btn-mode-immediate" class="p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-blue-950 flex items-center gap-1.5">
+                  <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+                  <span data-i18n="opt-immediate-title">Instant Dispatch</span>
+                </span>
+                <span class="text-[9px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Fastest</span>
+              </div>
+              <p class="text-[11px] text-slate-600 mt-1" data-i18n="opt-immediate-desc">Technician dispatched immediately (&lt;30 min average arrival)</p>
+            </button>
+
+            <button type="button" onclick="setBookingScheduleType('scheduled')" id="btn-mode-scheduled" class="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="calendar-clock" class="w-4 h-4 text-blue-600"></i>
+                  <span data-i18n="opt-scheduled-title">Schedule for Later</span>
+                </span>
+                <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Advance</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1" data-i18n="opt-scheduled-desc">Choose convenient date & preferred arrival window</p>
+            </button>
+          </div>
+
+          <!-- Schedule Detail Picker (Revealed when 'scheduled' is active) -->
+          <div id="scheduled-picker-details" class="space-y-3 pt-3 border-t border-slate-100 hidden">
+            <!-- Date Picker & Quick Chips -->
+            <div>
+              <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2 flex items-center justify-between">
+                <span data-i18n="lbl-choose-date">Select Service Date:</span>
+                <span class="text-[10px] font-medium text-slate-400" data-i18n="lbl-up-to-7days">Up to 7 days advance</span>
+              </label>
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <button type="button" onclick="selectQuickDay('today')" id="chip-day-today" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile">
+                  Today
+                </button>
+                <button type="button" onclick="selectQuickDay('tomorrow')" id="chip-day-tomorrow" class="px-3 py-1.5 rounded-xl border-2 border-blue-600 text-xs font-bold text-blue-900 bg-blue-50 transition btn-tactile shadow-xs">
+                  Tomorrow
+                </button>
+                <button type="button" onclick="selectQuickDay('day_after')" id="chip-day-day_after" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:border-blue-400 bg-white transition btn-tactile">
+                  Day After
+                </button>
+                <div class="relative flex-1 min-w-[140px]">
+                  <input type="date" id="booking-date-input" onchange="onBookingDateInputChange(this.value)" class="w-full px-3 py-1.5 text-xs font-bold text-slate-800 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Time Slot Picker -->
+            <div>
+              <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2" data-i18n="lbl-choose-slot">
+                Preferred Arrival Window:
+              </label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+                <button type="button" onclick="selectTimeSlot('09:00 AM - 12:00 PM', 'morning')" id="slot-btn-morning" class="p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-center transition btn-tactile shadow-xs">
+                  <span class="text-xs font-black text-blue-950 block">🌅 Morning</span>
+                  <span class="text-[10px] text-blue-700 font-medium">9 AM - 12 PM</span>
+                </button>
+                <button type="button" onclick="selectTimeSlot('12:00 PM - 03:00 PM', 'afternoon')" id="slot-btn-afternoon" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
+                  <span class="text-xs font-black text-slate-800 block">☀️ Afternoon</span>
+                  <span class="text-[10px] text-slate-500 font-medium">12 PM - 3 PM</span>
+                </button>
+                <button type="button" onclick="selectTimeSlot('03:00 PM - 06:00 PM', 'evening')" id="slot-btn-evening" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
+                  <span class="text-xs font-black text-slate-800 block">🌆 Evening</span>
+                  <span class="text-[10px] text-slate-500 font-medium">3 PM - 6 PM</span>
+                </button>
+                <button type="button" onclick="selectTimeSlot('06:00 PM - 09:00 PM', 'night')" id="slot-btn-night" class="p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-center transition btn-tactile">
+                  <span class="text-xs font-black text-slate-800 block">🌙 Night</span>
+                  <span class="text-[10px] text-slate-500 font-medium">6 PM - 9 PM</span>
+                </button>
+              </div>
+
+              <!-- Custom exact arrival time -->
+              <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-700 font-semibold flex items-center gap-1.5">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-600"></i>
+                  <span data-i18n="lbl-exact-time">Exact arrival time:</span>
+                </span>
+                <div class="flex items-center gap-2">
+                  <input type="time" id="booking-custom-time" onchange="onCustomTimeChange(this.value)" class="px-2.5 py-1 text-xs font-bold text-slate-800 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer" />
+                  <button type="button" onclick="clearCustomTime()" id="btn-clear-custom-time" class="text-[10px] text-slate-400 hover:text-slate-700 underline hidden font-semibold">Reset</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Confirmation Summary Banner -->
+            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-xs text-emerald-900 font-bold">
+              <div class="flex items-center gap-2">
+                <i data-lucide="calendar-check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+                <span>Slot: <strong id="confirmed-slot-display" class="font-black text-emerald-950">Tomorrow • 09:00 AM - 12:00 PM</strong></span>
+              </div>
+              <span class="text-[9px] bg-emerald-200/90 text-emerald-900 px-2 py-0.5 rounded-full font-black uppercase">Confirmed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Horizon Plan Selector -->
+        <div class="glass-card rounded-2xl p-4 border border-slate-200">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-3">
+            <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
+              <span data-i18n="txt-select-pricing">2. Select Engagement Horizon</span>
+            </h4>
+            <span class="text-[10px] text-slate-500 font-medium" data-i18n="txt-pricing-subtitle">Fair tariffs</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <label class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-2xl p-2.5 text-center transition relative btn-tactile shadow-sm" id="plan-hourly-label">
+              <input type="radio" name="plan_type" value="hourly" checked onchange="selectPlan('hourly')" class="sr-only" />
+              <div class="font-extrabold text-slate-900 text-xs" data-i18n="plan-hourly-title">Hourly Task</div>
+              <div class="text-[10px] text-slate-500 mt-0.5" data-i18n="plan-hourly-desc">1 hr quick repair</div>
+            </label>
+
+            <label class="cursor-pointer border border-slate-200 rounded-2xl p-2.5 text-center transition hover:border-blue-400 relative btn-tactile" id="plan-daily-label">
+              <input type="radio" name="plan_type" value="daily" onchange="selectPlan('daily')" class="sr-only" />
+              <div class="font-extrabold text-slate-900 text-xs" data-i18n="plan-daily-title">Full Day</div>
+              <div class="text-[10px] text-slate-500 mt-0.5" data-i18n="plan-daily-desc">8 hrs shift</div>
+            </label>
+
+            <label class="cursor-pointer border border-slate-200 rounded-2xl p-2.5 text-center transition hover:border-blue-400 relative btn-tactile" id="plan-weekly-label">
+              <input type="radio" name="plan_type" value="weekly" onchange="selectPlan('weekly')" class="sr-only" />
+              <span class="absolute -top-2 right-1.5 bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase shadow">5% Off</span>
+              <div class="font-extrabold text-slate-900 text-xs" data-i18n="plan-weekly-title">Weekly</div>
+              <div class="text-[10px] text-emerald-700 font-bold mt-0.5" data-i18n="plan-weekly-desc">5 days</div>
+            </label>
+
+            <label class="cursor-pointer border border-amber-300 bg-amber-50/30 rounded-2xl p-2.5 text-center transition hover:border-amber-500 relative btn-tactile" id="plan-monthly-label">
+              <input type="radio" name="plan_type" value="monthly" onchange="selectPlan('monthly')" class="sr-only" />
+              <span class="absolute -top-2 right-1.5 bg-amber-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase shadow">15% Off</span>
+              <div class="font-extrabold text-amber-950 text-xs" data-i18n="plan-monthly-title">Subscription</div>
+              <div class="text-[10px] text-amber-800 font-bold mt-0.5" data-i18n="plan-monthly-desc">22 days/mo</div>
+            </label>
+          </div>
+
+          <!-- NGO / Non-Profit Social Subsidy Checkbox -->
+          <div class="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2" id="ngo-selection-container">
+            <div class="flex items-center space-x-2">
+              <input type="checkbox" id="ngo-checkbox" onchange="handleNgoCheckboxChange(this)" class="w-4 h-4 accent-blue-600 rounded cursor-pointer" />
+              <label for="ngo-checkbox" class="text-xs font-bold text-slate-800 cursor-pointer flex items-center gap-1.5">
+                <span data-i18n="txt-ngo-label">Non-Profit / NGO / Care (20% Subsidy)</span>
+              </label>
+            </div>
+
+            <div id="ngo-verified-pill" class="hidden text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span id="ngo-verified-label">DARPAN Verified</span>
+              <button onclick="openNgoVerificationModal()" class="text-blue-700 hover:underline ml-1 font-bold">Edit</button>
+            </div>
+
+            <div id="ngo-unverified-hint" class="text-[10px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200 flex items-center gap-1">
+              <i data-lucide="shield-alert" class="w-3 h-3 text-amber-600"></i>
+              <span data-i18n="txt-ngo-hint">Requires DARPAN Verification</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Transparent Invoice Card inside Modal -->
+        <div class="glass-card rounded-2xl p-4 border-blue-200 bg-slate-50/50" id="transparent-invoice-box">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+            <div>
+              <h4 class="font-black text-slate-900 text-sm" data-i18n="txt-invoice-title">Transparent Cooperative Tariff</h4>
+              <p class="text-[10px] text-slate-500" data-i18n="txt-invoice-subtitle">Grassroots fair-wage calculation</p>
+            </div>
+            <span class="text-[10px] bg-emerald-100 text-emerald-900 font-black px-2 py-0.5 rounded-full border border-emerald-200" data-i18n="txt-invoice-badge">
+              0% Exploitative Cut
+            </span>
+          </div>
+
+          <!-- Itemized Receipt -->
+          <div class="space-y-2 py-3 text-xs">
+            <div class="flex items-center justify-between text-slate-700 bg-white p-2 rounded-xl border border-slate-200">
+              <span class="flex items-center gap-1.5 font-bold text-slate-700">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span data-i18n="lbl-invoice-slot">Scheduled Slot:</span>
+              </span>
+              <span class="font-black text-blue-900" id="invoice-schedule-time">Immediate (<30 mins)</span>
+            </div>
+
+            <!-- Itemized Sub-Services / Tasks List in Invoice -->
+            <div id="invoice-tasks-container" class="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 border-b border-slate-100 pb-1">
+                <span>Selected Tasks (<span id="invoice-tasks-count">1</span>):</span>
+                <span>Individual Base</span>
+              </div>
+              <div id="invoice-tasks-list" class="space-y-1 text-xs">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <div class="flex justify-between text-slate-600">
+              <span><span data-i18n="txt-lbl-labor">Combined Direct Fair Labor</span>:</span>
+              <span class="font-black text-slate-900" id="quote-labor">₹120.00</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span data-i18n="txt-lbl-toolkit">Certified Toolkit Charge:</span>
+              <span class="font-bold text-slate-900" id="quote-toolkit">₹40.00</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span><span data-i18n="txt-lbl-transit">Direct Transit Tariff</span> (<span id="quote-dist" class="font-semibold text-blue-700">1.2 km</span>):</span>
+              <span class="font-bold text-slate-900" id="quote-transit">₹20.00</span>
+            </div>
+            <div class="flex justify-between text-red-600" id="row-emergency" style="display:none;">
+              <span class="font-semibold flex items-center gap-1">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                <span data-i18n="txt-lbl-emergency">Emergency Priority Surcharge:</span>
+              </span>
+              <span class="font-bold" id="quote-emergency">+₹60.00</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span data-i18n="txt-lbl-tax">Statutory GST (5%):</span>
+              <span class="font-bold text-slate-900" id="quote-tax">₹6.00</span>
+            </div>
+            <div class="flex justify-between text-blue-900 bg-blue-50/80 p-2 rounded-xl border border-blue-100">
+              <div>
+                <span class="font-bold block" data-i18n="txt-lbl-platform">Cooperative Welfare Fund (3.5%):</span>
+                <span class="text-[10px] text-blue-600 font-normal" data-i18n="txt-lbl-platform-sub">Worker healthcare & pension</span>
+              </div>
+              <span class="font-black text-blue-900" id="quote-platform">₹4.20</span>
+            </div>
+            <div class="flex justify-between text-emerald-700 font-bold bg-emerald-50 p-2 rounded-xl border border-emerald-200" id="row-ngo" style="display:none;">
+              <span class="flex items-center gap-1">
+                <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span data-i18n="txt-lbl-ngo">Verified NGO Subsidy (-20%):</span>
+              </span>
+              <span id="quote-ngo">-₹0.00</span>
+            </div>
+            <div class="flex justify-between text-amber-900 font-bold bg-amber-50 p-2 rounded-xl border border-amber-300" id="row-subscriber-discount" style="display:none;">
+              <span class="flex items-center gap-1">
+                <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600"></i>
+                <span id="lbl-subscriber-discount">Samriddhi VIP Discount (25%):</span>
+              </span>
+              <span id="quote-subscriber-discount">-₹0.00</span>
+            </div>
+          </div>
+
+          <!-- Total Amount & CTA -->
+          <div class="pt-3 border-t border-slate-200">
+            <div class="flex justify-between items-baseline mb-3">
+              <span class="text-sm font-black text-slate-900" data-i18n="txt-lbl-total">Total Customer Payable:</span>
+              <span class="text-2xl sm:text-3xl font-black text-blue-900 tracking-tight" id="quote-total">₹190.20</span>
+            </div>
+
+            <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600 bg-white border border-slate-200 py-2 px-3 rounded-xl mb-3 text-center">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+              <span class="font-bold text-slate-700">100% Direct Fair Wage to Cooperative Worker • 0% Hidden Cuts</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <button type="button" onclick="goToBookingStep(1)" class="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition flex items-center justify-center gap-1 btn-tactile">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                <span>Change Task</span>
+              </button>
+              
+              <button id="btn-book-service" onclick="openPaymentGatewayModal()" class="sm:col-span-2 py-3.5 px-4 bg-gradient-to-r from-blue-700 via-indigo-700 to-coopblue-900 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-xs sm:text-sm rounded-xl shadow-xl transition flex items-center justify-center space-x-2 btn-tactile">
+                <i data-lucide="credit-card" class="w-4 h-4 text-amber-400"></i>
+                <span id="txt-btn-book" data-i18n="txt-btn-book">Confirm & Proceed to Payment</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
-  </aside>
+  </div>
 
   <!-- ================= MODAL: DEMO PAYMENT GATEWAY INTERFACE ================= -->
-  <div id="modal-payment-gateway" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+  <div id="modal-payment-gateway" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[150] flex items-center justify-center p-4 hidden animate-fade-in" style="display: none;">
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto">
       
       <!-- Payment Gateway Header -->
@@ -1856,7 +2974,7 @@
   </div>
 
   <!-- ================= MODAL: NGO & NON-PROFIT VERIFICATION FORM ================= -->
-  <div id="modal-ngo-verify" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div id="modal-ngo-verify" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[150] flex items-center justify-center p-4 hidden animate-fade-in" style="display: none;">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
         <div class="flex items-center space-x-3">
@@ -2289,7 +3407,624 @@
     </div>
   </div>
 
+  <!-- ================= MODAL: WORKER INCIDENT ESCALATION & COMPLAINT DESK ================= -->
+  <div id="modal-worker-escalate" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-red-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-red-100 text-red-800 flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-red-600"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-base" data-i18n="escalate-modal-title">Escalate Customer Incident to Ministry</h3>
+            <p class="text-xs text-slate-500" data-i18n="escalate-modal-sub">Direct worker protection report submitted to Ministry of Cooperation</p>
+          </div>
+        </div>
+        <button onclick="closeWorkerEscalationModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Debarment Rule Notice -->
+      <div class="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-950 space-y-1">
+        <div class="flex items-center gap-1.5 font-black text-red-800">
+          <i data-lucide="alert-octagon" class="w-4 h-4 text-red-600"></i>
+          <span>Ministry Multi-Worker Debarment Policy</span>
+        </div>
+        <p class="text-[11px] text-red-900 leading-relaxed">
+          If <strong>2 or more distinct certified technicians</strong> escalate complaints regarding the same citizen (e.g. holding technician beyond booked plan, verbal abuse, or refusing OTP), the citizen is <strong>permanently debarred</strong> across the platform.
+        </p>
+      </div>
+
+      <form onsubmit="handleWorkerEscalationSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Customer / Citizen Name *</label>
+          <input type="text" id="escalate-input-customer" required placeholder="e.g. Rohan Verma" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-600 focus:outline-none" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Incident Category *</label>
+            <select id="escalate-input-category" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-600 focus:outline-none bg-white">
+              <option value="OVERTIME_DELAY">Severe Uncompensated Delay / Job Exceeded Plan</option>
+              <option value="CUSTOMER_MISBEHAVIOR">Customer Hostile Abuse / Harassment</option>
+              <option value="FRAUD_OTP_REFUSAL">Refusal to Provide END OTP / Unpaid Extra Tasks</option>
+              <option value="UNSAFE_ENVIRONMENT">Hazardous Working Conditions</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Uncompensated Delay (Hours)</label>
+            <input type="number" step="0.5" id="escalate-input-delay" min="0" value="2.0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-600 focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Incident Severity Level *</label>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="p-2.5 border-2 border-amber-500 bg-amber-50 rounded-xl cursor-pointer flex items-center gap-2 font-bold text-amber-900" id="label-sev-high">
+              <input type="radio" name="escalate_sev_radio" value="HIGH" checked class="accent-amber-600" />
+              <span>⚠️ High (Delay / Breach)</span>
+            </label>
+            <label class="p-2.5 border border-slate-200 hover:border-red-300 rounded-xl cursor-pointer flex items-center gap-2 font-bold text-slate-700" id="label-sev-critical">
+              <input type="radio" name="escalate_sev_radio" value="CRITICAL" class="accent-red-600" />
+              <span>🚨 Critical (Debarment Trigger)</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Detailed Incident Description & Evidence *</label>
+          <textarea id="escalate-input-description" required rows="3" placeholder="Provide factual details: e.g. Customer booked 1-hour service, arrived on time, entered START OTP, but customer demanded extra wiring for 4 hours and refused extra payment..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-red-600 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeWorkerEscalationModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition">Cancel</button>
+          <button type="submit" id="btn-submit-escalation" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Submit Escalation to Ministry</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: WORKER EMERGENCY WITHDRAWAL & AUTO-FALLBACK ================= -->
+  <div id="modal-worker-withdraw-job" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-red-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center font-bold shadow-xs">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Emergency Job Withdrawal</h3>
+            <p class="text-xs text-slate-500">Autonomous Customer SLA Protection</p>
+          </div>
+        </div>
+        <button onclick="closeWorkerWithdrawModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Critical Notice -->
+      <div class="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-950 space-y-1.5">
+        <div class="flex items-center gap-1.5 font-black text-red-800">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-red-600"></i>
+          <span>Zero-Delay Customer Failover Guarantee</span>
+        </div>
+        <p class="text-[11px] text-red-900 leading-relaxed">
+          Withdrawing from this accepted request will <strong>instantly reassign the nearest available technician</strong> to the customer so that their delivery time is not compromised. A formal incident report will be automatically transmitted to the <strong>Ministry of Cooperation</strong>.
+        </p>
+      </div>
+
+      <!-- Current Booking Summary -->
+      <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <span class="text-[10px] text-slate-400 uppercase font-black block">Active Booking</span>
+          <span class="font-bold text-slate-800" id="withdraw-booking-id">Booking #1001</span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 uppercase font-black block">Citizen / Client</span>
+          <span class="font-bold text-slate-800" id="withdraw-customer-name">Aarav Mehta</span>
+        </div>
+      </div>
+
+      <form onsubmit="handleWorkerWithdrawSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Reason for Immediate Withdrawal *</label>
+          <select id="withdraw-reason-select" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-red-600 focus:outline-none bg-white">
+            <option value="VEHICLE_BREAKDOWN">🚨 Vehicle Breakdown / Tyre Puncture (En-route transit stall)</option>
+            <option value="TOOL_MALFUNCTION">🧰 Essential Tool / Diagnostic Kit Malfunction</option>
+            <option value="HEALTH_EMERGENCY">🩺 Sudden Acute Medical / Health Emergency</option>
+            <option value="SEVERE_CONGESTION">⛔ Road Blockage / Traffic Gridlock Preventing On-Time Arrival</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Incident Specifics (For Ministry Telemetry Audit) *</label>
+          <textarea id="withdraw-incident-notes" required rows="2" placeholder="Briefly describe what occurred (e.g. Scooter flat tyre on Janpath Road, unable to reach premises within booked SLA)..." class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-red-600 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeWorkerWithdrawModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition">Keep Job</button>
+          <button type="submit" id="btn-confirm-withdraw" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Confirm Reassignment & Transmit Report</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CUSTOMER SERVICE DEBARMENT RESTRICTION ================= -->
+  <div id="modal-service-debarment" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border-2 border-red-500 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center font-black shadow-xs">
+            <i data-lucide="shield-x" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Service Access Restricted</h3>
+            <p class="text-[11px] text-red-600 font-bold uppercase tracking-wider">Ministry Debarment Sanction</p>
+          </div>
+        </div>
+        <button onclick="closeServiceDebarmentModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-950 space-y-2">
+        <div class="flex items-center gap-1.5 font-black text-red-800">
+          <i data-lucide="alert-octagon" class="w-4 h-4 text-red-600"></i>
+          <span id="debarred-modal-headline">Access Denied for This Service</span>
+        </div>
+        <p class="text-[11px] text-red-900 leading-relaxed" id="debarred-modal-detail">
+          The Ministry of Cooperation has placed an administrative hold on this service for citizen account <strong id="debarred-modal-customer">Rohan Verma</strong>.
+        </p>
+        <div class="bg-white/80 p-2.5 rounded-xl border border-red-200 text-[11px] space-y-1">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Sanctioned Service:</span>
+            <span class="font-bold text-red-700 uppercase" id="debarred-modal-service-name">Electrician</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Official Reason:</span>
+            <span class="font-semibold text-slate-800" id="debarred-modal-reason">Safety Protocol Violation</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Statutory Authority:</span>
+            <span class="font-mono text-[10px] text-slate-600">PACS Sec 19(B) Fair Labor</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-[11px] text-slate-500 space-y-1">
+        <p>You can still book other authorized cooperative services where your account maintains clean standing, or switch personas to test compliant accounts.</p>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-100">
+        <button type="button" onclick="closeServiceDebarmentModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">Understood</button>
+        <button type="button" onclick="switchToCompliantCitizen()" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-xs shadow-md transition flex items-center gap-1.5 btn-tactile">
+          <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+          <span>Switch to Aarav (Active)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: MINISTRY CUSTOMER DEBARMENT ORDER DESK ================= -->
+  <div id="modal-ministry-debar-order" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border-2 border-red-500 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center font-black shadow-xs">
+            <i data-lucide="gavel" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Issue Ministry Debarment Sanction</h3>
+            <p class="text-[11px] text-slate-500">Section 19(B) Cooperative Labor Protection Directive</p>
+          </div>
+        </div>
+        <button onclick="closeMinistryDebarModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleMinistryDebarSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Target Citizen / Customer *</label>
+          <select id="min-debar-target-select" required class="w-full px-3 py-2 border border-slate-300 rounded-xl font-semibold focus:ring-2 focus:ring-red-500 focus:outline-none bg-white">
+            <option value="Rohan Verma|+91 98101 22334">Rohan Verma (+91 98101 22334)</option>
+            <option value="Vikas Malhotra|+91 98110 44231">Vikas Malhotra (+91 98110 44231)</option>
+            <option value="Aarav Mehta|+91 98765 43210">Aarav Mehta (+91 98765 43210)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Debarment Scope: Select Specific Service(s) or All *</label>
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5">
+            <label class="flex items-center space-x-2 font-black text-red-700 cursor-pointer">
+              <input type="checkbox" id="min-debar-scope-all" onchange="toggleMinistryDebarAll(this.checked)" class="w-4 h-4 text-red-600 rounded focus:ring-red-500" />
+              <span>Debar from ALL Services (Global Platform Suspension)</span>
+            </label>
+            <div id="min-debar-services-list" class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="electrician" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>⚡ Electrician</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="plumber" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🔧 Plumber</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="healthcare" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🩺 Healthcare</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="driver" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🚗 Driver</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="carpenter" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🪚 Carpenter</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="appliances" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>📺 Appliance Repair</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="masonry" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🧱 Masonry</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="painter" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🎨 Painter</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Violation Category *</label>
+          <select id="min-debar-reason-select" required class="w-full px-3 py-2 border border-slate-300 rounded-xl font-semibold focus:ring-2 focus:ring-red-500 focus:outline-none bg-white">
+            <option value="Unsafe Premises / Hazardous Wiring Conditions">Unsafe Premises / Hazardous Conditions</option>
+            <option value="Verbal Abuse / Harassment of Cooperative Technician">Verbal Abuse / Harassment of Worker</option>
+            <option value="Non-Payment / Escrow Dispute Fraud">Non-Payment / Escrow Dispute Fraud</option>
+            <option value="Repeated Malicious Order Cancellations">Repeated Malicious Order Cancellations</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Sanction Duration</label>
+          <select id="min-debar-duration-select" class="w-full px-3 py-2 border border-slate-300 rounded-xl font-semibold focus:ring-2 focus:ring-red-500 focus:outline-none bg-white">
+            <option value="30">30 Calendar Days</option>
+            <option value="60">60 Calendar Days</option>
+            <option value="90">90 Calendar Days</option>
+            <option value="365">1 Year Suspension</option>
+            <option value="PERMANENT">Indefinite Debarment</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeMinistryDebarModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition">Cancel</button>
+          <button type="submit" id="btn-submit-min-debar" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="gavel" class="w-4 h-4"></i>
+            <span>Issue Statutory Debarment Order</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: MULTI-SERVICE SATISFACTION REVIEW CONFIRMATION GATE ================= -->
+  <div id="modal-satisfaction-review" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-blue-200 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold shadow-xs">
+            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Review Selection & Confirm Satisfaction</h3>
+            <p class="text-xs text-slate-500">Citizen Order Pre-Dispatch Verification</p>
+          </div>
+        </div>
+        <button onclick="closeSatisfactionReviewModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Satisfaction Prompt Question Banner -->
+      <div class="p-4 bg-gradient-to-r from-blue-50 via-indigo-50 to-emerald-50 rounded-2xl border border-blue-200 space-y-1">
+        <div class="flex items-center gap-2 font-black text-slate-900 text-sm">
+          <i data-lucide="help-circle" class="w-4 h-4 text-blue-600"></i>
+          <span>Are you satisfied with your selected services?</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Please verify all repair and installation tasks below. You can modify your selection now, or confirm satisfaction to proceed with cooperative scheduling and transparent tariff estimation.
+        </p>
+      </div>
+
+      <!-- Itemized Selected Services List -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+          <span class="uppercase tracking-wider text-[10px]">Selected Tasks (<span id="satisfaction-modal-count">0</span> items)</span>
+          <span class="text-[11px] text-blue-700">Cooperative Fair Wage Rates</span>
+        </div>
+        <div id="satisfaction-modal-items" class="max-h-56 overflow-y-auto space-y-2 pr-1 divide-y divide-slate-100">
+          <!-- Populated dynamically via renderSatisfactionReviewModal() -->
+        </div>
+      </div>
+
+      <!-- Total Combined Labor Card -->
+      <div class="p-3.5 bg-slate-900 text-white rounded-2xl flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Combined Cooperative Base Labor</span>
+          <span class="text-xs text-emerald-400 font-semibold">Includes certified tooling & safety gear</span>
+        </div>
+        <div class="text-right">
+          <span class="text-2xl font-black text-emerald-400" id="satisfaction-modal-total-labor">₹0.00</span>
+          <span class="text-[10px] text-slate-400 block">+ GST & Welfare Cess in Step 2</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2.5 border-t border-slate-100">
+        <button type="button" onclick="closeSatisfactionReviewModal()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+          <span>Add / Modify Services</span>
+        </button>
+        <button type="button" onclick="confirmSatisfactionAndProceed()" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs shadow-md transition flex items-center justify-center gap-2 btn-tactile">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>✓ Yes, I'm Satisfied — Continue</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: WORKER SWITCHING AUTHENTICATION GATE ================= -->
+  <div id="modal-worker-auth-gate" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border-2 border-indigo-200 animate-in fade-in zoom-in duration-200">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Worker Verification Gate</h3>
+            <p class="text-xs text-slate-500">UIDAI / Cooperative Security Protocol</p>
+          </div>
+        </div>
+        <button type="button" onclick="cancelWorkerAuthGate()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Target Worker Preview Card -->
+      <div class="p-3.5 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl flex items-center space-x-3.5 shadow-md">
+        <img id="gate-worker-avatar" src="https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=120" class="w-12 h-12 rounded-xl object-cover border-2 border-indigo-400 shadow-sm" alt="Worker Avatar" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <h4 class="font-black text-sm text-white truncate" id="gate-worker-name">Rajesh Kumar</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30" id="gate-worker-status">Active Cockpit</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-300 mt-0.5">
+            <span id="gate-worker-skill" class="text-indigo-300 font-bold">Electrician</span>
+            <span>&bull;</span>
+            <span id="gate-worker-coop" class="text-slate-300 truncate">Delhi Shramik Coop</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+            <span>📞 <span id="gate-worker-phone">+91 98123 45678</span></span>
+            <span>&bull;</span>
+            <span class="font-mono text-indigo-200 text-[10px]" id="gate-worker-pacs-id">PACS-DL-4029</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instruction note -->
+      <div class="p-3 bg-indigo-50/80 rounded-xl border border-indigo-100 flex items-start gap-2.5 text-xs text-indigo-950">
+        <i data-lucide="lock" class="w-4 h-4 text-indigo-600 mt-0.5 shrink-0"></i>
+        <p class="leading-relaxed">
+          To prevent unauthorized worker switching and protect escrow payout credentials, enter the 4-digit UIDAI / PACS verification OTP sent to the worker's registered device.
+        </p>
+      </div>
+
+      <!-- OTP Challenge Form -->
+      <form id="form-worker-auth-gate" onsubmit="submitWorkerAuthGate(event)" class="space-y-4">
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-black text-slate-700 uppercase tracking-wider">Enter 4-Digit Worker OTP</label>
+            <button type="button" onclick="sendWorkerAuthGateOtp()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1">
+              <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+              <span>Resend OTP</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="gate-worker-otp" maxlength="4" placeholder="• • • •" class="flex-1 text-center font-mono text-xl tracking-widest px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" required />
+            <button type="button" id="gate-worker-demo-otp-btn" onclick="autofillWorkerAuthGateOtp()" class="px-3 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-xs rounded-xl transition flex items-center gap-1 shadow-xs" title="Auto-fill verified demo OTP">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Auto-Fill (<span id="gate-worker-demo-otp-code">5821</span>)</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="gate-worker-auth-feedback" class="text-xs font-semibold hidden p-2.5 rounded-xl"></div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+          <button type="button" onclick="cancelWorkerAuthGate()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">
+            Cancel Switch
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Verify & Access Cockpit</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CUSTOMER AUTHENTICATION & PROFILE VERIFICATION ================= -->
+  <div id="modal-citizen-auth" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl border-2 border-blue-200 animate-in fade-in zoom-in duration-200">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 text-white flex items-center justify-center font-bold shadow-sm">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Customer Identity & Location Authentication</h3>
+            <p class="text-xs text-slate-500">Citizen Verification & Geotagged Service Layer</p>
+          </div>
+        </div>
+        <button type="button" onclick="cancelCitizenAuth()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form id="form-citizen-auth" onsubmit="submitCitizenAuth(event)" class="space-y-4">
+        <!-- Full Name -->
+        <div>
+          <label class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
+            Full Name <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+            <input type="text" id="citizen-auth-name" placeholder="e.g. Aarav Mehta" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none" required />
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+          <label class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
+            Mobile Number (SMS verification) <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <i data-lucide="phone" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+            <input type="tel" id="citizen-auth-phone" placeholder="+91 98765 43210" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none" required />
+          </div>
+        </div>
+
+        <!-- Service Location & Presets -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-black text-slate-700 uppercase tracking-wider">
+              Service Delivery Location <span class="text-red-500">*</span>
+            </label>
+            <button type="button" onclick="detectCitizenGpsLocation()" class="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1">
+              <i data-lucide="crosshair" class="w-3 h-3"></i>
+              <span>Use Current GPS</span>
+            </button>
+          </div>
+          <div class="relative mb-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+            <input type="text" id="citizen-auth-location" placeholder="e.g. Connaught Place, New Delhi" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none" required />
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-[10px] uppercase font-bold text-slate-400">Quick:</span>
+            <button type="button" onclick="selectCitizenAuthLocationPreset('Connaught Place, New Delhi', [28.6315, 77.2167])" class="px-2 py-0.5 bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-800 text-[10px] font-bold rounded-md transition">Connaught Place</button>
+            <button type="button" onclick="selectCitizenAuthLocationPreset('Karol Bagh, New Delhi', [28.6506, 77.1906])" class="px-2 py-0.5 bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-800 text-[10px] font-bold rounded-md transition">Karol Bagh</button>
+            <button type="button" onclick="selectCitizenAuthLocationPreset('Saket, South Delhi', [28.5244, 77.2100])" class="px-2 py-0.5 bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-800 text-[10px] font-bold rounded-md transition">Saket</button>
+            <button type="button" onclick="selectCitizenAuthLocationPreset('Sector 18, Noida', [28.5708, 77.3261])" class="px-2 py-0.5 bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-800 text-[10px] font-bold rounded-md transition">Noida Sec 18</button>
+          </div>
+        </div>
+
+        <!-- 4-Digit OTP Challenge -->
+        <div class="p-3.5 bg-blue-50/70 rounded-2xl border border-blue-100 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-black text-blue-900 uppercase tracking-wider">4-Digit Security OTP</label>
+            <button type="button" onclick="sendCitizenOtp()" class="text-xs text-blue-700 hover:text-blue-900 font-bold flex items-center gap-1">
+              <i data-lucide="send" class="w-3 h-3"></i>
+              <span>Send OTP SMS</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="citizen-auth-otp" maxlength="4" placeholder="• • • •" class="flex-1 text-center font-mono text-xl tracking-widest px-4 py-2 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" required />
+            <button type="button" id="citizen-auth-demo-otp-btn" onclick="autofillCitizenOtp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 shadow-xs" title="Auto-fill demo OTP">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Auto-Fill (<span id="citizen-auth-demo-otp-code">4291</span>)</span>
+            </button>
+          </div>
+          <p class="text-[11px] text-blue-700 leading-snug">
+            A verification token is required to validate citizen identity, ensure dispatch safety, and activate cooperative insurance.
+          </p>
+        </div>
+
+        <div id="citizen-auth-feedback" class="text-xs font-semibold hidden p-2.5 rounded-xl"></div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+          <button type="button" onclick="cancelCitizenAuth()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs shadow-md transition flex items-center gap-1.5 btn-tactile">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Verify & Authenticate Profile</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL / TOAST: WORKER ACCEPTED NOTIFICATION POPUP ================= -->
+  <div id="modal-worker-accepted-toast" class="fixed bottom-6 right-6 z-50 max-w-md w-full bg-slate-950 text-white rounded-3xl p-5 shadow-2xl border-2 border-emerald-500 space-y-3.5 hidden animate-in slide-in-from-bottom-5 duration-300">
+    <div class="flex items-start justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400 shadow-sm">
+          <i data-lucide="check-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block">Dispatch Confirmed</span>
+          <h4 class="text-sm font-black text-white">Technician Accepted Your Request!</h4>
+        </div>
+      </div>
+      <button onclick="closeWorkerAcceptedToast()" class="text-slate-400 hover:text-white p-1">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- Worker Summary Bar -->
+    <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 flex items-center space-x-3">
+      <img id="toast-worker-photo" src="https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=120" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500 shadow-xs" alt="Worker" />
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between">
+          <span class="font-black text-white text-xs truncate" id="toast-worker-name">Rajesh Kumar</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold" id="toast-worker-coop">Delhi Shramik Coop</span>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+          <span class="text-amber-300 font-bold" id="toast-worker-rating">★ 4.9</span>
+          <span>&bull;</span>
+          <span class="text-emerald-300 font-semibold" id="toast-worker-distance">📍 1.2 km away</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTP Display Bar -->
+    <div class="grid grid-cols-2 gap-2 bg-emerald-950/40 p-3 rounded-2xl border border-emerald-900/60 text-xs">
+      <div>
+        <span class="text-[10px] uppercase font-bold text-slate-300 block">Arrival START_OTP</span>
+        <span class="text-lg font-mono font-black text-emerald-400 tracking-wider" id="toast-start-otp">5821</span>
+      </div>
+      <div>
+        <span class="text-[10px] uppercase font-bold text-slate-300 block">Completion END_OTP</span>
+        <span class="text-lg font-mono font-black text-amber-300 tracking-wider" id="toast-end-otp">8419</span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between text-[11px] text-slate-400">
+      <span>Share START_OTP only when worker arrives.</span>
+      <button type="button" onclick="focusCitizenBookingStatus()" class="text-emerald-400 hover:text-emerald-300 font-black flex items-center gap-1">
+        <span>View Live Status →</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Script Logic -->
-  <script src="app.js"></script>
+  <script src="app.js?v=2.7.0"></script>
+
 </body>
 </html>

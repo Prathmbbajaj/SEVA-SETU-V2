@@ -317,3 +317,39 @@ code, .font-mono {
   background: #eff6ff;
 }
 
+/* Service Booking Modal Display Guarantees */
+#modal-service-booking.hidden {
+  display: none !important;
+}
+
+#modal-service-booking:not(.hidden) {
+  display: flex !important;
+  z-index: 100 !important;
+}
+
+/* Child Modal Overlays (NGO Verification & Payment Gateway) */
+#modal-ngo-verify.hidden {
+  display: none !important;
+}
+
+#modal-ngo-verify:not(.hidden) {
+  display: flex !important;
+  z-index: 150 !important;
+}
+
+#modal-payment-gateway.hidden {
+  display: none !important;
+}
+
+#modal-payment-gateway:not(.hidden) {
+  display: flex !important;
+  z-index: 150 !important;
+}
+
+.modal-backdrop.hidden,
+.hidden {
+  display: none !important;
+}
+
+
+

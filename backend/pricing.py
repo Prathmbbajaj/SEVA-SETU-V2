@@ -112,3 +112,40 @@ def calculate_transparent_fare(
         "start_otp": start_otp,
         "end_otp": end_otp
     }
+
+
+def calculate_freelance_fare(
+    service_type: str,
+    agreed_hours: float = 2.0,
+    hourly_rate: float = 150.0,
+    toolkit_required: bool = False
+) -> Dict[str, Any]:
+    """
+    Computes transparent fare breakdown for post-shift direct freelance gigs.
+    Key Policy: 0% Federation Commission / 0% Welfare Cess.
+    100% of the agreed wage is disbursed directly to the worker's UPI/account.
+    """
+    trade_info = TRADE_RATES.get(service_type.lower(), {"hourly": 120.0, "toolkit": 30.0})
+    rate = hourly_rate or trade_info.get("hourly", 120.0)
+    base_wage = round(rate * agreed_hours, 2)
+    toolkit = trade_info.get("toolkit", 30.0) if toolkit_required else 0.0
+    
+    total_fare = round(base_wage + toolkit, 2)
+
+    return {
+        "service_type": service_type,
+        "agreed_hours": agreed_hours,
+        "hourly_rate": rate,
+        "breakdown": {
+            "labor_wage": base_wage,
+            "toolkit_reimbursement": toolkit,
+            "federation_commission": 0.0, # 0% cut to federation
+            "cooperative_cess": 0.0,      # 0% deduction
+            "direct_worker_takehome": total_fare
+        },
+        "total_amount": total_fare,
+        "worker_direct_payout": total_fare,
+        "worker_takehome_percent": 100.0,
+        "federation_cut_percent": 0.0
+    }
+

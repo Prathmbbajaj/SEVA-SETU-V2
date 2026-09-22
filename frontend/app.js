@@ -251,7 +251,13 @@ const TRANSLATIONS = {
     "lbl-req-workforce": "Required Workforce",
     "lbl-active-deployed": "Active Certified Deployed",
     "lbl-net-deficit": "Workforce Deficit / Gap",
-    "lbl-monthly-demand": "Monthly Service Demand"
+    "lbl-monthly-demand": "Monthly Service Demand",
+    "min-debarment-title": "Citizen Incident Escalations & Debarment Engine",
+    "min-debarment-sub": "Automatic debarment triggered when ≥ 2 independent workers escalate complaints against abusive / non-paying citizens",
+    "min-discipline-title": "Worker Rejection Auditing & Ministry Disciplinary Desk",
+    "min-discipline-sub": "Workers with ≥ 3 declined dispatches are flagged for formal show-cause review, suspension, or license revocation",
+    "escalate-modal-title": "Escalate Customer Incident to Backend",
+    "escalate-modal-sub": "Raise official complaint for delayed service, customer misbehavior, or OTP refusal"
   },
   hi: {
     "ministry-subtitle": "सहकारिता मंत्रालय, भारत सरकार • \"सेवा से समृद्धि\"",
@@ -447,7 +453,13 @@ const TRANSLATIONS = {
     "lbl-req-workforce": "आवश्यक कार्यबल",
     "lbl-active-deployed": "सक्रिय प्रमाणित तकनीशियन",
     "lbl-net-deficit": "कुल कार्यबल कमी",
-    "lbl-monthly-demand": "मासिक सेवा मांग"
+    "lbl-monthly-demand": "मासिक सेवा मांग",
+    "min-debarment-title": "नागरिक घटना शिकायतें एवं निष्कासन प्रणाली",
+    "min-debarment-sub": "जब ≥ 2 स्वतंत्र श्रमिक शिकायत दर्ज करते हैं तो स्वचालित नागरिक निष्कासन",
+    "min-discipline-title": "श्रमिक अस्वीकृति ऑडिट एवं मंत्रालय अनुशासनात्मक डेस्क",
+    "min-discipline-sub": "≥ 3 अस्वीकृत प्रेषण वाले श्रमिकों को समीक्षा, निलंबन या लाइसेंस रद्दीकरण हेतु चिह्नित किया जाता है",
+    "escalate-modal-title": "ग्राहक घटना की शिकायत बैकएंड को भेजें",
+    "escalate-modal-sub": "अत्यधिक देरी, दुर्व्यवहार या ओटीपी न देने पर आधिकारिक शिकायत दर्ज करें"
   }
 };
 
@@ -871,6 +883,15 @@ const WORKERS = [
   }
 ];
 
+// Normalize worker profiles with disciplinary and freelancing capabilities
+WORKERS.forEach(w => {
+  if (w.rejection_count === undefined) w.rejection_count = (w.id === 106 ? 2 : 0);
+  if (w.disciplinary_status === undefined) w.disciplinary_status = "GOOD_STANDING";
+  if (w.freelance_enabled === undefined) w.freelance_enabled = false;
+  if (w.freelance_slots === undefined) w.freelance_slots = ["17:00 - 21:00 (Evening)", "Weekend Flexible"];
+  if (w.freelance_earned === undefined) w.freelance_earned = 0.0;
+});
+
 // Trade Rates & Metadata with REDUCED Grassroots Cooperative Pricing & Synonyms for Search
 const SERVICES = [
   {
@@ -1031,6 +1052,828 @@ const SERVICES = [
   }
 ];
 
+// ==========================================
+// SPECIFIC WORK / SUB-SERVICES CATALOG (ALL 12 COOPERATIVE TRADES)
+// ==========================================
+const SUB_SERVICES_CATALOG = {
+  electrician: [
+    {
+      id: "switch_socket_repair",
+      title: "Switch & Socket Repair",
+      title_hi: "स्विच और सॉकेट मरम्मत",
+      desc: "Fix loose wiring, burnt switchboard, plug replacements & socket earthing",
+      desc_hi: "ढीली वायरिंग, जले हुए स्विचबोर्ड, सॉकेट बदलना और अर्थिंग सुधार",
+      icon: "zap",
+      badge: "Fast 15-min fix",
+      badge_hi: "त्वरित 15 मिनट",
+      base: 120
+    },
+    {
+      id: "fan_installation",
+      title: "Fan Installation & Repair",
+      title_hi: "पंखा स्थापना व मरम्मत",
+      desc: "Ceiling fan, exhaust fan installation, capacitor replacement or regulator fix",
+      desc_hi: "सीलिंग फैन, एग्जॉस्ट फैन लगाना, कैपेसिटर या रेगुलेटर मरम्मत",
+      icon: "wind",
+      badge: "Co-op Certified",
+      badge_hi: "सहकारी प्रमाणित",
+      base: 180
+    },
+    {
+      id: "lighting_fitting",
+      title: "Lighting & Chandelier Fitting",
+      title_hi: "लाइट व झूमर फिटिंग",
+      desc: "LED concealed lights, false ceiling spot lights, strip lighting & chandelier",
+      desc_hi: "एलईडी लाइट, फॉल्स सीलिंग स्पॉट लाइट, स्ट्रिप लाइट व झूमर फिटिंग",
+      icon: "sun",
+      badge: "Precision Work",
+      badge_hi: "सटीक कार्य",
+      base: 150
+    },
+    {
+      id: "appliance_wiring",
+      title: "MCB & Appliance Heavy Wiring",
+      title_hi: "एमसीबी और उपकरण हैवी वायरिंग",
+      desc: "Frequent tripping MCB, 16A heavy power points for AC, geyser or inverter",
+      desc_hi: "बार-बार ट्रिप होने वाली एमसीबी, एसी, गीज़र या इन्वर्टर हेतु हैवी वायरिंग",
+      icon: "shield-alert",
+      badge: "Safety Grade",
+      badge_hi: "सुरक्षा ग्रेड",
+      base: 250
+    },
+    {
+      id: "full_home_inspection",
+      title: "Full Home Electrical Audit",
+      title_hi: "सम्पूर्ण विद्युत निरीक्षण",
+      desc: "Complete electrical circuit check, neutral-earth leakage test & audit log",
+      desc_hi: "घर का सम्पूर्ण सर्किट परीक्षण, लीकेज टेस्ट व सुरक्षा ऑडिट रिपोर्ट",
+      icon: "clipboard-check",
+      badge: "Certified Audit",
+      badge_hi: "प्रमाणित ऑडिट",
+      base: 350
+    },
+    {
+      id: "other_electric",
+      title: "Custom Electrical Task",
+      title_hi: "अन्य विद्युत कार्य",
+      desc: "Doorbell installation, decorative festive lights, inverter battery check, etc.",
+      desc_hi: "डोरबेल लगाना, सजावटी लाइटें, इन्वर्टर बैटरी जांच या अन्य कार्य",
+      icon: "wrench",
+      badge: "Flexible Rate",
+      badge_hi: "लचीली दर",
+      base: 120
+    }
+  ],
+  plumber: [
+    {
+      id: "tap_pipe_leakage",
+      title: "Tap & Pipe Leakage Repair",
+      title_hi: "नल और पाइप रिसाव मरम्मत",
+      desc: "Fix dripping bib taps, angle valves, leaking washbasin p-trap or concealed pipes",
+      desc_hi: "टपकते नल, एंगल कॉक, वॉशबेसिन पी-ट्रैप या दीवार के अंदर पाइप लीकेज ठीक करें",
+      icon: "droplet",
+      badge: "Quick Seal",
+      badge_hi: "त्वरित सील",
+      base: 120
+    },
+    {
+      id: "toilet_flush_repair",
+      title: "Toilet Cistern & Flush Valve",
+      title_hi: "टॉयलेट सिस्टर्न व फ्लश वाल्व",
+      desc: "Repair leaking flush tanks, siphon ball-cock, dual-flush valves or jet spray",
+      desc_hi: "फ्लश टैंक लीकेज, साइफन बॉल-कॉक, डुअल फ्लश वाल्व या जेट स्प्रे बदलना",
+      icon: "refresh-cw",
+      badge: "Hygienic Fix",
+      badge_hi: "स्वच्छ समाधान",
+      base: 160
+    },
+    {
+      id: "drainage_blockage",
+      title: "Drain & Sink Unclogging",
+      title_hi: "नाली और सिंक की रुकावट खोलना",
+      desc: "Unclog choked kitchen sinks, bathroom floor traps, master sewers & gullies",
+      desc_hi: "जाम किचन सिंक, बाथरूम नाली, फ्लोर ट्रैप या सीवर लाइन की सफाई",
+      icon: "disc",
+      badge: "Deep Clear",
+      badge_hi: "गहन सफाई",
+      base: 200
+    },
+    {
+      id: "water_tank_motor",
+      title: "Water Tank & Motor Pump",
+      title_hi: "पानी टंकी और मोटर पंप",
+      desc: "Overhead PVC tank cleaning, automatic float valve, booster or submersible motor",
+      desc_hi: "पानी टंकी सफाई, ऑटो फ्लोट वाल्व, बूस्टर पंप या सबमर्सिबल मोटर फिटिंग",
+      icon: "cpu",
+      badge: "Heavy Duty",
+      badge_hi: "हैवी ड्यूटी",
+      base: 250
+    },
+    {
+      id: "bath_fitting_install",
+      title: "Sanitary & Shower Installation",
+      title_hi: "सैनिटरी व शावर स्थापना",
+      desc: "Install overhead rain shower, hot-cold mixer, diverter or geyser plumbing",
+      desc_hi: "रेन शावर, हॉट-कोल्ड मिक्सर, डाइवर्टर या गीज़र की पाइपलाइन फिटिंग",
+      icon: "layers",
+      badge: "Master Plumber",
+      badge_hi: "मास्टर प्लंबर",
+      base: 300
+    },
+    {
+      id: "other_plumbing",
+      title: "Custom Plumbing Assignment",
+      title_hi: "अन्य प्लंबिंग कार्य",
+      desc: "Water meter fitting, garden tap connection or any custom pipe alteration",
+      desc_hi: "वाटर मीटर फिटिंग, गार्डन पाइप कनेक्शन या अन्य पाइपलाइन मरम्मत",
+      icon: "tool",
+      badge: "Co-op Rate",
+      badge_hi: "सहकारी दर",
+      base: 120
+    }
+  ],
+  carpentry: [
+    {
+      id: "furniture_repair",
+      title: "Furniture Repair & Polish",
+      title_hi: "फर्नीचर मरम्मत और पॉलिश",
+      desc: "Fix shaky dining chairs, bed frames, sofa wood joint reinforcement or polish",
+      desc_hi: "हिलती कुर्सियां, बेड फ्रेम, सोफा लकड़ी जोड़ मजबूती या टचअप पॉलिश",
+      icon: "hammer",
+      badge: "Artisan Fix",
+      badge_hi: "कारीगर मरम्मत",
+      base: 160
+    },
+    {
+      id: "door_lock_hinge",
+      title: "Door, Lock & Hinge Fitting",
+      title_hi: "दरवाज़ा, लॉक और हिंज फिटिंग",
+      desc: "Align sagging doors, fit mortise handle locks, hydraulic closers or tower bolts",
+      desc_hi: "दरवाजा संरेखण, मॉर्टिस हैंडल लॉक, हाइड्रोलिक क्लोज़र या सिटकनी फिटिंग",
+      icon: "lock",
+      badge: "Secure Fit",
+      badge_hi: "सुरक्षित फिट",
+      base: 150
+    },
+    {
+      id: "wardrobe_modular",
+      title: "Wardrobe & Drawer Channels",
+      title_hi: "अलमारी व दराज चैनल फिटिंग",
+      desc: "Telescopic drawer slides, sliding wardrobe roller wheels & cabinet hinges",
+      desc_hi: "दराज के चैनल, स्लाइडिंग अलमारी के पहिये व कैबिनेट सॉफ्ट-क्लोज़ हिंज",
+      icon: "grid",
+      badge: "Precision Woodwork",
+      badge_hi: "सटीक काष्ठकला",
+      base: 220
+    },
+    {
+      id: "custom_woodwork",
+      title: "Custom Wood Crafting & Shelves",
+      title_hi: "कस्टम लकड़ी निर्माण व शेल्फ",
+      desc: "Wall mounted wooden bookshelves, kitchen lofts, temple mandir & study desks",
+      desc_hi: "दीवार बुकशेल्फ, किचन मचान, पूजा मंदिर व लकड़ी की स्टडी टेबल निर्माण",
+      icon: "box",
+      badge: "Master Carpenter",
+      badge_hi: "मास्टर बढ़ई",
+      base: 350
+    },
+    {
+      id: "window_mesh_repair",
+      title: "Window & Mosquito Net Frame",
+      title_hi: "खिड़की व मच्छरदानी जाली फ्रेम",
+      desc: "Wooden window pane repair, wire mesh fitting & weather stripping",
+      desc_hi: "खिड़की के पल्ले, मच्छरदानी जाली फ्रेम लगाना व लैच सुधार",
+      icon: "maximize",
+      badge: "Weather Proof",
+      badge_hi: "मौसम सुरक्षित",
+      base: 180
+    },
+    {
+      id: "other_carpentry",
+      title: "Custom Carpentry Task",
+      title_hi: "अन्य बढ़ई कार्य",
+      desc: "Picture frame hanging, curtain rod wooden brackets, drill & wall mounting",
+      desc_hi: "फोटो फ्रेम लगाना, कर्टेन रॉड ब्रैकेट, ड्रिलिंग या अन्य लकड़ी कार्य",
+      icon: "pocket",
+      badge: "Fair Wage",
+      badge_hi: "उचित मजदूरी",
+      base: 140
+    }
+  ],
+  cleaning: [
+    {
+      id: "deep_home_cleaning",
+      title: "Deep Home Sanitization",
+      title_hi: "सम्पूर्ण घर की गहन सफाई",
+      desc: "Floor scrubbing, spiderweb removal, balcony pressure wash & all room dusting",
+      desc_hi: "फर्श स्क्रबिंग, जाले हटाना, बालकनी धुलाई व सभी कमरों की गहन डस्टिंग",
+      icon: "sparkles",
+      badge: "Govt Certified",
+      badge_hi: "सरकारी प्रमाणित",
+      base: 300
+    },
+    {
+      id: "kitchen_deep_clean",
+      title: "Kitchen & Chimney Degreasing",
+      title_hi: "किचन और चिमनी डीप क्लीन",
+      desc: "Exhaust fan, oil grease removal from kitchen tiles, counters & cabinets",
+      desc_hi: "किचन चिमनी, टाइल्स से तेल-चिकनाई हटाना, स्लैब व कैबिनेट की सफाई",
+      icon: "flame",
+      badge: "Heavy Degrease",
+      badge_hi: "गहन डीग्रीजिंग",
+      base: 250
+    },
+    {
+      id: "bathroom_cleaning",
+      title: "Bathroom & Tile Descaling",
+      title_hi: "बाथरूम और टाइल सफाई",
+      desc: "Hard water scale removal, toilet seat acid scrub, taps & mirror shine",
+      desc_hi: "खारे पानी के दाग हटाना, कमोड एसिड स्क्रब, नल व शीशा पॉलिश",
+      icon: "droplets",
+      badge: "Hospital Grade",
+      badge_hi: "अस्पताल ग्रेड",
+      base: 180
+    },
+    {
+      id: "sofa_carpet_wash",
+      title: "Sofa & Carpet Shampooing",
+      title_hi: "सोफा और कालीन धुलाई",
+      desc: "Vacuum suction shampooing for 5-seater sofas, mattress or wool carpets",
+      desc_hi: "वैक्यूम शैम्पू निष्कर्षण द्वारा सोफा सेट, गद्दे या कालीन की सफाई",
+      icon: "archive",
+      badge: "Fabric Safe",
+      badge_hi: "कपड़ा सुरक्षित",
+      base: 250
+    },
+    {
+      id: "post_paint_clean",
+      title: "Post-Paint / Renovation Cleanup",
+      title_hi: "रंगाई उपरांत सफाई कार्य",
+      desc: "Scrape dried paint drops, vacuum cement dust & restore shine to floors",
+      desc_hi: "पेंट के छींटे खुरचना, सीमेंट की धूल हटाना व फर्श की चमक वापस लाना",
+      icon: "check-circle-2",
+      badge: "Co-op Crew",
+      badge_hi: "सहकारी टीम",
+      base: 350
+    },
+    {
+      id: "other_cleaning",
+      title: "Custom Cleaning Requirement",
+      title_hi: "अन्य सफाई कार्य",
+      desc: "Single room cleanup, terrace sweeping, water tank wash or shop cleaning",
+      desc_hi: "एक कमरे की सफाई, छत की झाड़ू, पानी की टंकी या दुकान की सफाई",
+      icon: "brush",
+      badge: "Flexible",
+      badge_hi: "लचीला",
+      base: 120
+    }
+  ],
+  painting: [
+    {
+      id: "room_wall_paint",
+      title: "Single Room Repainting",
+      title_hi: "एक कमरे का रंग रोगन",
+      desc: "Putty patch filling, acrylic primer & 2 smooth coats of emulsion paint",
+      desc_hi: "पुट्टी भराव, ऐक्रेलिक प्राइमर और इमल्शन पेंट के 2 फिनिश कोट",
+      icon: "palette",
+      badge: "Smooth Finish",
+      badge_hi: "चिकनी फिनिश",
+      base: 350
+    },
+    {
+      id: "waterproof_dampproof",
+      title: "Damp Proofing & Seepage Seal",
+      title_hi: "सीलन व जलरोधी उपचार",
+      desc: "Doctor Fixit / Asian Paints damp seal coating for peeling walls & ceilings",
+      desc_hi: "दीवारों व छत की पपड़ी और सीलन हेतु विशेष वॉटरप्रूफ कोटिंग",
+      icon: "shield",
+      badge: "Leak Proof",
+      badge_hi: "सीलन मुक्त",
+      base: 400
+    },
+    {
+      id: "wood_metal_paint",
+      title: "Wood Polish & Metal Enamel",
+      title_hi: "लकड़ी पॉलिश व ग्रिल पेंट",
+      desc: "Door melamine/PU polish or anti-rust synthetic enamel on iron gates & grills",
+      desc_hi: "दरवाजों की मेलामाइन पॉलिश या लोहे के गेट-ग्रिल पर जंगरोधी एनामेल पेंट",
+      icon: "feather",
+      badge: "Artisan Coat",
+      badge_hi: "कारीगरी कोट",
+      base: 250
+    },
+    {
+      id: "texture_stencil",
+      title: "Texture & Accent Feature Wall",
+      title_hi: "टेक्सचर व डिज़ाइनर दीवार",
+      desc: "Royale play, metallic texture, stencil patterns & feature wall styling",
+      desc_hi: "रॉयल प्ले, मेटैलिक टेक्सचर, स्टेंसिल आर्ट व लिविंग रूम फीचर वॉल",
+      icon: "eye",
+      badge: "Design Specialist",
+      badge_hi: "डिज़ाइनर काम",
+      base: 450
+    },
+    {
+      id: "full_home_painting",
+      title: "Complete Flat / House Painting",
+      title_hi: "सम्पूर्ण घर का पेंटिंग कार्य",
+      desc: "Full interior & exterior painting contract executed by cooperative guild painters",
+      desc_hi: "सहकारी गिल्ड के कुशल पेंटरों द्वारा पूरे घर का अंदरूनी व बाहरी रंग-रोगन",
+      icon: "home",
+      badge: "Co-op Warranty",
+      badge_hi: "सहकारी वारंटी",
+      base: 600
+    },
+    {
+      id: "other_painting",
+      title: "Touch-up & Minor Patchwork",
+      title_hi: "टचअप व छोटी मरम्मत",
+      desc: "Drill hole putty touch-up, water spot coat or single wall repair",
+      desc_hi: "कील के छेद भरना, पानी के दाग छुपाना या छोटी दीवार का पैच पेंट",
+      icon: "paintbrush",
+      badge: "Quick Touch",
+      badge_hi: "त्वरित कार्य",
+      base: 180
+    }
+  ],
+  healthcare: [
+    {
+      id: "vitals_check",
+      title: "Elderly Vitals & Health Check",
+      title_hi: "वरिष्ठ नागरिक स्वास्थ्य जांच",
+      desc: "Blood pressure, blood sugar testing, pulse oximetry, posture & health record",
+      desc_hi: "रक्तचाप, शुगर जांच, पल्स ऑक्सीमीटर, मुद्रा व डिजिटल स्वास्थ्य रिकॉर्ड",
+      icon: "activity",
+      badge: "Certified ANM",
+      badge_hi: "प्रमाणित एएनएम",
+      base: 120
+    },
+    {
+      id: "wound_dressing",
+      title: "Wound Dressing & Bedside Care",
+      title_hi: "घाव की पट्टी व बेडसाइड देखभाल",
+      desc: "Sterile surgical dressing, bed sore prevention, antiseptic care & bandaging",
+      desc_hi: "सर्जिकल घाव की जीवाणुरहित पट्टी, बेड सोर रोकथाम व रोगाणुरोधी देखभाल",
+      icon: "heart",
+      badge: "Sterile Care",
+      badge_hi: "जीवाणुरहित",
+      base: 150
+    },
+    {
+      id: "physiotherapy_assist",
+      title: "Mobility & Physiotherapy Support",
+      title_hi: "गतिशीलता व फिजियोथेरेपी सहायता",
+      desc: "Guided joint movements, stroke recovery walking aid & post-injury exercises",
+      desc_hi: "जोड़ों के व्यायाम, पक्षाघात सुधार व चोट के बाद चलने-फिरने में सहायता",
+      icon: "user-check",
+      badge: "Trained Physiotherapist",
+      badge_hi: "प्रशिक्षित थेरेपिस्ट",
+      base: 250
+    },
+    {
+      id: "post_surgery_care",
+      title: "Post-Surgical Patient Attendant",
+      title_hi: "सर्जरी उपरांत परिचर्या सेवा",
+      desc: "Post-discharge monitoring, sponge bath, medication administration & nutrition assist",
+      desc_hi: "अस्पताल से छुट्टी के बाद देखभाल, स्पंज बाथ, दवा प्रबंधन व भोजन सहायता",
+      icon: "shield",
+      badge: "Hospital Grade",
+      badge_hi: "अस्पताल स्तर",
+      base: 300
+    },
+    {
+      id: "vaccination_injection",
+      title: "Doctor Injection & IV Drip Setup",
+      title_hi: "इंजेक्शन व आईवी ड्रिप सेवा",
+      desc: "Prescription-verified intramuscular/intravenous injection or normal saline IV drip",
+      desc_hi: "डॉक्टर पर्चे अनुसार आईएम/आईवी इंजेक्शन लगाना या सेलाइन ड्रिप चढ़ाना",
+      icon: "plus-circle",
+      badge: "Registered Nurse",
+      badge_hi: "पंजीकृत नर्स",
+      base: 180
+    },
+    {
+      id: "other_healthcare",
+      title: "Custom Healthcare Attendant",
+      title_hi: "अन्य स्वास्थ्य परिचर्या",
+      desc: "General daytime elderly companion, hospital escort or medical chaperone",
+      desc_hi: "बुजुर्गों के साथ दिनभर का सहयोगी, अस्पताल ले जाने वाला सहायक आदि",
+      icon: "smile",
+      badge: "Dedicated Care",
+      badge_hi: "समर्पित सेवा",
+      base: 150
+    }
+  ],
+  masonry: [
+    {
+      id: "tile_floor_repair",
+      title: "Tile & Marble Floor Repair",
+      title_hi: "टाइल व मार्बल फर्श मरम्मत",
+      desc: "Replace cracked or broken tiles, hollow floor regrouting & marble edge polish",
+      desc_hi: "टूटी टाइलें बदलना, खोखले फर्श की ग्राउटिंग व मार्बल किनारों की पॉलिश",
+      icon: "layout",
+      badge: "Level Finish",
+      badge_hi: "समतल फिनिश",
+      base: 200
+    },
+    {
+      id: "plaster_wall_crack",
+      title: "Wall Plaster & Structural Bonding",
+      title_hi: "दीवार प्लास्टर व दरार भराव",
+      desc: "Cement mortar patching, re-plastering damaged walls & expanding crack bonding",
+      desc_hi: "सीमेंट प्लास्टर मरम्मत, खराब दीवारों का नया प्लास्टर व गहरी दरारें भरना",
+      icon: "layers",
+      badge: "Mason Certified",
+      badge_hi: "राजमिस्त्री प्रमाणित",
+      base: 220
+    },
+    {
+      id: "brickwork_partition",
+      title: "Brickwork & Small Wall Partition",
+      title_hi: "ईंट चिनाई व विभाजन दीवार",
+      desc: "Red clay or fly-ash brick partition walls, planter beds or boundary repair",
+      desc_hi: "लाल ईंट या फ्लाई-ऐश से विभाजन दीवार, क्यारी निर्माण या चारदीवारी मरम्मत",
+      icon: "grid",
+      badge: "High Strength",
+      badge_hi: "मजबूत निर्माण",
+      base: 350
+    },
+    {
+      id: "kitchen_countertop",
+      title: "Granite Countertop & Sink Setting",
+      title_hi: "ग्रेनाइट काउंटरटॉप व सिंक फिटिंग",
+      desc: "Granite stone cutting, edge chamfering & solid under-counter sink mounting",
+      desc_hi: "ग्रेनाइट पत्थर कटाई, मोल्डिंग चैम्फरिंग व किचन सिंक की मजबूत फिटिंग",
+      icon: "box",
+      badge: "Precision Mason",
+      badge_hi: "सटीक राजमिस्त्री",
+      base: 400
+    },
+    {
+      id: "drain_slope_leveling",
+      title: "Terrace & Balcony Slope Leveling",
+      title_hi: "छत व बालकनी ढलान समतलन",
+      desc: "Fix rain water stagnation by correcting cement slope toward drainage spout",
+      desc_hi: "बारिश का पानी रुकने की समस्या हेतु सीमेंट ढलान सही करना",
+      icon: "compass",
+      badge: "Accurate Slope",
+      badge_hi: "सही ढलान",
+      base: 250
+    },
+    {
+      id: "other_masonry",
+      title: "Custom Masonry & Stone Work",
+      title_hi: "अन्य राजमिस्त्री व पत्थर कार्य",
+      desc: "Door frame grouting, step stone fixing, coping stones or cement work",
+      desc_hi: "चौखट जाम करना, सीढ़ियों का पत्थर लगाना या अन्य सीमेंट निर्माण कार्य",
+      icon: "tool",
+      badge: "Fair Wage",
+      badge_hi: "उचित मजदूरी",
+      base: 180
+    }
+  ],
+  pottery: [
+    {
+      id: "earthen_pots_tandoor",
+      title: "Clay Tandoor & Earthen Cookware",
+      title_hi: "मिट्टी का तंदूर व हांडी निर्माण",
+      desc: "Traditional clay tandoor setup, unglazed earthen handi, biryani pots & restoration",
+      desc_hi: "पारंपरिक मिट्टी का तंदूर, कच्ची मिट्टी की हांडी, मटका व बर्तनों का निर्माण",
+      icon: "sun",
+      badge: "Handmade Art",
+      badge_hi: "हस्तनिर्मित कला",
+      base: 150
+    },
+    {
+      id: "decorative_terracotta",
+      title: "Terracotta Decor & Garden Planters",
+      title_hi: "टेराकोटा गमले व सजावटी शिल्प",
+      desc: "Handmade porous terracotta flower pots, hanging planters, garden murals & wind chimes",
+      desc_hi: "हाथ से बने टेराकोटा गमले, हैंगिंग पॉट्स, गार्डन भित्ति चित्र व विंड चाइम्स",
+      icon: "flower-2",
+      badge: "Eco-Friendly",
+      badge_hi: "पर्यावरण अनुकूल",
+      base: 180
+    },
+    {
+      id: "clay_diyas_festival",
+      title: "Festival Diyas & Sacred Pottery",
+      title_hi: "त्योहार दीये व पूजा सामग्री",
+      desc: "Artisan hand-pressed Diwali oil diyas, kulhars, temple kalash & havan kunds",
+      desc_hi: "दीपावली दीये, कुल्हड़, मंदिर कलश, धूपदानी व पारम्परिक पूजा मिट्टी के बर्तन",
+      icon: "flame",
+      badge: "Traditional",
+      badge_hi: "पारंपरिक",
+      base: 120
+    },
+    {
+      id: "pottery_wheel_workshop",
+      title: "Live Pottery Wheel Demonstration",
+      title_hi: "कुम्हार चाक प्रशिक्षण व कार्यशाला",
+      desc: "Interactive pottery wheel experience & clay shaping workshop for schools or events",
+      desc_hi: "स्कूलों या आयोजनों हेतु कुम्हार के चाक पर जीवंत मिट्टी कला प्रशिक्षण",
+      icon: "rotate-cw",
+      badge: "Master Artisan",
+      badge_hi: "मास्टर कारीगर",
+      base: 300
+    },
+    {
+      id: "clay_water_dispenser",
+      title: "Alkaline Clay Matka / Water Pot",
+      title_hi: "शीतल जल मटका व सुराही",
+      desc: "Natural cooling alkaline clay matka with brass tap assembly & stand",
+      desc_hi: "पीतल की टोंटी वाला शुद्ध प्राकृतिक मिट्टी का मटका व सुराही स्थापना",
+      icon: "droplet",
+      badge: "100% Pure Clay",
+      badge_hi: "100% शुद्ध मिट्टी",
+      base: 160
+    },
+    {
+      id: "other_pottery",
+      title: "Custom Terracotta Craft Assignment",
+      title_hi: "अन्य मृत्तिका शिल्प कार्य",
+      desc: "Bespoke terracotta sculpture, clay wall relief or customized clay artifacts",
+      desc_hi: "विशेष टेराकोटा मूर्तियां, मिट्टी की नक्काशी या अन्य हस्तशिल्प कार्य",
+      icon: "sparkles",
+      badge: "Heritage Guild",
+      badge_hi: "धरोहर संघ",
+      base: 140
+    }
+  ],
+  blacksmith: [
+    {
+      id: "gate_grill_welding",
+      title: "Iron Gate & Grill Arc Welding",
+      title_hi: "लोहे का गेट व ग्रिल वेल्डिंग",
+      desc: "Electric arc welding on broken hinges, security grills, gates & reinforcement",
+      desc_hi: "टूटे कब्जे, खिड़की की ग्रिल, लोहे के मुख्य द्वार की इलेक्ट्रिक आर्क वेल्डिंग",
+      icon: "zap",
+      badge: "High Tensile",
+      badge_hi: "मजबूत वेल्डिंग",
+      base: 180
+    },
+    {
+      id: "tool_sharpening_forging",
+      title: "Tool Forging, Tempering & Sharpening",
+      title_hi: "औजार निर्माण व धार लगाना",
+      desc: "Axe, sickle, chisel, knife forging, tempering on hot anvil & diamond wheel sharpening",
+      desc_hi: "कुल्हाड़ी, दरांती, छेनी की भट्टी पर गर्म फोर्जिंग व धार लगाना",
+      icon: "shield",
+      badge: "Traditional Forge",
+      badge_hi: "पारंपरिक भट्टी",
+      base: 140
+    },
+    {
+      id: "shutter_channel_fix",
+      title: "Shop Rolling Shutter & Spring Repair",
+      title_hi: "रोलिंग शटर व स्प्रिंग मरम्मत",
+      desc: "Commercial shutter tension spring balancing, side channel straightening & locks",
+      desc_hi: "दुकान के रोलिंग शटर का स्प्रिंग बदलना, साइड चैनल सीधा करना व सेंटर लॉक",
+      icon: "sliders",
+      badge: "Heavy Duty",
+      badge_hi: "हैवी ड्यूटी",
+      base: 260
+    },
+    {
+      id: "railing_safety_bars",
+      title: "Staircase Railing & Balcony Safety",
+      title_hi: "रेलिंग व बालकनी सुरक्षा बार",
+      desc: "Wrought iron railing installation, safety grills for kids and pet barriers",
+      desc_hi: "लोहे की सीढ़ी रेलिंग लगाना, बालकनी सेफ्टी ग्रिल व बच्चों की सुरक्षा जाल",
+      icon: "lock",
+      badge: "ISI Certified",
+      badge_hi: "आईएसआई प्रमाणित",
+      base: 320
+    },
+    {
+      id: "metal_fabrication",
+      title: "Custom Structural Iron Fabrication",
+      title_hi: "कस्टम धातु निर्माण कार्य",
+      desc: "MS angle iron racks, tin sheet roofing shed frames or utility stands",
+      desc_hi: "लोहे के रैक, शेड का ढांचा, वाशिंग मशीन स्टैंड या कस्टम स्ट्रक्चर",
+      icon: "box",
+      badge: "Master Blacksmith",
+      badge_hi: "मास्टर लुहार",
+      base: 380
+    },
+    {
+      id: "other_blacksmith",
+      title: "Custom On-Site Metal Repair",
+      title_hi: "अन्य धातु शिल्प कार्य",
+      desc: "Cold metal cutting, pad-eye welding, chain link fence repair or metal fittings",
+      desc_hi: "लोहा कटाई, कुंडा वेल्डिंग, जालीदार तार फेंसिंग या अन्य लोहे की मरम्मत",
+      icon: "tool",
+      badge: "Fair Wage",
+      badge_hi: "उचित मजदूरी",
+      base: 150
+    }
+  ],
+  tailoring: [
+    {
+      id: "clothes_alteration",
+      title: "Alteration, Hemming & Zipper Fix",
+      title_hi: "कपड़ों की फिटिंग, रफू व चेन सुधार",
+      desc: "Pant length hem, waist tightening/loosening, dress taper & jacket zipper replacement",
+      desc_hi: "पैंट की लंबाई कम करना, कमर ढीली/टाइट करना व जैकेट की चेन बदलना",
+      icon: "scissors",
+      badge: "Same Day Fit",
+      badge_hi: "उसी दिन फिटिंग",
+      base: 100
+    },
+    {
+      id: "blouse_suit_stitching",
+      title: "Ladies Suit & Designer Blouse Stitching",
+      title_hi: "लेडीज सूट व डिज़ाइनर ब्लाउज सिलाई",
+      desc: "Custom neckline, padded princess cut blouse, churidar or salwar suit with lining",
+      desc_hi: "प्रिंसेस कट पैडेड ब्लाउज, अस्तर वाला सलवार सूट व डिज़ाइनर कुर्ती सिलाई",
+      icon: "award",
+      badge: "Boutique Finish",
+      badge_hi: "बुटीक फिनिश",
+      base: 280
+    },
+    {
+      id: "curtains_cushion_covers",
+      title: "Curtains & Sofa Cushion Tailoring",
+      title_hi: "पर्दे व कुशन कवर सिलाई",
+      desc: "Eyelet ring curtains, sofa zip cushions, bolster covers & dining chair upholstery",
+      desc_hi: "आईलेट रिंग पर्दे, सोफा कुशन ज़िप कवर, मसनद कवर व कुर्सी कवर सिलाई",
+      icon: "bookmark",
+      badge: "Home Decor",
+      badge_hi: "होम डेकोर",
+      base: 200
+    },
+    {
+      id: "kurta_shirt_stitching",
+      title: "Kurta Pajama & Formal Shirt",
+      title_hi: "कुर्ता पायजामा व शर्ट सिलाई",
+      desc: "Traditional khadi kurta, drawstring pajama, Nehru jacket or bespoke formal shirt",
+      desc_hi: "पारंपरिक खादी कुर्ता, पायजामा, नेहरू जैकेट या फॉर्मल कॉलर शर्ट सिलाई",
+      icon: "check-circle",
+      badge: "Master Tailor",
+      badge_hi: "मास्टर दर्जी",
+      base: 250
+    },
+    {
+      id: "uniform_bulk_tailoring",
+      title: "School / Work Uniform Stitching",
+      title_hi: "यूनिफॉर्म व संस्थागत सिलाई",
+      desc: "Durable school uniforms, chef coats, lab aprons or corporate workwear",
+      desc_hi: "स्कूल ड्रेस, शेफ कोट, एप्रन या कंपनी वर्कवियर की मजबूत सिलाई",
+      icon: "users",
+      badge: "Co-op Certified",
+      badge_hi: "सहकारी प्रमाणित",
+      base: 300
+    },
+    {
+      id: "other_tailoring",
+      title: "Custom Fabric & Handloom Crafting",
+      title_hi: "अन्य सिलाई व रफू कार्य",
+      desc: "Invisible darning (rafoo), quilt cover stitching or custom fabric crafts",
+      desc_hi: "कपड़ों की इनविजिबल रफू, रजाई-गद्दे का कवर या अन्य विशेष सिलाई कार्य",
+      icon: "sparkles",
+      badge: "Artisan Guild",
+      badge_hi: "बुनकर गिल्ड",
+      base: 120
+    }
+  ],
+  driver: [
+    {
+      id: "local_city_chauffeur",
+      title: "City Transit & Daily Chauffeur",
+      title_hi: "शहर में स्थानीय ड्राइवर सेवा",
+      desc: "Safe, courteous chauffeur for city traffic, family hospital visits & shopping trips",
+      desc_hi: "शहर के ट्रैफिक, पारिवारिक अस्पताल विजिट व खरीददारी हेतु सुरक्षित चालक",
+      icon: "navigation",
+      badge: "Verified PSV",
+      badge_hi: "सत्यापित चालक",
+      base: 150
+    },
+    {
+      id: "outstation_highway_driver",
+      title: "Outstation & Highway Travel Driver",
+      title_hi: "बाहरी शहर व हाइवे ड्राइवर",
+      desc: "Expert highway driver for multi-day outstation road trips, hill stations & expressways",
+      desc_hi: "हाइवे, पहाड़ों व बाहरी शहरों की लंबी यात्रा हेतु अनुभवी चालक सेवा",
+      icon: "map-pin",
+      badge: "Highway Expert",
+      badge_hi: "हाइवे विशेषज्ञ",
+      base: 280
+    },
+    {
+      id: "airport_station_transfer",
+      title: "Airport / Railway Station Transfer",
+      title_hi: "एयरपोर्ट व स्टेशन ट्रांसफर",
+      desc: "Punctual early morning or late night drop-off/pickup with luggage assistance",
+      desc_hi: "समय पर सुबह या देर रात एयरपोर्ट/रेलवे स्टेशन ड्रॉप व सामान में मदद",
+      icon: "plane",
+      badge: "Punctual Guarantee",
+      badge_hi: "समय की गारंटी",
+      base: 180
+    },
+    {
+      id: "temporary_valet_event",
+      title: "Wedding & Event Valet Chauffeur",
+      title_hi: "इवेंट वैलेट व पारिवारिक समारोह",
+      desc: "Uniformed courteous drivers for weddings, corporate banquets & party returns",
+      desc_hi: "शादी-ब्याह, पार्टियों व पारिवारिक आयोजनों हेतु शालीन वर्दीधारी ड्राइवर",
+      icon: "key",
+      badge: "Polite & Uniformed",
+      badge_hi: "शालीन व वर्दीधारी",
+      base: 220
+    },
+    {
+      id: "heavy_vehicle_van",
+      title: "Commercial Van & Goods Transport",
+      title_hi: "कमर्शियल वैन व माल ढुलाई चालक",
+      desc: "Commercial licensed driver for household moving vans, Bolero pick-ups or tempos",
+      desc_hi: "घर का सामान ले जाने वाले पिकअप, टेम्पो या कमर्शियल वाहन हेतु चालक",
+      icon: "truck",
+      badge: "Commercial DL",
+      badge_hi: "कमर्शियल लाइसेंस",
+      base: 250
+    },
+    {
+      id: "other_driver",
+      title: "Emergency On-Demand Driver",
+      title_hi: "आपातकालीन ड्राइवर सेवा",
+      desc: "Instant replacement driver if your regular chauffeur is unavailable or unwell",
+      desc_hi: "नियमित ड्राइवर की अनुपस्थिति में तुरंत उपलब्ध ऑन-कॉल चालक",
+      icon: "compass",
+      badge: "Police Verified",
+      badge_hi: "पुलिस सत्यापित",
+      base: 140
+    }
+  ],
+  waste_management: [
+    {
+      id: "household_dry_wet",
+      title: "Doorstep Dry & Wet Waste Clearing",
+      title_hi: "गीला व सूखा कचरा पृथक्करण उठान",
+      desc: "Scheduled eco-friendly segregated garbage collection directly from your doorstep",
+      desc_hi: "घर के दरवाजे से गीला व सूखा अलग-अलग कचरा उठाने की पर्यावरण-अनुकूल सेवा",
+      icon: "trash",
+      badge: "Green Protocol",
+      badge_hi: "हरित प्रोटोकॉल",
+      base: 80
+    },
+    {
+      id: "electronic_ewaste",
+      title: "Certified E-Waste & Appliance Disposal",
+      title_hi: "ई-कचरा व पुराने उपकरण निस्तारण",
+      desc: "CPCB certified safe recycling of discarded TVs, laptops, cables & batteries",
+      desc_hi: "पुराने टीवी, लैपटॉप, तार व बैटरियों का प्रमाणित सुरक्षित रीसाइक्लिंग निस्तारण",
+      icon: "cpu",
+      badge: "CPCB Certified",
+      badge_hi: "सीपीसीबी प्रमाणित",
+      base: 140
+    },
+    {
+      id: "construction_debris",
+      title: "Renovation Debris & Rubble Clearing",
+      title_hi: "मलबा व निर्माण अपशिष्ट उठाव",
+      desc: "Clear brick rubble, broken tiles, cement dust bags and plaster post-renovation",
+      desc_hi: "घर की मरम्मत के बाद का मलबा, टूटी टाइलें व सीमेंट बोरियां हटाने की सेवा",
+      icon: "truck",
+      badge: "Municipal Grade",
+      badge_hi: "नगर निगम स्तर",
+      base: 260
+    },
+    {
+      id: "bulk_paper_plastic",
+      title: "Bulk Paper, Carton & Plastic Scrap",
+      title_hi: "बल्क पेपर, गत्ते व प्लास्टिक स्क्रैप",
+      desc: "Bulk collection of old newspapers (raddi), corrugated shipping boxes & plastics",
+      desc_hi: "पुराने अखबार, रद्दी, पैकेजिंग गत्ते व प्लास्टिक कबाड़ का सामूहिक उठान",
+      icon: "file-text",
+      badge: "Co-op Recycler",
+      badge_hi: "सहकारी रीसायकल",
+      base: 120
+    },
+    {
+      id: "green_garden_waste",
+      title: "Garden Foliage & Pruning Debris",
+      title_hi: "बगीचा छंटाई व हरित कचरा",
+      desc: "Clearing tree branch trimmings, grass clippings and garden leaves for composting",
+      desc_hi: "पेड़ों की छंटी टहनियां, घास व सूखी पत्तियां खाद बनाने हेतु एकत्रित करना",
+      icon: "trees",
+      badge: "Compost Cycle",
+      badge_hi: "कम्पोस्ट चक्र",
+      base: 110
+    },
+    {
+      id: "other_waste",
+      title: "Custom Society / Bulky Waste Removal",
+      title_hi: "अन्य कचरा प्रबंधन कार्य",
+      desc: "Old mattress disposal, bulky junk clearing or residential society cleanup drive",
+      desc_hi: "पुराने गद्दे, भारी कबाड़ हटाना या आवासीय सोसाइटी का विशेष सफाई अभियान",
+      icon: "check-square",
+      badge: "Zero Landfill",
+      badge_hi: "शून्य लैंडफिल",
+      base: 100
+    }
+  ]
+};
+
 // District Analytics Data
 let DISTRICT_DATA = [
   { district: "Central Delhi", district_hi: "मध्य दिल्ली", demand: 94, pending: 28, workers: 45, alert: true },
@@ -1040,11 +1883,54 @@ let DISTRICT_DATA = [
   { district: "North Delhi", district_hi: "उत्तर दिल्ली", demand: 68, pending: 9, workers: 30, alert: false }
 ];
 
+// Citizen and Worker Personas with Authentication Profiles
+const CITIZEN_PERSONAS = {
+  "Aarav Mehta": {
+    name: "Aarav Mehta",
+    phone: "+91 98765 43210",
+    location: "Connaught Place, New Delhi",
+    coords: [28.6315, 77.2167],
+    otp: "4291",
+    statusBadge: "Active Account • Good Standing"
+  },
+  "Rohan Verma": {
+    name: "Rohan Verma",
+    phone: "+91 98101 22334",
+    location: "Karol Bagh, New Delhi",
+    coords: [28.6506, 77.1906],
+    otp: "5182",
+    statusBadge: "Restricted Account • Electrician Debarred"
+  },
+  "Vikas Malhotra": {
+    name: "Vikas Malhotra",
+    phone: "+91 98110 44231",
+    location: "Saket, South Delhi",
+    coords: [28.5244, 77.2100],
+    otp: "7834",
+    statusBadge: "Sanctioned Account • Global Debarment"
+  }
+};
+
+const WORKER_SWITCH_PERSONAS = {
+  "101": { id: 101, name: "Rajesh Kumar", skill: "electrician", phone: "+91 98123 45678", coop_name: "Delhi Central Labour Cooperative", pacs_id: "PACS-DL-4029", otp: "5821", photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=120" },
+  "102": { id: 102, name: "Mohammad Aslam", skill: "plumber", phone: "+91 98111 22334", coop_name: "Delhi Central Labour Cooperative", pacs_id: "PACS-DL-4532", otp: "3892", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120" },
+  "103": { id: 103, name: "Sunita Sharma", skill: "healthcare", phone: "+91 98733 90812", coop_name: "South Delhi Multi-Purpose Cooperative", pacs_id: "SDMC-PACS-1190", otp: "6214", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120" },
+  "106": { id: 106, name: "Amit Verma", skill: "electrician", phone: "+91 98700 11223", coop_name: "Delhi Central Labour Cooperative", pacs_id: "PACS-DL-8831", otp: "9401", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120" }
+};
+
 // Global Reactive State
 const state = {
   currentLanguage: "en",
   activePortal: "client", // 'client', 'worker', 'ministry'
   selectedService: "electrician",
+  selectedSubService: null,
+  selectedSubServices: [],
+  currentCustomerName: "Aarav Mehta",
+  currentCustomerPhone: "+91 98765 43210",
+  currentCustomerLocation: "Connaught Place, New Delhi",
+  currentCustomerOtp: "4291",
+  generatedWorkerOtp: "8491",
+  currentBookingModalStep: 1,
   selectedPlan: "hourly",
   isEmergency: false,
   isNgo: false,
@@ -1089,7 +1975,508 @@ const state = {
   bookingTimeSlot: "09:00 AM - 12:00 PM",
   bookingTimeSlotKey: "morning",
   bookingCustomTime: "",
-  ministrySelectedService: "all"
+  ministrySelectedService: "all",
+  workerDutyMode: "COOP_SHIFT", // "COOP_SHIFT" or "FREELANCE"
+  freelanceSlots: ["17:00 - 21:00 (Evening)", "Weekend Flexible"],
+  activeFreelanceBooking: null,
+  workerRadarMap: null,
+  workerRadarWorkerMarker: null,
+  workerRadarDestMarker: null,
+  workerRadarPolyline: null,
+  freelanceNavMap: null,
+  flNavWorkerMarker: null,
+  flNavDestMarker: null,
+  flNavPolyline: null,
+  freelanceJobs: [
+    {
+      id: "FL-501",
+      title: "Commercial Panel Wiring Upgrade",
+      category: "electrician",
+      client_name: "Gupta Traders Pvt Ltd",
+      client_phone: "+91 98110 44231",
+      client_location: "Connaught Place, Barakhamba Road",
+      coords: [28.6304, 77.2273],
+      date: "Today (Post-Shift)",
+      time_slot: "17:30 - 20:30",
+      est_duration: "3 Hours",
+      freelance_fee: 1450.0,
+      worker_takehome: 1450.0,
+      platform_fee: 20.0,
+      federation_cut: 0.0,
+      description: "Direct evening electrical rewiring for 3 commercial sub-meters. Direct client payment via UPI upon completion.",
+      claimed_by: null
+    },
+    {
+      id: "FL-502",
+      title: "Restaurant Kitchen Dual-Boiler Descaling",
+      category: "plumber",
+      client_name: "Café Heritage Inn",
+      client_phone: "+91 98221 88392",
+      client_location: "Janpath, Central Delhi",
+      coords: [28.6219, 77.2183],
+      date: "Tonight",
+      time_slot: "20:00 - 22:30",
+      est_duration: "2.5 Hours",
+      freelance_fee: 1800.0,
+      worker_takehome: 1800.0,
+      platform_fee: 20.0,
+      federation_cut: 0.0,
+      description: "Descaling and high-pressure valve testing after restaurant closing hours. Urgent direct cash/UPI dispatch.",
+      claimed_by: null
+    },
+    {
+      id: "FL-503",
+      title: "Clinic Emergency Backup Inverter Installation",
+      category: "electrician",
+      client_name: "Apex Healthcare PolyClinic",
+      client_phone: "+91 98334 11772",
+      client_location: "Paharganj, New Delhi",
+      coords: [28.6433, 77.2132],
+      date: "Tomorrow Morning (Off-Duty)",
+      time_slot: "06:30 - 08:30",
+      est_duration: "2 Hours",
+      freelance_fee: 1200.0,
+      worker_takehome: 1200.0,
+      platform_fee: 20.0,
+      federation_cut: 0.0,
+      description: "Pre-shift inverter connection before clinic opens. Direct client UPI settlement.",
+      claimed_by: null
+    },
+    {
+      id: "FL-504",
+      title: "Boutique Display Shelf & Teak Joinery Repair",
+      category: "carpentry",
+      client_name: "Elegance Handlooms",
+      client_phone: "+91 98445 99310",
+      client_location: "Khan Market, New Delhi",
+      coords: [28.5996, 77.2267],
+      date: "Sunday (Weekend Flexible)",
+      time_slot: "10:00 - 15:00",
+      est_duration: "5 Hours",
+      freelance_fee: 2600.0,
+      worker_takehome: 2600.0,
+      platform_fee: 20.0,
+      federation_cut: 0.0,
+      description: "Custom teak display adjustment and hidden bracket mounting. 100% direct craftsman compensation.",
+      claimed_by: null
+    }
+  ],
+  customerComplaints: [
+    {
+      complaint_id: "CMP-001",
+      worker_id: 101,
+      worker_name: "Rajesh Kumar",
+      customer_name: "Rohan Verma",
+      customer_phone: "+91 98990 01122",
+      category: "SERVICE_DELAY_EXCESS",
+      delay_hours: 4.5,
+      description: "Customer booked 1 day slot, gave start OTP but held worker for 4 extra hours without compensation and refused to release end OTP.",
+      timestamp: "2026-09-15T18:30:00Z"
+    }
+  ],
+  debarredCustomers: {
+    "Vikas Malhotra": {
+      reason: "Repeated customer delays and abusive behavior escalated by Worker 102 and Worker 104",
+      debarred_at: "2026-09-14T11:20:00Z",
+      escalation_count: 2,
+      services: ["ALL"]
+    },
+    "Rohan Verma": {
+      reason: "Safety protocol violation and unauthorized hazardous electrical tamper",
+      debarred_at: "2026-09-16T14:30:00Z",
+      escalation_count: 1,
+      services: ["electrician"]
+    }
+  },
+  workerRejections: [
+    {
+      rejection_id: "REJ-101",
+      worker_id: 106,
+      worker_name: "Amit Verma",
+      worker_skill: "electrician",
+      coop_name: "Delhi Central Labour Cooperative",
+      booking_id: 991,
+      service_type: "electrician",
+      reason: "Worker declined dispatch (Outside preferred operating radius)",
+      timestamp: "2026-09-15T14:10:00Z"
+    },
+    {
+      rejection_id: "REJ-102",
+      worker_id: 106,
+      worker_name: "Amit Verma",
+      worker_skill: "electrician",
+      coop_name: "Delhi Central Labour Cooperative",
+      booking_id: 994,
+      service_type: "electrician",
+      reason: "Worker declined dispatch (Busy with personal work)",
+      timestamp: "2026-09-15T16:45:00Z"
+    }
+  ],
+  growthChartOptions: {
+    region: "all",
+    horizon: "6m",
+    series: {
+      deployments: true,
+      requests: true,
+      revenue: true
+    }
+  },
+  regionalGrowthData: {
+    all: {
+      region_name: "Consolidated National Capital Region (NCR)",
+      horizons: {
+        "6m": {
+          labels: ["Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26"],
+          deployments: [1240, 1580, 2040, 2690, 3450, 4280],
+          requests: [1380, 1750, 2260, 2980, 3810, 4650],
+          revenue: [372000, 474000, 612000, 807000, 1035000, 1428500],
+          welfare: [13020, 16590, 21420, 28245, 36225, 49997],
+          velocity: "+245.2% 6-Mo Surge",
+          kpis: {
+            deployments: "4,280 Active",
+            deployments_sub: "+24.1% MoM Surge",
+            requests: "4,650 Requests",
+            requests_sub: "92.0% Fulfilment Ratio",
+            revenue: "₹14.28 Lakhs",
+            revenue_sub: "100% Direct Worker DBT",
+            welfare: "₹50,000 Pool",
+            welfare_sub: "3.5% Social Security Cess"
+          }
+        },
+        "30d": {
+          labels: ["Week 1 (Aug 24)", "Week 2 (Aug 31)", "Week 3 (Sep 07)", "Week 4 (Sep 14)"],
+          deployments: [820, 960, 1140, 1360],
+          requests: [890, 1050, 1250, 1460],
+          revenue: [246000, 288000, 342000, 408000],
+          welfare: [8610, 10080, 11970, 14280],
+          velocity: "+65.8% 30-Day Growth",
+          kpis: {
+            deployments: "1,360 Deployed",
+            deployments_sub: "+19.3% vs Prev Week",
+            requests: "1,460 Requests",
+            requests_sub: "93.1% Service Fulfilment",
+            revenue: "₹4.08 Lakhs",
+            revenue_sub: "Zero Middleman Extraction",
+            welfare: "₹14,280 Pool",
+            welfare_sub: "Health & Accidental Cess"
+          }
+        },
+        "ytd": {
+          labels: ["Q1 FY25", "Q2 FY25", "Q3 FY25", "Q4 FY25", "Q1 FY26", "Q2 FY26"],
+          deployments: [3100, 4800, 7200, 10400, 15100, 21500],
+          requests: [3450, 5300, 7900, 11300, 16400, 23200],
+          revenue: [930000, 1440000, 2160000, 3120000, 4530000, 6450000],
+          welfare: [32550, 50400, 75600, 109200, 158550, 225750],
+          velocity: "+593.5% FY CAGR",
+          kpis: {
+            deployments: "21,500 Deployed",
+            deployments_sub: "6-Quarter PACS Expansion",
+            requests: "23,200 Requests",
+            requests_sub: "92.7% National Fulfillment",
+            revenue: "₹64.50 Lakhs",
+            revenue_sub: "Cumulative Artisan Earnings",
+            welfare: "₹2.25 Lakhs Pool",
+            welfare_sub: "State Insurance Endowment"
+          }
+        }
+      }
+    },
+    central_delhi: {
+      region_name: "Central Delhi (Connaught Place, Karol Bagh)",
+      horizons: {
+        "6m": {
+          labels: ["Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26"],
+          deployments: [320, 410, 540, 710, 920, 1140],
+          requests: [350, 450, 590, 780, 1010, 1230],
+          revenue: [96000, 123000, 162000, 213000, 276000, 368900],
+          welfare: [3360, 4305, 5670, 7455, 9660, 12911],
+          velocity: "+256.3% 6-Mo Surge",
+          kpis: {
+            deployments: "1,140 Active",
+            deployments_sub: "+23.9% MoM Trajectory",
+            requests: "1,230 Requests",
+            requests_sub: "92.7% Fulfilment Ratio",
+            revenue: "₹3.68 Lakhs",
+            revenue_sub: "100% Direct Worker DBT",
+            welfare: "₹12,911 Pool",
+            welfare_sub: "3.5% Social Security Cess"
+          }
+        },
+        "30d": {
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          deployments: [220, 260, 310, 350],
+          requests: [240, 280, 335, 375],
+          revenue: [66000, 78000, 93000, 105000],
+          welfare: [2310, 2730, 3255, 3675],
+          velocity: "+59.1% MoM",
+          kpis: {
+            deployments: "350 Deployed",
+            deployments_sub: "+12.9% vs Prev Week",
+            requests: "375 Requests",
+            requests_sub: "93.3% Service Fulfilment",
+            revenue: "₹1.05 Lakhs",
+            revenue_sub: "Direct Worker Payouts",
+            welfare: "₹3,675 Pool",
+            welfare_sub: "Central District Reserve"
+          }
+        },
+        "ytd": {
+          labels: ["Q1 FY25", "Q2 FY25", "Q3 FY25", "Q4 FY25", "Q1 FY26", "Q2 FY26"],
+          deployments: [820, 1250, 1900, 2750, 3950, 5600],
+          requests: [900, 1380, 2090, 3010, 4300, 6050],
+          revenue: [246000, 375000, 570000, 825000, 1185000, 1680000],
+          welfare: [8610, 13125, 19950, 28875, 41475, 58800],
+          velocity: "+582.9% FY CAGR",
+          kpis: {
+            deployments: "5,600 Deployed",
+            deployments_sub: "District Guild Growth",
+            requests: "6,050 Requests",
+            requests_sub: "92.6% Cumulative Fulfillment",
+            revenue: "₹16.80 Lakhs",
+            revenue_sub: "Worker Take-Home Wages",
+            welfare: "₹58,800 Pool",
+            welfare_sub: "District Welfare Cess"
+          }
+        }
+      }
+    },
+    south_delhi: {
+      region_name: "South Delhi (Hauz Khas, Saket, Greater Kailash)",
+      horizons: {
+        "6m": {
+          labels: ["Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26"],
+          deployments: [380, 490, 640, 830, 1080, 1320],
+          requests: [420, 530, 690, 910, 1180, 1440],
+          revenue: [114000, 147000, 192000, 249000, 324000, 442000],
+          welfare: [3990, 5145, 6720, 8715, 11340, 15470],
+          velocity: "+247.4% 6-Mo Surge",
+          kpis: {
+            deployments: "1,320 Active",
+            deployments_sub: "+22.2% MoM Expansion",
+            requests: "1,440 Requests",
+            requests_sub: "91.7% Fulfilment Ratio",
+            revenue: "₹4.42 Lakhs",
+            revenue_sub: "High-Value Guild Gigs",
+            welfare: "₹15,470 Pool",
+            welfare_sub: "3.5% Cooperative Cess"
+          }
+        },
+        "30d": {
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          deployments: [250, 300, 360, 410],
+          requests: [270, 325, 390, 445],
+          revenue: [75000, 90000, 108000, 123000],
+          welfare: [2625, 3150, 3780, 4305],
+          velocity: "+64.0% MoM",
+          kpis: {
+            deployments: "410 Deployed",
+            deployments_sub: "+13.8% vs Prev Week",
+            requests: "445 Requests",
+            requests_sub: "92.1% Service Fulfilment",
+            revenue: "₹1.23 Lakhs",
+            revenue_sub: "South Delhi Technicians",
+            welfare: "₹4,305 Pool",
+            welfare_sub: "PACS Medical Reserve"
+          }
+        },
+        "ytd": {
+          labels: ["Q1 FY25", "Q2 FY25", "Q3 FY25", "Q4 FY25", "Q1 FY26", "Q2 FY26"],
+          deployments: [960, 1490, 2250, 3200, 4700, 6600],
+          requests: [1050, 1630, 2450, 3500, 5100, 7150],
+          revenue: [288000, 447000, 675000, 960000, 1410000, 1980000],
+          welfare: [10080, 15645, 23625, 33600, 49350, 69300],
+          velocity: "+587.5% FY CAGR",
+          kpis: {
+            deployments: "6,600 Deployed",
+            deployments_sub: "PACS Cooperative Network",
+            requests: "7,150 Requests",
+            requests_sub: "92.3% Cumulative Fulfilment",
+            revenue: "₹19.80 Lakhs",
+            revenue_sub: "Direct Cooperative DBT",
+            welfare: "₹69,300 Pool",
+            welfare_sub: "South Federation Reserve"
+          }
+        }
+      }
+    },
+    new_delhi: {
+      region_name: "New Delhi (Barakhamba, Chanakyapuri, Lodhi)",
+      horizons: {
+        "6m": {
+          labels: ["Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26"],
+          deployments: [210, 270, 350, 460, 590, 740],
+          requests: [230, 290, 380, 500, 640, 800],
+          revenue: [63000, 81000, 105000, 138000, 177000, 246000],
+          welfare: [2205, 2835, 3675, 4830, 6195, 8610],
+          velocity: "+252.4% 6-Mo Surge",
+          kpis: {
+            deployments: "740 Active",
+            deployments_sub: "+25.4% MoM Growth",
+            requests: "800 Requests",
+            requests_sub: "92.5% Fulfilment Ratio",
+            revenue: "₹2.46 Lakhs",
+            revenue_sub: "100% Direct DBT",
+            welfare: "₹8,610 Pool",
+            welfare_sub: "3.5% Welfare Cess"
+          }
+        },
+        "30d": {
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          deployments: [140, 165, 195, 240],
+          requests: [150, 180, 210, 260],
+          revenue: [42000, 49500, 58500, 72000],
+          welfare: [1470, 1732, 2047, 2520],
+          velocity: "+71.4% MoM",
+          kpis: {
+            deployments: "240 Deployed",
+            deployments_sub: "+23.1% vs Prev Week",
+            requests: "260 Requests",
+            requests_sub: "92.3% Service Fulfilment",
+            revenue: "₹72,000",
+            revenue_sub: "Zero Cut Taken",
+            welfare: "₹2,520 Pool",
+            welfare_sub: "Urban Cooperative Reserve"
+          }
+        },
+        "ytd": {
+          labels: ["Q1 FY25", "Q2 FY25", "Q3 FY25", "Q4 FY25", "Q1 FY26", "Q2 FY26"],
+          deployments: [540, 820, 1240, 1780, 2560, 3600],
+          requests: [590, 900, 1360, 1950, 2800, 3900],
+          revenue: [162000, 246000, 372000, 534000, 768000, 1080000],
+          welfare: [5670, 8610, 13020, 18690, 26880, 37800],
+          velocity: "+566.7% FY CAGR",
+          kpis: {
+            deployments: "3,600 Deployed",
+            deployments_sub: "Urban Guild Network",
+            requests: "3,900 Requests",
+            requests_sub: "92.3% Cumulative Fulfilment",
+            revenue: "₹10.80 Lakhs",
+            revenue_sub: "Direct Worker Payouts",
+            welfare: "₹37,800 Pool",
+            welfare_sub: "3.5% Trust Fund"
+          }
+        }
+      }
+    },
+    north_delhi: {
+      region_name: "North Delhi (Civil Lines, Kashmere Gate, Model Town)",
+      horizons: {
+        "6m": {
+          labels: ["Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26"],
+          deployments: [180, 230, 290, 380, 480, 590],
+          requests: [200, 255, 320, 420, 530, 650],
+          revenue: [54000, 69000, 87000, 114000, 144000, 198000],
+          welfare: [1890, 2415, 3045, 3990, 5040, 6930],
+          velocity: "+227.8% 6-Mo Surge",
+          kpis: {
+            deployments: "590 Active",
+            deployments_sub: "+22.9% MoM Trajectory",
+            requests: "650 Requests",
+            requests_sub: "90.8% Fulfilment Ratio",
+            revenue: "₹1.98 Lakhs",
+            revenue_sub: "100% Direct DBT",
+            welfare: "₹6,930 Pool",
+            welfare_sub: "3.5% Social Security Cess"
+          }
+        },
+        "30d": {
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          deployments: [110, 135, 165, 195],
+          requests: [120, 150, 180, 215],
+          revenue: [33000, 40500, 49500, 58500],
+          welfare: [1155, 1417, 1732, 2047],
+          velocity: "+77.3% MoM",
+          kpis: {
+            deployments: "195 Deployed",
+            deployments_sub: "+18.2% vs Prev Week",
+            requests: "215 Requests",
+            requests_sub: "90.7% Service Fulfilment",
+            revenue: "₹58,500",
+            revenue_sub: "Direct Artisan Wages",
+            welfare: "₹2,047 Pool",
+            welfare_sub: "North Delhi PACS Fund"
+          }
+        },
+        "ytd": {
+          labels: ["Q1 FY25", "Q2 FY25", "Q3 FY25", "Q4 FY25", "Q1 FY26", "Q2 FY26"],
+          deployments: [420, 660, 1010, 1470, 2130, 3050],
+          requests: [470, 740, 1120, 1630, 2350, 3350],
+          revenue: [126000, 198000, 303000, 441000, 639000, 915000],
+          welfare: [4410, 6930, 10605, 15435, 22365, 32025],
+          velocity: "+626.2% FY CAGR",
+          kpis: {
+            deployments: "3,050 Deployed",
+            deployments_sub: "North District Guilds",
+            requests: "3,350 Requests",
+            requests_sub: "91.0% Cumulative Fulfilment",
+            revenue: "₹9.15 Lakhs",
+            revenue_sub: "Craftsmen Direct Income",
+            welfare: "₹32,025 Pool",
+            welfare_sub: "3.5% Trust Fund"
+          }
+        }
+      }
+    },
+    west_delhi: {
+      region_name: "West Delhi (Rajouri Garden, Janakpuri, Punjabi Bagh)",
+      horizons: {
+        "6m": {
+          labels: ["Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26"],
+          deployments: [150, 180, 220, 310, 380, 490],
+          requests: [180, 215, 280, 370, 450, 530],
+          revenue: [45000, 54000, 66000, 93000, 114000, 173600],
+          welfare: [1575, 1890, 2310, 3255, 3990, 6076],
+          velocity: "+226.7% 6-Mo Surge",
+          kpis: {
+            deployments: "490 Active",
+            deployments_sub: "+28.9% MoM Trajectory",
+            requests: "530 Requests",
+            requests_sub: "92.5% Fulfilment Ratio",
+            revenue: "₹1.73 Lakhs",
+            revenue_sub: "100% Direct Worker DBT",
+            welfare: "₹6,076 Pool",
+            welfare_sub: "3.5% Social Security Cess"
+          }
+        },
+        "30d": {
+          labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          deployments: [100, 120, 140, 165],
+          requests: [110, 135, 155, 180],
+          revenue: [30000, 36000, 42000, 49500],
+          welfare: [1050, 1260, 1470, 1732],
+          velocity: "+65.0% MoM",
+          kpis: {
+            deployments: "165 Deployed",
+            deployments_sub: "+17.9% vs Prev Week",
+            requests: "180 Requests",
+            requests_sub: "91.7% Service Fulfilment",
+            revenue: "₹49,500",
+            revenue_sub: "Direct Cooperative Payout",
+            welfare: "₹1,732 Pool",
+            welfare_sub: "West Delhi Cess Reserve"
+          }
+        },
+        "ytd": {
+          labels: ["Q1 FY25", "Q2 FY25", "Q3 FY25", "Q4 FY25", "Q1 FY26", "Q2 FY26"],
+          deployments: [360, 580, 900, 1320, 1960, 2650],
+          requests: [440, 650, 1020, 1490, 2150, 2850],
+          revenue: [108000, 174000, 270000, 396000, 588000, 795000],
+          welfare: [3780, 6090, 9450, 13860, 20580, 27825],
+          velocity: "+636.1% FY CAGR",
+          kpis: {
+            deployments: "2,650 Deployed",
+            deployments_sub: "Industrial Guild Network",
+            requests: "2,850 Requests",
+            requests_sub: "93.0% Cumulative Fulfilment",
+            revenue: "₹7.95 Lakhs",
+            revenue_sub: "100% Direct DBT",
+            welfare: "₹27,825 Pool",
+            welfare_sub: "3.5% Trust Fund"
+          }
+        }
+      }
+    }
+  }
 };
 
 // Runs an init step in isolation so a single failure (e.g. a blocked/slow CDN
@@ -1114,8 +2501,13 @@ document.addEventListener("DOMContentLoaded", () => {
   safeInit("worker onboarding", initWorkerOnboarding);
   safeInit("ministry telemetry", initMinistryExtensions);
   safeInit("ministry requirements", initMinistryServiceRequirements);
+  safeInit("citizen persona", () => changeCitizenPersona("Aarav Mehta", true));
   safeInit("live quote", calculateLiveQuote);
   safeInit("district table", renderDistrictTable);
+  safeInit("freelance hub", initWorkerFreelanceHub);
+  safeInit("ministry debarment desk", initDebarmentDesk);
+  safeInit("ministry discipline desk", initDisciplineDesk);
+  safeInit("ministry growth analytics", initMinistryGrowthAnalytics);
   safeInit("backend health check", checkBackendHealth);
 
   // Periodic simulated ticker updates
@@ -1197,6 +2589,15 @@ function switchPortal(portalId) {
     setTimeout(() => state.clientMap.invalidateSize(), 200);
   }
 
+  // Refresh ministry growth charts if ministry cockpit is opened
+  if (portalId === "ministry") {
+    setTimeout(() => {
+      if (typeof initMinistryGrowthAnalytics === "function") {
+        initMinistryGrowthAnalytics();
+      }
+    }, 120);
+  }
+
   safeCreateIcons();
 }
 
@@ -1258,9 +2659,20 @@ function toggleLanguage(lang) {
   // 4b. Update booking schedule labels in selected language
   updateBookingScheduleUI();
 
+  // 4c. Update service booking modal if present
+  if (typeof updateServiceBookingModalUI === "function") {
+    updateServiceBookingModalUI();
+  }
+
   // 5. Re-render district intelligence table and ministry requirements
   renderDistrictTable();
   initMinistryServiceRequirements();
+  if (typeof renderFreelanceJobs === "function") renderFreelanceJobs();
+  if (typeof renderMinistryDebarmentTable === "function") renderMinistryDebarmentTable();
+  if (typeof renderMinistryDisciplineTable === "function") renderMinistryDisciplineTable();
+  if (typeof setWorkerDutyMode === "function" && state.workerDutyMode) {
+    setWorkerDutyMode(state.workerDutyMode, true);
+  }
 
   // 6. Update payment gateway button text if quote available
   if (state.lastQuoteData) {
@@ -1387,7 +2799,7 @@ function filterServicesByText(query) {
 
   // Auto-select first matching service if currently selected is not in results
   if (matched.length > 0 && !matched.some(s => s.id === state.selectedService)) {
-    selectService(matched[0].id);
+    selectService(matched[0].id, false);
   }
 
   initServiceGrid(matched);
@@ -1408,6 +2820,345 @@ function clearSearch() {
     statusEl.innerText = "";
   }
   initServiceGrid();
+}
+
+// Debarment Checking & Citizen Persona Management
+function isCustomerDebarredForService(customerName, serviceId) {
+  const custName = customerName || state.currentCustomerName || "Aarav Mehta";
+  if (!state.debarredCustomers || !state.debarredCustomers[custName]) {
+    return { debarred: false, services: [], reason: "" };
+  }
+  const info = state.debarredCustomers[custName];
+  const services = info.services || ["ALL"];
+  const isDebarred = services.includes("ALL") || (serviceId && services.includes(serviceId));
+  return {
+    debarred: isDebarred,
+    services: services,
+    reason: info.reason || "Administrative sanction by Ministry of Cooperation",
+    info: info
+  };
+}
+
+let pendingCitizenSwitchName = null;
+let pendingCitizenCoords = null;
+
+function changeCitizenPersona(name, bypassAuth = false) {
+  sfx.playClick();
+  if (bypassAuth) {
+    state.currentCustomerName = name;
+    const persona = CITIZEN_PERSONAS[name] || {};
+    if (persona.phone) state.currentCustomerPhone = persona.phone;
+    if (persona.location) {
+      state.currentCustomerLocation = persona.location;
+      const locText = document.getElementById("citizen-location-text");
+      if (locText) locText.innerText = persona.location;
+    }
+    if (persona.coords) state.customerCoords = persona.coords;
+
+    const selectEl = document.getElementById("citizen-persona-select");
+    if (selectEl && selectEl.value !== name) {
+      selectEl.value = name;
+    }
+
+    const badgeEl = document.getElementById("citizen-persona-badge");
+    const alertBanner = document.getElementById("citizen-debarred-alert");
+    const alertText = document.getElementById("citizen-debarred-alert-text");
+    const servicesContainer = document.getElementById("citizen-debarred-services-list");
+
+    const debarInfo = state.debarredCustomers && state.debarredCustomers[name];
+    if (debarInfo) {
+      const isGlobal = (debarInfo.services || []).includes("ALL");
+      const serviceList = debarInfo.services || ["ALL"];
+      
+      if (badgeEl) {
+        badgeEl.className = "text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-100 text-red-800 border border-red-300";
+        badgeEl.innerText = isGlobal ? "🚫 Debarred (All Services)" : `🚫 Debarred (${serviceList.join(", ")})`;
+      }
+
+      if (alertBanner) alertBanner.classList.remove("hidden");
+      if (alertText) {
+        alertText.innerHTML = isGlobal
+          ? `Citizen account <strong>"${name}"</strong> is currently under <strong>GLOBAL DEBARMENT</strong> across all cooperative services (${debarInfo.reason}).`
+          : `Citizen account <strong>"${name}"</strong> is debarred from <strong>${serviceList.map(s => s.toUpperCase()).join(", ")}</strong> services (${debarInfo.reason}). Other authorized services remain accessible.`;
+      }
+
+      if (servicesContainer) {
+        servicesContainer.innerHTML = serviceList.map(s => `
+          <span class="px-2 py-0.5 bg-red-200 text-red-900 rounded-md font-mono text-[10px] font-bold">
+            ${s === "ALL" ? "🚫 ALL SERVICES" : `⚡ ${s.toUpperCase()}`}
+          </span>
+        `).join("");
+      }
+    } else {
+      if (badgeEl) {
+        badgeEl.className = "text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+        badgeEl.innerText = "✓ Active Account (Good Standing)";
+      }
+      if (alertBanner) alertBanner.classList.add("hidden");
+    }
+
+    // Re-render service grid with status badges
+    initServiceGrid();
+    showToast(`Switched active citizen account to ${name}`, "info");
+    return;
+  }
+
+  // Interactive Persona Switch: Launch Customer Authentication Gate
+  if (name === state.currentCustomerName) return;
+  openCitizenAuthModal(name);
+}
+
+function openCitizenAuthModal(targetName = null) {
+  sfx.playClick();
+  const modal = document.getElementById("modal-citizen-auth");
+  if (!modal) return;
+
+  const target = targetName || state.currentCustomerName || "Aarav Mehta";
+  pendingCitizenSwitchName = target;
+
+  const persona = CITIZEN_PERSONAS[target] || {
+    name: target,
+    phone: state.currentCustomerPhone || "+91 98765 43210",
+    location: state.currentCustomerLocation || "Connaught Place, New Delhi",
+    coords: state.customerCoords || [28.6315, 77.2167],
+    otp: "4291"
+  };
+
+  pendingCitizenCoords = persona.coords;
+
+  const nameInput = document.getElementById("citizen-auth-name");
+  if (nameInput) nameInput.value = persona.name;
+
+  const phoneInput = document.getElementById("citizen-auth-phone");
+  if (phoneInput) phoneInput.value = persona.phone;
+
+  const locInput = document.getElementById("citizen-auth-location");
+  if (locInput) locInput.value = persona.location;
+
+  const otpCodeEl = document.getElementById("citizen-auth-demo-otp-code");
+  if (otpCodeEl) otpCodeEl.innerText = persona.otp || "4291";
+
+  const otpInput = document.getElementById("citizen-auth-otp");
+  if (otpInput) otpInput.value = "";
+
+  const feedback = document.getElementById("citizen-auth-feedback");
+  if (feedback) {
+    feedback.className = "text-xs font-semibold hidden p-2.5 rounded-xl";
+    feedback.innerText = "";
+  }
+
+  modal.classList.remove("hidden");
+  safeCreateIcons();
+}
+
+function cancelCitizenAuth() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-citizen-auth");
+  if (modal) modal.classList.add("hidden");
+
+  // Revert persona select dropdown back to current confirmed persona
+  const selectEl = document.getElementById("citizen-persona-select");
+  if (selectEl && selectEl.value !== state.currentCustomerName) {
+    selectEl.value = state.currentCustomerName;
+  }
+  pendingCitizenSwitchName = null;
+  pendingCitizenCoords = null;
+}
+
+function selectCitizenAuthLocationPreset(locationName, coords) {
+  sfx.playClick();
+  const locInput = document.getElementById("citizen-auth-location");
+  if (locInput) locInput.value = locationName;
+  if (coords) pendingCitizenCoords = coords;
+  showToast(`Selected location: ${locationName}`, "info");
+}
+
+function detectCitizenGpsLocation() {
+  sfx.playClick();
+  const locInput = document.getElementById("citizen-auth-location");
+  if (locInput) {
+    locInput.value = "Connaught Place Radial Rd (GPS Detected)";
+    pendingCitizenCoords = [28.6315, 77.2167];
+  }
+  showToast("📍 Geolocation acquired: ±3m accuracy in Connaught Place", "success");
+}
+
+function sendCitizenOtp() {
+  sfx.playBeep();
+  const feedback = document.getElementById("citizen-auth-feedback");
+  const phoneInput = document.getElementById("citizen-auth-phone");
+  const phone = phoneInput ? phoneInput.value.trim() : "mobile";
+  if (feedback) {
+    feedback.className = "text-xs font-semibold p-2.5 rounded-xl bg-blue-100 text-blue-900 border border-blue-200 block";
+    feedback.innerText = `✓ 4-digit SMS OTP dispatched to ${phone}`;
+  }
+  showToast(`Security OTP sent to ${phone}`, "info");
+}
+
+function autofillCitizenOtp() {
+  sfx.playClick();
+  const otpCodeEl = document.getElementById("citizen-auth-demo-otp-code");
+  const code = otpCodeEl ? otpCodeEl.innerText.trim() : "4291";
+  const otpInput = document.getElementById("citizen-auth-otp");
+  if (otpInput) {
+    otpInput.value = code;
+  }
+  showToast(`Demo OTP auto-filled: ${code}`, "info");
+}
+
+function submitCitizenAuth(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  sfx.init();
+
+  const nameInput = document.getElementById("citizen-auth-name");
+  const phoneInput = document.getElementById("citizen-auth-phone");
+  const locInput = document.getElementById("citizen-auth-location");
+  const otpInput = document.getElementById("citizen-auth-otp");
+  const feedback = document.getElementById("citizen-auth-feedback");
+
+  const name = nameInput ? nameInput.value.trim() : "";
+  const phone = phoneInput ? phoneInput.value.trim() : "";
+  const location = locInput ? locInput.value.trim() : "";
+  const enteredOtp = otpInput ? otpInput.value.trim() : "";
+
+  if (!name || !phone || !location) {
+    if (feedback) {
+      feedback.className = "text-xs font-semibold p-2.5 rounded-xl bg-red-100 text-red-900 border border-red-300 block";
+      feedback.innerText = "Please provide Name, Phone Number, and Delivery Location.";
+    }
+    sfx.playWarning();
+    return false;
+  }
+
+  const target = pendingCitizenSwitchName || name;
+  const persona = CITIZEN_PERSONAS[target] || {};
+  const expectedOtp = persona.otp || "4291";
+
+  // Validate OTP: accept persona's OTP or demo standard pins "4291", "5182", "7834", "1234", "0000"
+  const validPins = [expectedOtp, "4291", "5182", "7834", "1234", "0000"];
+  if (!validPins.includes(enteredOtp)) {
+    if (feedback) {
+      feedback.className = "text-xs font-semibold p-2.5 rounded-xl bg-red-100 text-red-900 border border-red-300 block";
+      feedback.innerText = `Invalid 4-digit OTP. Please enter ${expectedOtp} or use Auto-Fill.`;
+    }
+    sfx.playWarning();
+    return false;
+  }
+
+  // OTP verified! Apply authenticated citizen profile
+  state.currentCustomerName = name;
+  state.currentCustomerPhone = phone;
+  state.currentCustomerLocation = location;
+  if (pendingCitizenCoords) {
+    state.customerCoords = pendingCitizenCoords;
+  } else if (persona.coords) {
+    state.customerCoords = persona.coords;
+  }
+
+  // Update DOM elements
+  const locText = document.getElementById("citizen-location-text");
+  if (locText) locText.innerText = location;
+
+  const selectEl = document.getElementById("citizen-persona-select");
+  if (selectEl) {
+    let hasOption = false;
+    for (let i = 0; i < selectEl.options.length; i++) {
+      if (selectEl.options[i].value === name) {
+        selectEl.selectedIndex = i;
+        hasOption = true;
+        break;
+      }
+    }
+    if (!hasOption) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.innerText = `${name} (Verified Citizen • ${location})`;
+      selectEl.appendChild(opt);
+      selectEl.value = name;
+    }
+  }
+
+  // Sync debarment state
+  const badgeEl = document.getElementById("citizen-persona-badge");
+  const alertBanner = document.getElementById("citizen-debarred-alert");
+  const alertText = document.getElementById("citizen-debarred-alert-text");
+  const servicesContainer = document.getElementById("citizen-debarred-services-list");
+
+  const debarInfo = state.debarredCustomers && state.debarredCustomers[name];
+  if (debarInfo) {
+    const isGlobal = (debarInfo.services || []).includes("ALL");
+    const serviceList = debarInfo.services || ["ALL"];
+    
+    if (badgeEl) {
+      badgeEl.className = "text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-100 text-red-800 border border-red-300";
+      badgeEl.innerText = isGlobal ? "🚫 Debarred (All Services)" : `🚫 Debarred (${serviceList.join(", ")})`;
+    }
+
+    if (alertBanner) alertBanner.classList.remove("hidden");
+    if (alertText) {
+      alertText.innerHTML = isGlobal
+        ? `Citizen account <strong>"${name}"</strong> is currently under <strong>GLOBAL DEBARMENT</strong> across all cooperative services (${debarInfo.reason}).`
+        : `Citizen account <strong>"${name}"</strong> is debarred from <strong>${serviceList.map(s => s.toUpperCase()).join(", ")}</strong> services (${debarInfo.reason}). Other authorized services remain accessible.`;
+    }
+
+    if (servicesContainer) {
+      servicesContainer.innerHTML = serviceList.map(s => `
+        <span class="px-2 py-0.5 bg-red-200 text-red-900 rounded-md font-mono text-[10px] font-bold">
+          ${s === "ALL" ? "🚫 ALL SERVICES" : `⚡ ${s.toUpperCase()}`}
+        </span>
+      `).join("");
+    }
+  } else {
+    if (badgeEl) {
+      badgeEl.className = "text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+      badgeEl.innerText = "✓ Active Account (Good Standing)";
+    }
+    if (alertBanner) alertBanner.classList.add("hidden");
+  }
+
+  // Re-render service grid with status badges
+  initServiceGrid();
+
+  // Close modal
+  const modal = document.getElementById("modal-citizen-auth");
+  if (modal) modal.classList.add("hidden");
+
+  pendingCitizenSwitchName = null;
+  pendingCitizenCoords = null;
+
+  sfx.playSuccessFanfare();
+  showToast(`✓ Citizen verified: ${name} (${location})`, "success");
+  return true;
+}
+
+function openServiceDebarmentModal(serviceId, reason) {
+  const modal = document.getElementById("modal-service-debarment");
+  if (!modal) return;
+  const sObj = SERVICES.find(s => s.id === serviceId) || { name: serviceId };
+  
+  const custEl = document.getElementById("debarred-modal-customer");
+  if (custEl) custEl.innerText = state.currentCustomerName || "Rohan Verma";
+  
+  const servEl = document.getElementById("debarred-modal-service-name");
+  if (servEl) servEl.innerText = sObj.name;
+  
+  const reasonEl = document.getElementById("debarred-modal-reason");
+  if (reasonEl) reasonEl.innerText = reason || "Cooperative Safety & Labor Code Violation";
+
+  modal.classList.remove("hidden");
+  safeCreateIcons();
+}
+
+function closeServiceDebarmentModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-service-debarment");
+  if (modal) modal.classList.add("hidden");
+}
+
+function switchToCompliantCitizen() {
+  closeServiceDebarmentModal();
+  changeCitizenPersona("Aarav Mehta");
+  showToast("Switched to Aarav Mehta (Active Account with Good Standing)", "success");
 }
 
 // 5. Service Selection Grid
@@ -1474,29 +3225,53 @@ function initServiceGrid(filteredList = null) {
     const time = isHi ? (s.time_hi || s.time) : s.time;
     const hrSuffix = isHi ? "/घंटा" : "/hr";
 
+    // Debarment status for current customer
+    const debarCheck = isCustomerDebarredForService(state.currentCustomerName, s.id);
+    const isDebarred = debarCheck.debarred;
+
     const card = document.createElement("div");
-    card.onclick = () => {
+    card.setAttribute("data-service-id", s.id);
+    card.setAttribute("onclick", `selectService('${s.id}', true)`);
+    card.onclick = (e) => {
+      e.stopPropagation();
       sfx.playClick();
-      selectService(s.id);
+      selectService(s.id, true);
     };
-    card.className = `p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col items-start justify-between text-left space-y-2 btn-tactile ${
-      isSelected 
-        ? "border-blue-600 bg-blue-50/80 shadow-md ring-2 ring-blue-500/20" 
-        : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
-    }`;
+
+    let borderClass = isSelected 
+      ? "border-blue-600 bg-blue-50/80 shadow-md ring-2 ring-blue-500/20" 
+      : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm";
+
+    if (isDebarred) {
+      borderClass = "border-red-400 bg-red-50/50 hover:border-red-600 opacity-90";
+    }
+
+    card.className = `p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col items-start justify-between text-left space-y-2 btn-tactile relative ${borderClass}`;
 
     card.innerHTML = `
       <div class="flex items-center justify-between w-full">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center ${isSelected ? "bg-blue-600 text-white shadow-sm" : "bg-slate-100 text-slate-700"}">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center ${
+          isDebarred ? "bg-red-100 text-red-700" : (isSelected ? "bg-blue-600 text-white shadow-sm" : "bg-slate-100 text-slate-700")
+        }">
           <i data-lucide="${s.icon}" class="w-5 h-5"></i>
         </div>
-        <span class="text-[10px] font-black ${isSelected ? "text-blue-800 bg-blue-100/90" : "text-slate-500 bg-slate-100"} px-2.5 py-0.5 rounded-full">
-          ${time}
-        </span>
+        <div class="flex items-center gap-1.5">
+          ${isDebarred ? `
+            <span class="text-[10px] font-black text-red-700 bg-red-100 border border-red-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <i data-lucide="shield-x" class="w-3 h-3"></i> Debarred
+            </span>
+          ` : `
+            <span class="text-[10px] font-black ${isSelected ? "text-blue-800 bg-blue-100/90" : "text-slate-500 bg-slate-100"} px-2.5 py-0.5 rounded-full">
+              ${time}
+            </span>
+          `}
+        </div>
       </div>
       <div>
-        <h4 class="font-black text-sm ${isSelected ? "text-blue-950" : "text-slate-900"}">${name}</h4>
-        <span class="text-[10px] text-emerald-700 font-bold block mt-0.5">✓ ${badge}</span>
+        <h4 class="font-black text-sm ${isDebarred ? "text-red-950" : (isSelected ? "text-blue-950" : "text-slate-900")}">${name}</h4>
+        <span class="text-[10px] ${isDebarred ? "text-red-600" : "text-emerald-700"} font-bold block mt-0.5">
+          ${isDebarred ? "🚫 Debarred by Ministry" : `✓ ${badge}`}
+        </span>
       </div>
       <div class="flex items-center justify-between w-full pt-1.5 border-t border-slate-100 text-xs">
         <span class="font-black text-slate-900">₹${s.base}${hrSuffix}</span>
@@ -1516,27 +3291,545 @@ function toggleShowAllServices() {
   initServiceGrid();
 }
 
-function selectService(serviceId) {
-  state.selectedService = serviceId;
-
-  // Auto-expand services if selected service is outside the first 6
-  const first6 = SERVICES.slice(0, 6);
-  if (!state.showAllServices && !first6.some(s => s.id === serviceId)) {
-    state.showAllServices = true;
+function selectService(serviceId, openModal = true) {
+  // Check if citizen is debarred from this specific service
+  const debarCheck = isCustomerDebarredForService(state.currentCustomerName, serviceId);
+  if (debarCheck.debarred) {
+    sfx.playFallbackWarning();
+    openServiceDebarmentModal(serviceId, debarCheck.reason);
+    return;
   }
 
-  initServiceGrid();
+  state.selectedService = serviceId;
+
+  try {
+    // Auto-expand services if selected service is outside the first 6
+    const first6 = SERVICES.slice(0, 6);
+    if (!state.showAllServices && !first6.some(s => s.id === serviceId)) {
+      state.showAllServices = true;
+    }
+    initServiceGrid();
+  } catch (err) {
+    console.warn("initServiceGrid non-fatal warning:", err);
+  }
   
-  // Find matching worker for this skill
-  const matchingWorker = WORKERS.find(w => w.skill === serviceId && w.is_available) || WORKERS[0];
-  state.activeWorker = matchingWorker;
-  updateWorkerCardUI(matchingWorker);
+  try {
+    // Find matching worker for this skill
+    const matchingWorker = WORKERS.find(w => w.skill === serviceId && w.is_available) || WORKERS[0];
+    state.activeWorker = matchingWorker;
+    updateWorkerCardUI(matchingWorker);
+    updateMapPins();
+  } catch (err) {
+    console.warn("Worker/Map sync non-fatal warning:", err);
+  }
+
+  try {
+    // Reset selected sub-services for this new service
+    const catalog = SUB_SERVICES_CATALOG[serviceId] || [];
+    state.selectedSubServices = catalog.length > 0 ? [catalog[0]] : [];
+    state.selectedSubService = state.selectedSubServices[0] || null;
+
+    calculateLiveQuote();
+
+    // Update step indicator
+    updateWorkflowStep(1);
+  } catch (err) {
+    console.warn("Quote/Workflow non-fatal warning:", err);
+  }
+
+  if (openModal) {
+    openServiceBookingModal(serviceId, 1);
+  }
+}
+
+// ==========================================
+// POP-UP SERVICE BOOKING MODAL WORKFLOW
+// ==========================================
+
+function openServiceBookingModal(serviceId, step = 1) {
+  sfx.playClick();
+  const modal = document.getElementById("modal-service-booking");
+  if (!modal) {
+    console.error("modal-service-booking element not found in DOM");
+    return;
+  }
+
+  const sId = serviceId || state.selectedService || "electrician";
+  state.selectedService = sId;
+
+  // Default to first subservice if none selected yet for this trade
+  const catalog = SUB_SERVICES_CATALOG[sId] || [];
+  if (!state.selectedSubServices || state.selectedSubServices.length === 0 || !catalog.some(s => s.id === state.selectedSubServices[0].id)) {
+    state.selectedSubServices = catalog.length > 0 ? [catalog[0]] : [];
+  }
+  state.selectedSubService = state.selectedSubServices[0] || null;
+
+  try {
+    updateServiceBookingModalUI();
+  } catch (e) {
+    console.warn("updateServiceBookingModalUI non-fatal warning:", e);
+  }
+
+  // Switch to requested step
+  try {
+    backToSubServicesSelection();
+    goToBookingStep(step);
+  } catch (e) {
+    console.warn("goToBookingStep non-fatal warning:", e);
+  }
+
+  modal.classList.remove("hidden");
+  modal.style.display = "flex";
+  document.body.classList.add("overflow-hidden");
+  safeCreateIcons();
+}
+
+function closeServiceBookingModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-service-booking");
+  if (modal) {
+    modal.classList.add("hidden");
+    modal.style.display = "none";
+  }
+  document.body.classList.remove("overflow-hidden");
+}
+
+function updateServiceBookingModalUI() {
+  const modal = document.getElementById("modal-service-booking");
+  if (!modal) return;
+
+  const isHi = state.currentLanguage === "hi";
+  const sObj = SERVICES.find(s => s.id === state.selectedService) || SERVICES[0];
+
+  // 1. Header Title, Badge, Subtitle & Icon
+  const titleEl = document.getElementById("booking-modal-title");
+  if (titleEl) {
+    titleEl.innerText = isHi ? `${sObj.name_hi} सेवाएँ` : `${sObj.name} Services`;
+  }
+
+  const badgeEl = document.getElementById("booking-modal-badge");
+  if (badgeEl) {
+    badgeEl.innerText = isHi ? (sObj.badge_hi || sObj.badge) : sObj.badge;
+  }
+
+  const subtitleEl = document.getElementById("booking-modal-subtitle");
+  if (subtitleEl) {
+    subtitleEl.innerText = isHi 
+      ? "100% प्रत्यक्ष उचित मजदूरी • शून्य छिपा हुआ कमीशन • एनपीसीआई एस्क्रो" 
+      : "100% Direct Fair Wage to Cooperative Technician • Zero Hidden Cut • NPCI Escrow";
+  }
+
+  const iconEl = document.getElementById("booking-modal-service-icon");
+  if (iconEl) {
+    iconEl.setAttribute("data-lucide", sObj.icon || "wrench");
+  }
+
+  // 2. Stepper labels
+  const stepTxt1 = document.getElementById("step-txt-1");
+  if (stepTxt1) {
+    stepTxt1.innerText = isHi ? "1. विशिष्ट कार्य चुनें" : "1. Select Specific Tasks";
+  }
+  const stepTxt2 = document.getElementById("step-txt-2");
+  if (stepTxt2) {
+    stepTxt2.innerText = isHi ? "2. समय निर्धारण व बिल" : "2. Schedule & Tariff";
+  }
+
+  // 3. Step 1 headings
+  const subHeading = document.getElementById("txt-subservice-heading");
+  if (subHeading) {
+    subHeading.innerText = isHi ? "आपको किस प्रकार की सहायता चाहिए?" : "Select One or More Services";
+  }
+  const subSubHeading = document.getElementById("txt-subservice-subheading");
+  if (subSubHeading) {
+    subSubHeading.innerText = isHi 
+      ? "सत्यापित पारदर्शी दरों पर सेवा प्राप्त करने हेतु एक या अधिक कार्य चुनें और संतुष्टि की पुष्टि करें।" 
+      : "Choose one or more services below, then review your selection to confirm satisfaction before continuing.";
+  }
+
+  // 4. Render Step 1 sub-services
+  renderSubServices(state.selectedService);
+
+  // 5. Update Step 2 Breadcrumb & details
+  if (state.selectedSubServices && state.selectedSubServices.length > 0) {
+    const primarySub = state.selectedSubServices[0];
+    const step2Icon = document.getElementById("step2-sub-icon");
+    if (step2Icon) {
+      step2Icon.innerHTML = `<i data-lucide="${primarySub.icon || sObj.icon || "wrench"}" class="w-4 h-4"></i>`;
+    }
+    const step2Label = document.getElementById("step2-service-label");
+    if (step2Label) {
+      step2Label.innerText = isHi 
+        ? `${sObj.name_hi} - ${state.selectedSubServices.length} कार्य चयनित` 
+        : `${sObj.name} - ${state.selectedSubServices.length} Task(s) Selected`;
+    }
+    const step2Title = document.getElementById("step2-sub-title");
+    if (step2Title) {
+      step2Title.innerText = state.selectedSubServices.map(s => isHi ? (s.title_hi || s.title) : s.title).join(" + ");
+    }
+  }
+
+  // 6. Update Step 2 Dispatch title & badge
+  const dispatchTitle = document.getElementById("txt-dispatch-mode-title");
+  if (dispatchTitle) {
+    dispatchTitle.innerText = isHi ? "1. प्रेषण मोड चुनें" : "1. Choose Dispatch Mode";
+  }
+  const scheduleStatus = document.getElementById("badge-schedule-status");
+  if (scheduleStatus) {
+    if (state.bookingScheduleType === "immediate") {
+      scheduleStatus.innerText = isHi ? "तत्काल प्रेषण (<30 मिनट)" : "Immediate Dispatch (<30 mins)";
+    } else {
+      scheduleStatus.innerText = isHi ? "अग्रिम निर्धारित स्लॉट" : "Advance Scheduled Slot";
+    }
+  }
+
+  renderInvoiceTasksList();
+  safeCreateIcons();
+}
+
+function renderSubServices(serviceId) {
+  const grid = document.getElementById("modal-subservices-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const isHi = state.currentLanguage === "hi";
+  const subList = SUB_SERVICES_CATALOG[serviceId] || SUB_SERVICES_CATALOG["electrician"] || [];
+
+  // Reset if selection from another trade
+  if (state.selectedSubServices.length > 0 && !subList.some(s => s.id === state.selectedSubServices[0].id)) {
+    state.selectedSubServices = [];
+  }
+  if (state.selectedSubServices.length === 0 && subList.length > 0) {
+    state.selectedSubServices = [subList[0]];
+  }
+  state.selectedSubService = state.selectedSubServices[0] || null;
+
+  subList.forEach(sub => {
+    const isSelected = state.selectedSubServices.some(s => s.id === sub.id);
+    const title = isHi ? (sub.title_hi || sub.title) : sub.title;
+    const desc = isHi ? (sub.desc_hi || sub.desc) : sub.desc;
+    const badge = isHi ? (sub.badge_hi || sub.badge) : sub.badge;
+
+    const card = document.createElement("div");
+    card.setAttribute("data-sub-id", sub.id);
+    card.onclick = (e) => {
+      e.stopPropagation();
+      sfx.playClick();
+      toggleSubServiceSelection(sub.id);
+    };
+
+    card.className = `p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between text-left space-y-2 btn-tactile relative ${
+      isSelected
+        ? "border-blue-600 bg-blue-50/90 shadow-md ring-2 ring-blue-500/20"
+        : "border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm"
+    }`;
+
+    card.innerHTML = `
+      <div class="flex items-start justify-between w-full">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center ${isSelected ? "bg-blue-600 text-white shadow-sm" : "bg-blue-50 text-blue-700"}">
+            <i data-lucide="${sub.icon || "wrench"}" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-black ${isSelected ? "text-blue-800 bg-blue-100" : "text-emerald-700 bg-emerald-50 border border-emerald-200"} px-2.5 py-0.5 rounded-full">
+              ${badge}
+            </span>
+          </div>
+        </div>
+        <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition ${isSelected ? "bg-blue-600 border-blue-600 text-white shadow-xs" : "border-slate-300 bg-white"}">
+          ${isSelected ? `<i data-lucide="check" class="w-4 h-4 text-white"></i>` : ""}
+        </div>
+      </div>
+      <div>
+        <h4 class="font-black text-sm ${isSelected ? "text-blue-950" : "text-slate-900"}">${title}</h4>
+        <p class="text-xs text-slate-500 mt-1 leading-relaxed">${desc}</p>
+      </div>
+      <div class="flex items-center justify-between w-full pt-2 border-t border-slate-100 text-xs">
+        <span class="font-bold text-slate-500">${isHi ? "श्रम दर:" : "Base Labor:"}</span>
+        <span class="font-black text-slate-900 text-sm">₹${sub.base}${isHi ? "/कार्य" : "/job"}</span>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  updateSubServicesActionBar();
+  safeCreateIcons();
+}
+
+function toggleSubServiceSelection(subId) {
+  const currentCatalog = SUB_SERVICES_CATALOG[state.selectedService] || [];
+  const subObj = currentCatalog.find(s => s.id === subId);
+  if (!subObj) return;
+
+  const existingIdx = state.selectedSubServices.findIndex(s => s.id === subId);
+  if (existingIdx >= 0) {
+    if (state.selectedSubServices.length > 1) {
+      state.selectedSubServices.splice(existingIdx, 1);
+    } else {
+      showToast("At least one service task must remain selected.", "info");
+      return;
+    }
+  } else {
+    state.selectedSubServices.push(subObj);
+  }
+
+  state.selectedSubService = state.selectedSubServices[0] || null;
+  renderSubServices(state.selectedService);
+  calculateLiveQuote();
+}
+
+function updateSubServicesActionBar() {
+  const countEl = document.getElementById("selected-subservices-count");
+  const laborEl = document.getElementById("selected-subservices-labor");
+  const labelEl = document.getElementById("selected-subservices-label");
+  const subtotalEl = document.getElementById("selected-subservices-subtotal");
+  const btn = document.getElementById("btn-proceed-subservices");
+  const count = state.selectedSubServices.length;
+  const totalLabor = state.selectedSubServices.reduce((sum, s) => sum + (s.base || 0), 0);
+
+  if (countEl) countEl.innerText = count;
+  if (laborEl) laborEl.innerText = `₹${totalLabor.toFixed(2)}`;
+  if (labelEl) {
+    labelEl.innerText = count === 1 
+      ? `${state.selectedSubServices[0].title}`
+      : `${count} Tasks Selected`;
+  }
+  if (subtotalEl) {
+    subtotalEl.innerText = count > 0 
+      ? `Combined Base Fair Wage: ₹${totalLabor.toFixed(2)} • Review selection to proceed`
+      : "Choose 1 or more options above";
+  }
+  if (btn) {
+    btn.disabled = count === 0;
+  }
+
+  const bar = document.getElementById("subservices-action-bar");
+  if (bar) {
+    bar.classList.remove("hidden");
+  }
+}
+
+// In-Menu Satisfaction Review Gate (Displays inside the same modal booking dialog)
+function openSatisfactionReviewModal() {
+  sfx.playClick();
+  if (state.selectedSubServices.length === 0) {
+    showToast("Please select at least one service task.", "warning");
+    return;
+  }
+
+  const count = state.selectedSubServices.length;
+  const totalLabor = state.selectedSubServices.reduce((sum, s) => sum + (s.base || 0), 0);
+
+  // 1. In-Menu Satisfaction Review Panel inside #modal-service-booking
+  const inMenuPanel = document.getElementById("in-menu-satisfaction-panel");
+  const subservicesGrid = document.getElementById("modal-subservices-grid");
+  const subservicesActionBar = document.getElementById("subservices-action-bar");
+
+  if (inMenuPanel) {
+    // Hide the grid and action bar, display the in-menu review directly within the same menu
+    if (subservicesGrid) subservicesGrid.classList.add("hidden");
+    if (subservicesActionBar) subservicesActionBar.classList.add("hidden");
+    inMenuPanel.classList.remove("hidden");
+
+    const inMenuCountEl = document.getElementById("in-menu-task-count");
+    if (inMenuCountEl) inMenuCountEl.innerText = count;
+
+    const inMenuTotalEl = document.getElementById("in-menu-satisfaction-total");
+    if (inMenuTotalEl) inMenuTotalEl.innerText = `₹${totalLabor.toFixed(2)}`;
+
+    const inMenuItemsContainer = document.getElementById("in-menu-satisfaction-items");
+    if (inMenuItemsContainer) {
+      inMenuItemsContainer.innerHTML = state.selectedSubServices.map(s => `
+        <div class="py-2.5 flex items-start justify-between gap-3 text-xs">
+          <div class="flex items-start gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i data-lucide="${s.icon || 'wrench'}" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="font-black text-white">${s.title}</div>
+              <div class="text-[11px] text-blue-200 leading-tight mt-0.5">${s.desc}</div>
+            </div>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <span class="font-black text-emerald-400 font-mono">₹${s.base.toFixed(2)}</span>
+            <span class="text-[10px] text-emerald-300 font-bold block">✓ Fair Wage</span>
+          </div>
+        </div>
+      `).join("");
+    }
+  }
+
+  // 2. Also synchronize external review modal elements if accessed
+  const countEl = document.getElementById("satisfaction-modal-task-count") || document.getElementById("satisfaction-modal-count");
+  if (countEl) countEl.innerText = count;
+
+  const totalEl = document.getElementById("satisfaction-modal-total-labor");
+  if (totalEl) totalEl.innerText = `₹${totalLabor.toFixed(2)}`;
+
+  const itemsContainer = document.getElementById("satisfaction-modal-items");
+  if (itemsContainer) {
+    itemsContainer.innerHTML = state.selectedSubServices.map(s => `
+      <div class="py-2.5 flex items-start justify-between gap-3 text-xs">
+        <div class="flex items-start gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i data-lucide="${s.icon || 'wrench'}" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="font-black text-slate-900">${s.title}</div>
+            <div class="text-[11px] text-slate-500 leading-tight mt-0.5">${s.desc}</div>
+          </div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <span class="font-black text-slate-900">₹${s.base.toFixed(2)}</span>
+          <span class="text-[10px] text-emerald-700 font-bold block">✓ Fair Wage</span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // Ensure external popup modal is NOT conflicting or showing behind
+  const outerModal = document.getElementById("modal-satisfaction-review");
+  if (outerModal) outerModal.classList.add("hidden");
+
+  safeCreateIcons();
+}
+
+function backToSubServicesSelection() {
+  sfx.playClick();
+  const inMenuPanel = document.getElementById("in-menu-satisfaction-panel");
+  const subservicesGrid = document.getElementById("modal-subservices-grid");
+  const subservicesActionBar = document.getElementById("subservices-action-bar");
+
+  if (inMenuPanel) inMenuPanel.classList.add("hidden");
+  if (subservicesGrid) subservicesGrid.classList.remove("hidden");
+  if (subservicesActionBar) subservicesActionBar.classList.remove("hidden");
+
+  const outerModal = document.getElementById("modal-satisfaction-review");
+  if (outerModal) outerModal.classList.add("hidden");
+
+  safeCreateIcons();
+}
+
+function closeSatisfactionReviewModal() {
+  backToSubServicesSelection();
+}
+
+function confirmSatisfactionAndProceed() {
+  sfx.playSuccessFanfare();
   
-  updateMapPins();
+  // Reset in-menu panel view for when step 1 is re-visited
+  const inMenuPanel = document.getElementById("in-menu-satisfaction-panel");
+  const subservicesGrid = document.getElementById("modal-subservices-grid");
+  const subservicesActionBar = document.getElementById("subservices-action-bar");
+  if (inMenuPanel) inMenuPanel.classList.add("hidden");
+  if (subservicesGrid) subservicesGrid.classList.remove("hidden");
+  if (subservicesActionBar) subservicesActionBar.classList.remove("hidden");
+
+  const outerModal = document.getElementById("modal-satisfaction-review");
+  if (outerModal) outerModal.classList.add("hidden");
+
+  // Recalculate quote with all chosen tasks
   calculateLiveQuote();
 
-  // Update step indicator
-  updateWorkflowStep(1);
+  // Populate itemized sub-services in Step 2 invoice receipt (#invoice-tasks-container)
+  renderInvoiceTasksList();
+
+  // Move to Step 2
+  goToBookingStep(2);
+  showToast("Satisfaction confirmed! Review transparent tariff and schedule.", "success");
+}
+
+function renderInvoiceTasksList() {
+  const container = document.getElementById("invoice-tasks-container");
+  if (!container) return;
+
+  if (state.selectedSubServices && state.selectedSubServices.length > 0) {
+    container.classList.remove("hidden");
+    container.innerHTML = `
+      <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5">
+        <div class="flex items-center justify-between font-black text-slate-700 pb-1 border-b border-slate-200">
+          <span class="uppercase tracking-wider text-[10px]">Selected Tasks (${state.selectedSubServices.length})</span>
+          <span class="text-[10px] text-emerald-700 font-bold">✓ Customer Verified</span>
+        </div>
+        ${state.selectedSubServices.map(t => `
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-800 font-bold">• ${t.title}</span>
+            <span class="font-mono text-slate-900 font-black">₹${t.base.toFixed(2)}</span>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  } else {
+    container.classList.add("hidden");
+  }
+}
+
+function selectSubService(subId) {
+  toggleSubServiceSelection(subId);
+}
+
+function goToBookingStep(step) {
+  sfx.playClick();
+  state.currentBookingModalStep = step;
+
+  const step1 = document.getElementById("booking-step-1");
+  const step2 = document.getElementById("booking-step-2");
+  const btn1 = document.getElementById("step-btn-1");
+  const btn2 = document.getElementById("step-btn-2");
+
+  if (step === 1) {
+    if (step1) step1.classList.remove("hidden");
+    if (step2) step2.classList.add("hidden");
+
+    if (btn1) {
+      btn1.className = "flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-black bg-blue-600 text-white shadow-xs transition";
+    }
+    if (btn2) {
+      btn2.className = "flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-bold text-slate-500 hover:text-slate-800 transition";
+    }
+
+    renderSubServices(state.selectedService);
+  } else {
+    // If no subservice selected yet, pick the first one by default
+    if (!state.selectedSubService) {
+      const currentCatalog = SUB_SERVICES_CATALOG[state.selectedService] || [];
+      if (currentCatalog.length > 0) {
+        state.selectedSubService = currentCatalog[0];
+      }
+    }
+
+    if (step1) step1.classList.add("hidden");
+    if (step2) step2.classList.remove("hidden");
+
+    if (btn1) {
+      btn1.className = "flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-bold text-slate-500 hover:text-slate-800 transition";
+    }
+    if (btn2) {
+      btn2.className = "flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-black bg-blue-600 text-white shadow-xs transition";
+    }
+
+    const isHi = state.currentLanguage === "hi";
+    const sObj = SERVICES.find(s => s.id === state.selectedService) || SERVICES[0];
+    if (state.selectedSubService) {
+      const step2Icon = document.getElementById("step2-sub-icon");
+      if (step2Icon) {
+        step2Icon.innerHTML = `<i data-lucide="${state.selectedSubService.icon || sObj.icon || "wrench"}" class="w-4 h-4"></i>`;
+      }
+      const step2Label = document.getElementById("step2-service-label");
+      if (step2Label) {
+        step2Label.innerText = isHi ? `${sObj.name_hi} - चयनित कार्य` : `${sObj.name} - Selected Task`;
+      }
+      const step2Title = document.getElementById("step2-sub-title");
+      if (step2Title) {
+        step2Title.innerText = isHi ? (state.selectedSubService.title_hi || state.selectedSubService.title) : state.selectedSubService.title;
+      }
+    }
+
+    // Refresh quote & icons in step 2
+    calculateLiveQuote();
+  }
+
+  safeCreateIcons();
 }
 
 function selectPlan(planType) {
@@ -1914,6 +4207,71 @@ function drawRouteLine(fromCoords, toCoords) {
   state.clientMap.fitBounds(state.routePolyline.getBounds(), { padding: [40, 40] });
 }
 
+function resetCustomerAppMap() {
+  if (!state.clientMap) return;
+
+  try {
+    // 1. Remove active route polyline if present
+    if (state.routePolyline) {
+      try {
+        state.clientMap.removeLayer(state.routePolyline);
+      } catch (e) {}
+      state.routePolyline = null;
+    }
+
+    // 2. Re-center clientMap to citizen coordinates with standard zoom 13
+    const coords = state.customerCoords || [28.6315, 77.2167];
+    try {
+      state.clientMap.setView(coords, 13, { animate: true });
+    } catch (e) {
+      state.clientMap.setView(coords, 13);
+    }
+
+    // 3. Update customer marker position & popup
+    if (state.customerMarker) {
+      try {
+        state.customerMarker.setLatLng(coords);
+        const locText = state.currentCustomerLocation || "Connaught Place, New Delhi";
+        state.customerMarker.bindPopup(`<div class='text-xs'><b>Your Location (${state.currentCustomerName})</b><br>${locText}<br><span class='text-blue-600 font-semibold'>Proximity Broadcast Origin</span></div>`);
+      } catch (e) {}
+    }
+
+    // 4. Reset radar circle position & radius
+    if (state.radarCircle) {
+      try {
+        state.radarCircle.setLatLng(coords);
+        state.radarCircle.setRadius(3000);
+      } catch (e) {}
+    }
+
+    // 5. Reset all worker pins to default positions and status
+    updateMapPins();
+
+    // 6. Reset worker radar route if active
+    if (state.workerRadarMap && state.workerRadarPolyline) {
+      try {
+        state.workerRadarMap.removeLayer(state.workerRadarPolyline);
+      } catch (e) {}
+      state.workerRadarPolyline = null;
+    }
+  } catch (err) {
+    console.warn("resetCustomerAppMap warning:", err);
+  }
+}
+
+function closeCompletedBookingCard() {
+  sfx.playClick();
+  const statusCard = document.getElementById("booking-status-card");
+  if (statusCard) statusCard.classList.add("hidden");
+  const acceptedBanner = document.getElementById("citizen-worker-accepted-banner");
+  if (acceptedBanner) acceptedBanner.classList.add("hidden");
+  const completedBar = document.getElementById("booking-completed-action-bar");
+  if (completedBar) completedBar.classList.add("hidden");
+  resetCustomerAppMap();
+  updateWorkflowStep(1);
+  showToast("Proximity radar reset. Ready for next cooperative service.", "info");
+}
+
 function getWorkerCoords(worker) {
   if (!worker) return [28.6328, 77.2197];
   if (Array.isArray(worker.coords) && worker.coords.length >= 2) return worker.coords;
@@ -1939,10 +4297,18 @@ async function calculateLiveQuote() {
   state.isEmergency = isEmergency;
 
   const serviceObj = SERVICES.find(s => s.id === state.selectedService) || SERVICES[0];
-  let labor = serviceObj.base;
-  if (state.selectedPlan === "daily") labor = serviceObj.base * 5.5;
-  if (state.selectedPlan === "weekly") labor = serviceObj.base * 22 * 0.95; // 5% discount
-  if (state.selectedPlan === "monthly") labor = serviceObj.base * 22 * 5.5 * 0.85; // 15% discount
+  let baseRate = 0;
+  if (state.selectedSubServices && state.selectedSubServices.length > 0) {
+    baseRate = state.selectedSubServices.reduce((sum, s) => sum + (s.base || 0), 0);
+  } else if (state.selectedSubService && state.selectedSubService.base) {
+    baseRate = state.selectedSubService.base;
+  } else {
+    baseRate = serviceObj.base;
+  }
+  let labor = baseRate;
+  if (state.selectedPlan === "daily") labor = baseRate * 5.5;
+  if (state.selectedPlan === "weekly") labor = baseRate * 22 * 0.95; // 5% discount
+  if (state.selectedPlan === "monthly") labor = baseRate * 22 * 5.5 * 0.85; // 15% discount
 
   // Reduced toolkit charges
   const toolkit = state.selectedPlan === "hourly" || state.selectedPlan === "daily" ? 40.0 : 100.0;
@@ -2005,7 +4371,17 @@ function renderPriceQuote(data) {
 
   const lblService = document.getElementById("lbl-quote-service");
   if (lblService) {
-    lblService.innerText = isHi ? serviceObj.name_hi : serviceObj.name.toUpperCase();
+    if (state.selectedSubServices && state.selectedSubServices.length > 1) {
+      lblService.innerText = isHi 
+        ? `${state.selectedSubServices.length} सेवाएँ संयुक्त (${state.selectedSubServices.map(s => s.title).join(", ")})` 
+        : `${state.selectedSubServices.length} SERVICES BUNDLED (${state.selectedSubServices.map(s => s.title).join(", ")})`;
+    } else if (state.selectedSubService) {
+      lblService.innerText = isHi 
+        ? (state.selectedSubService.title_hi || state.selectedSubService.title) 
+        : state.selectedSubService.title.toUpperCase();
+    } else {
+      lblService.innerText = isHi ? serviceObj.name_hi : serviceObj.name.toUpperCase();
+    }
   }
 
   document.getElementById("quote-labor").innerText = `₹${b.labor_cost.toFixed(2)}`;
@@ -2070,15 +4446,42 @@ function renderPriceQuote(data) {
   }
 }
 
-// 8. Demo Payment Gateway Interface (Interactive Breakdown & Escrow Authorization)
 function openPaymentGatewayModal() {
   sfx.playClick();
   const modal = document.getElementById("modal-payment-gateway");
   if (!modal) return;
 
   const isHi = state.currentLanguage === "hi";
+  const customerName = state.currentCustomerName || "Aarav Mehta";
+
+  // Check if current citizen account is debarred by Ministry
+  if (state.debarredCustomers && state.debarredCustomers[customerName]) {
+    const alertBanner = document.getElementById("citizen-debarred-alert");
+    const alertText = document.getElementById("citizen-debarred-alert-text");
+    if (alertBanner) alertBanner.classList.remove("hidden");
+    if (alertText) {
+      alertText.innerHTML = isHi 
+        ? `नागरिक <strong>"${customerName}"</strong> को प्रमाणित तकनीशियनों की शिकायतों के बाद सहकारिता मंत्रालय द्वारा सेवा सेतु से <strong>निष्कासित (DEBARRED)</strong> किया गया है।`
+        : `Customer account <strong>"${customerName}"</strong> is officially <strong>DEBARRED</strong> from booking cooperative services on Seva Setu (${state.debarredCustomers[customerName].reason || "Multiple worker complaint escalations"}).`;
+    }
+    sfx.playFallbackWarning();
+    showToast(isHi ? `🚫 खाता निष्कासित: सेवा बुकिंग प्रतिबंधित है` : `🚫 Account Debarred: Service booking forbidden for ${customerName}`, "emergency");
+    if (alertBanner) alertBanner.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  // Hide the booking modal if open so payment gateway displays cleanly
+  const serviceBookingModal = document.getElementById("modal-service-booking");
+  if (serviceBookingModal) {
+    serviceBookingModal.classList.add("hidden");
+    serviceBookingModal.style.display = "none";
+  }
+  document.body.classList.remove("overflow-hidden");
+
   const serviceObj = SERVICES.find(s => s.id === state.selectedService) || SERVICES[0];
   const serviceName = isHi ? serviceObj.name_hi : serviceObj.name;
+  const subTask = state.selectedSubService 
+    ? ` • ${isHi ? (state.selectedSubService.title_hi || state.selectedSubService.title) : state.selectedSubService.title}` 
+    : "";
   
   let planName = state.selectedPlan.toUpperCase();
   if (isHi) {
@@ -2091,7 +4494,7 @@ function openPaymentGatewayModal() {
   // Populate Order Summary
   const summaryServiceEl = document.getElementById("pay-summary-service");
   if (summaryServiceEl) {
-    summaryServiceEl.innerText = `${serviceName} (${planName}) - Connaught Place`;
+    summaryServiceEl.innerText = `${serviceName}${subTask} (${planName}) - Connaught Place`;
   }
 
   const summarySlotEl = document.getElementById("pay-summary-slot-text");
@@ -2168,13 +4571,30 @@ function openPaymentGatewayModal() {
   selectPayTab("qr");
 
   modal.classList.remove("hidden");
+  modal.style.display = "flex";
+  document.body.classList.add("overflow-hidden");
   safeCreateIcons();
 }
 
 function closePaymentGatewayModal() {
   sfx.playClick();
   const modal = document.getElementById("modal-payment-gateway");
-  if (modal) modal.classList.add("hidden");
+  if (modal) {
+    modal.classList.add("hidden");
+    modal.style.display = "none";
+  }
+  if (!state.activeBooking) {
+    const sModal = document.getElementById("modal-service-booking");
+    if (sModal && state.selectedService) {
+      sModal.classList.remove("hidden");
+      sModal.style.display = "flex";
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+  } else {
+    document.body.classList.remove("overflow-hidden");
+  }
 }
 
 function selectPayTab(tab) {
@@ -2254,21 +4674,49 @@ function handleNgoCheckboxChange(checkbox) {
 
 function openNgoVerificationModal() {
   sfx.playClick();
-  document.getElementById("modal-ngo-verify").classList.remove("hidden");
+  const modal = document.getElementById("modal-ngo-verify");
+  if (!modal) return;
+  modal.classList.remove("hidden");
+  modal.style.display = "flex";
+  document.body.classList.add("overflow-hidden");
   safeCreateIcons();
   
   if (state.ngoData) {
-    document.getElementById("ngo-input-name").value = state.ngoData.name;
-    document.getElementById("ngo-input-darpan").value = state.ngoData.darpan;
-    document.getElementById("ngo-input-tax").value = state.ngoData.tax || "";
-    document.getElementById("ngo-input-purpose").value = state.ngoData.purpose || "elder";
-    document.getElementById("ngo-input-rep").value = state.ngoData.rep || "";
+    const nameEl = document.getElementById("ngo-input-name");
+    const darpanEl = document.getElementById("ngo-input-darpan");
+    const taxEl = document.getElementById("ngo-input-tax");
+    const purposeEl = document.getElementById("ngo-input-purpose");
+    const repEl = document.getElementById("ngo-input-rep");
+    if (nameEl) nameEl.value = state.ngoData.name;
+    if (darpanEl) darpanEl.value = state.ngoData.darpan;
+    if (taxEl) taxEl.value = state.ngoData.tax || "";
+    if (purposeEl) purposeEl.value = state.ngoData.purpose || "elder";
+    if (repEl) repEl.value = state.ngoData.rep || "";
   }
 }
 
 function closeNgoVerificationModal(isSuccess = false) {
   sfx.playClick();
-  document.getElementById("modal-ngo-verify").classList.add("hidden");
+  const modal = document.getElementById("modal-ngo-verify");
+  if (modal) {
+    modal.classList.add("hidden");
+    modal.style.display = "none";
+  }
+
+  // Keep body overflow locked if service booking modal is still open underneath
+  const sModal = document.getElementById("modal-service-booking");
+  if (sModal && !sModal.classList.contains("hidden") && sModal.style.display !== "none") {
+    document.body.classList.add("overflow-hidden");
+  } else {
+    document.body.classList.remove("overflow-hidden");
+  }
+
+  if (!isSuccess && !state.ngoVerified) {
+    const cb = document.getElementById("ngo-checkbox");
+    if (cb) cb.checked = false;
+    state.isNgo = false;
+    calculateLiveQuote();
+  }
 }
 
 function autoFillSampleNgo() {
@@ -2340,6 +4788,25 @@ function executeBookingConfirmed() {
   sfx.playAlert();
   const isHi = state.currentLanguage === "hi";
   const btn = document.getElementById("btn-book-service");
+  const customerName = state.currentCustomerName || "Aarav Mehta";
+
+  // Check if citizen is debarred from this service
+  const debarCheck = isCustomerDebarredForService(customerName, state.selectedService);
+  if (debarCheck.debarred) {
+    const alertBanner = document.getElementById("citizen-debarred-alert");
+    const alertText = document.getElementById("citizen-debarred-alert-text");
+    if (alertBanner) alertBanner.classList.remove("hidden");
+    if (alertText) {
+      alertText.innerHTML = isHi 
+        ? `नागरिक <strong>"${customerName}"</strong> को सहकारिता मंत्रालय द्वारा इस सेवा (${state.selectedService}) से <strong>निष्कासित (DEBARRED)</strong> किया गया है (${debarCheck.reason || "Repeated violations"})।`
+        : `Customer account <strong>"${customerName}"</strong> has been officially <strong>DEBARRED</strong> from booking <strong>${state.selectedService.toUpperCase()}</strong> following ministry directive (${debarCheck.reason || "Administrative sanction"}).`;
+    }
+    sfx.playFallbackWarning();
+    openServiceDebarmentModal(state.selectedService, debarCheck.reason);
+    showToast(isHi ? `🚫 सेवा प्रतिबंधित: ${customerName} निष्कासित है` : `🚫 Service Restricted: ${customerName} is debarred from this service`, "emergency");
+    if (alertBanner) alertBanner.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
 
   if (!state.lastQuoteData) {
     calculateLiveQuote();
@@ -2359,10 +4826,17 @@ function executeBookingConfirmed() {
 
   const slotText = getFormattedBookingSlot(isHi);
 
+  const subServicesList = (state.selectedSubServices && state.selectedSubServices.length > 0)
+    ? state.selectedSubServices
+    : (state.selectedSubService ? [state.selectedSubService] : []);
+
   const bookingResult = {
     booking_id: 1001 + Math.floor(Math.random() * 50),
-    customer_name: "Aarav Mehta",
+    customer_name: customerName,
     service_type: state.selectedService,
+    sub_service: subServicesList.map(s => isHi ? (s.title_hi || s.title) : s.title).join(" + "),
+    sub_service_id: subServicesList.map(s => s.id).join(","),
+    sub_services: subServicesList,
     booking_date: state.bookingDate || "Today",
     booking_time: slotText,
     status: "BROADCASTING",
@@ -2385,15 +4859,21 @@ function executeBookingConfirmed() {
 
   state.activeBooking = bookingResult;
 
+  // Ensure modal is closed
+  const sModal = document.getElementById("modal-service-booking");
+  if (sModal) sModal.classList.add("hidden");
+  document.body.classList.remove("overflow-hidden");
+
   // Reveal Active Booking Card in Citizen App
   const statusCard = document.getElementById("booking-status-card");
   if (statusCard) statusCard.classList.remove("hidden");
 
   const statusTitle = document.getElementById("booking-status-title");
   if (statusTitle) {
+    const subTitle = bookingResult.sub_service ? ` • ${bookingResult.sub_service}` : "";
     statusTitle.innerText = isHi 
-      ? `बुकिंग #${bookingResult.booking_id} सक्रिय` 
-      : `Booking #${bookingResult.booking_id} Active`;
+      ? `बुकिंग #${bookingResult.booking_id} सक्रिय${subTitle}` 
+      : `Booking #${bookingResult.booking_id} Active${subTitle}`;
   }
 
   const statusBookingSlot = document.getElementById("status-booking-slot");
@@ -2437,7 +4917,7 @@ function executeBookingConfirmed() {
 
   // Asynchronously attempt backend booking registration if online
   if (state.hasBackendConnection) {
-    fetch(`${API_BASE_URL}/api/v1/bookings`, {
+    fetch(`${API_BASE_URL}/api/bookings/new`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -2446,13 +4926,21 @@ function executeBookingConfirmed() {
         worker_id: bookingResult.assigned_worker.id,
         pricing: bookingResult.pricing,
         booking_date: bookingResult.booking_date,
-        booking_time: bookingResult.booking_time
+        booking_time: bookingResult.booking_time,
+        sub_services: bookingResult.sub_services
       })
+    }).then(async res => {
+      if (res.status === 403) {
+        const errData = await res.json();
+        const reason = errData.detail || "Debarred customer";
+        openServiceDebarmentModal(bookingResult.service_type, reason);
+        showToast("🚫 " + reason, "emergency");
+      }
     }).catch(err => console.log("Backend booking call simulated or offline:", err.message));
   }
 
   // Smooth scroll to status card
-  if (statusCard) {
+  if (statusCard && typeof statusCard.scrollIntoView === "function") {
     statusCard.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 }
@@ -2496,7 +4984,8 @@ function triggerWorkerRadar(booking) {
   const serviceTypeEl = document.getElementById("radar-service-type");
   if (serviceTypeEl) {
     const slotTag = booking.booking_time ? ` (${booking.booking_time})` : "";
-    serviceTypeEl.innerText = isHi ? `${sTitle} अनुरोध${slotTag}` : `${sTitle} Call${slotTag}`;
+    const taskTag = booking.sub_service ? ` • ${booking.sub_service}` : "";
+    serviceTypeEl.innerText = isHi ? `${sTitle}${taskTag} अनुरोध${slotTag}` : `${sTitle}${taskTag} Call${slotTag}`;
   }
 
   const clientNameEl = document.getElementById("radar-client-name");
@@ -2517,15 +5006,130 @@ function triggerWorkerRadar(booking) {
   }
 }
 
+function initWorkerRadarMap(destCoords, destTitle = "Client Premises", serviceType = "Service Request") {
+  if (typeof L === "undefined") {
+    console.warn("Leaflet not available for worker radar navigation.");
+    return;
+  }
+
+  const container = document.getElementById("worker-radar-map");
+  if (!container) return;
+
+  const wCoords = getWorkerCoords(state.activeWorker);
+  const targetCoords = destCoords || state.customerCoords || [28.6304, 77.2273];
+
+  const radarMapContainer = document.getElementById("worker-radar-map-container");
+  const radarScanner = document.getElementById("worker-radar-scanner");
+  if (radarMapContainer) radarMapContainer.classList.remove("hidden");
+  if (radarScanner) radarScanner.classList.add("hidden");
+
+  if (!state.workerRadarMap) {
+    state.workerRadarMap = L.map("worker-radar-map", {
+      zoomControl: true,
+      scrollWheelZoom: false
+    }).setView(wCoords, 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(state.workerRadarMap);
+  } else {
+    state.workerRadarMap.invalidateSize();
+  }
+
+  // Clear previous layers
+  if (state.workerRadarWorkerMarker) state.workerRadarMap.removeLayer(state.workerRadarWorkerMarker);
+  if (state.workerRadarDestMarker) state.workerRadarMap.removeLayer(state.workerRadarDestMarker);
+  if (state.workerRadarPolyline) state.workerRadarMap.removeLayer(state.workerRadarPolyline);
+
+  // Worker live location marker
+  const workerIcon = L.divIcon({
+    className: 'custom-pin worker-pin ring-4 ring-emerald-300',
+    html: `<span>W</span>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
+  });
+  state.workerRadarWorkerMarker = L.marker(wCoords, { icon: workerIcon })
+    .addTo(state.workerRadarMap)
+    .bindPopup(`<b>Your Live Location</b><br>${state.activeWorker?.name || "Technician"}`);
+
+  // Destination marker
+  const destIcon = L.divIcon({
+    className: 'custom-pin customer-pin ring-4 ring-blue-300',
+    html: `<span>D</span>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
+  });
+  state.workerRadarDestMarker = L.marker(targetCoords, { icon: destIcon })
+    .addTo(state.workerRadarMap)
+    .bindPopup(`<b>${destTitle}</b><br>${serviceType}`);
+
+  // Route polyline connecting technician to client location
+  state.workerRadarPolyline = L.polyline([wCoords, targetCoords], {
+    color: '#2563eb',
+    weight: 4,
+    opacity: 0.85,
+    dashArray: '8, 8'
+  }).addTo(state.workerRadarMap);
+
+  try {
+    state.workerRadarMap.fitBounds(state.workerRadarPolyline.getBounds(), { padding: [40, 40] });
+  } catch (e) {
+    state.workerRadarMap.setView(wCoords, 13);
+  }
+
+  // Update HUD text
+  const hudTitle = document.getElementById("radar-nav-dest-title");
+  if (hudTitle) hudTitle.innerText = `Navigating to ${destTitle}`;
+  const dist = computeDistanceKm(wCoords[0], wCoords[1], targetCoords[0], targetCoords[1]);
+  const etaMinutes = Math.max(3, Math.round(dist * 3.5));
+  const hudEta = document.getElementById("radar-nav-dest-eta");
+  if (hudEta) hudEta.innerText = `GPS Route • ${dist} km away • Est. ${etaMinutes} mins transit`;
+
+  // Update external Google Maps navigation link
+  const extBtn = document.getElementById("btn-radar-external-nav");
+  if (extBtn) {
+    extBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${wCoords[0]},${wCoords[1]}&destination=${targetCoords[0]},${targetCoords[1]}`;
+  }
+
+  setTimeout(() => {
+    if (state.workerRadarMap) state.workerRadarMap.invalidateSize();
+  }, 250);
+}
+
+function toggleWorkerRadarView() {
+  sfx.playClick();
+  const radarMapContainer = document.getElementById("worker-radar-map-container");
+  const radarScanner = document.getElementById("worker-radar-scanner");
+  if (!radarMapContainer || !radarScanner) return;
+
+  if (radarMapContainer.classList.contains("hidden")) {
+    radarMapContainer.classList.remove("hidden");
+    radarScanner.classList.add("hidden");
+    if (state.workerRadarMap) {
+      setTimeout(() => state.workerRadarMap.invalidateSize(), 100);
+    }
+  } else {
+    radarMapContainer.classList.add("hidden");
+    radarScanner.classList.remove("hidden");
+  }
+}
+
 function workerAcceptJob() {
   sfx.playSuccessFanfare();
   if (!state.activeBooking) return;
   const isHi = state.currentLanguage === "hi";
 
   state.activeBooking.status = "ACCEPTED";
+  const assignedWorker = state.activeBooking.assigned_worker || state.activeWorker;
+  const wCoords = getWorkerCoords(assignedWorker);
+  const distance = computeDistanceKm(
+    state.customerCoords[0], state.customerCoords[1],
+    wCoords[0], wCoords[1]
+  );
+
   state.activeBooking.timeline.push(isHi
-    ? `श्रमिक ${state.activeBooking.assigned_worker.name} ने कार्य स्वीकार किया। रास्ते में हैं।`
-    : `Worker ${state.activeBooking.assigned_worker.name} accepted the request. En route.`);
+    ? `श्रमिक ${assignedWorker.name} ने कार्य स्वीकार किया। रास्ते में हैं।`
+    : `Worker ${assignedWorker.name} accepted the request. En route.`);
   
   const badgeStatus = document.getElementById("booking-badge-status");
   if (badgeStatus) {
@@ -2539,12 +5143,110 @@ function workerAcceptJob() {
     badgeStep1.innerText = isHi ? "आगमन ओटीपी प्रतीक्षारत" : "AWAITING START_OTP";
   }
 
+  // Populate Citizen Assigned Worker card elements
+  const statusWorkerName = document.getElementById("status-worker-name");
+  if (statusWorkerName) statusWorkerName.innerText = assignedWorker.name;
+
+  const statusWorkerCoop = document.getElementById("status-worker-coop");
+  if (statusWorkerCoop) statusWorkerCoop.innerText = `✓ ${assignedWorker.coop_name}`;
+
+  const statusWorkerDist = document.getElementById("status-worker-dist");
+  if (statusWorkerDist) statusWorkerDist.innerText = `📍 ${distance} km away • Rating: ${assignedWorker.rating} ★`;
+
+  const statusWorkerPhoto = document.getElementById("status-worker-photo");
+  if (statusWorkerPhoto) statusWorkerPhoto.src = assignedWorker.photo;
+
+  const startOtpEl = document.getElementById("display-start-otp");
+  if (startOtpEl) startOtpEl.innerText = state.activeBooking.start_otp;
+
+  const endOtpEl = document.getElementById("display-end-otp");
+  if (endOtpEl) endOtpEl.innerText = state.activeBooking.end_otp;
+
+  // Populate Citizen Worker Accepted Live Banner
+  const acceptedBanner = document.getElementById("citizen-worker-accepted-banner");
+  if (acceptedBanner) {
+    acceptedBanner.classList.remove("hidden");
+    const bannerOtp = document.getElementById("banner-start-otp-val");
+    if (bannerOtp) bannerOtp.innerText = state.activeBooking.start_otp;
+    const bannerTitle = document.getElementById("citizen-worker-accepted-title");
+    if (bannerTitle) bannerTitle.innerText = `${assignedWorker.name} Accepted Your Request!`;
+    const bannerSub = document.getElementById("citizen-worker-accepted-sub");
+    if (bannerSub) bannerSub.innerText = `${assignedWorker.coop_name} • 📍 ${distance} km away. Share START_OTP upon technician arrival.`;
+  }
+
+  // Populate & Reveal Citizen Worker Accepted Toast Modal
+  const toastModal = document.getElementById("modal-worker-accepted-toast");
+  if (toastModal) {
+    const toastName = document.getElementById("toast-worker-name");
+    if (toastName) toastName.innerText = assignedWorker.name;
+    const toastPhoto = document.getElementById("toast-worker-photo");
+    if (toastPhoto) toastPhoto.src = assignedWorker.photo;
+    const toastCoop = document.getElementById("toast-worker-coop");
+    if (toastCoop) toastCoop.innerText = assignedWorker.coop_name;
+    const toastRating = document.getElementById("toast-worker-rating");
+    if (toastRating) toastRating.innerText = `★ ${assignedWorker.rating}`;
+    const toastDist = document.getElementById("toast-worker-distance");
+    if (toastDist) toastDist.innerText = `📍 ${distance} km away`;
+    const toastStartOtp = document.getElementById("toast-start-otp");
+    if (toastStartOtp) toastStartOtp.innerText = state.activeBooking.start_otp;
+    const toastEndOtp = document.getElementById("toast-end-otp");
+    if (toastEndOtp) toastEndOtp.innerText = state.activeBooking.end_otp;
+
+    toastModal.classList.remove("hidden");
+    toastModal.style.display = "block";
+  }
+
   updateTimeline(state.activeBooking.timeline);
-  const activeWCoords = getWorkerCoords(state.activeBooking.assigned_worker);
+  const activeWCoords = getWorkerCoords(assignedWorker);
   drawRouteLine(activeWCoords, state.customerCoords);
+
+  // Send backend dispatch respond if connected
+  if (state.hasBackendConnection) {
+    fetch(`${API_BASE_URL}/api/bookings/dispatch/respond`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        booking_id: state.activeBooking.booking_id,
+        worker_id: assignedWorker.id,
+        action: "ACCEPT"
+      })
+    }).then(async res => {
+      if (res.ok) {
+        const data = await res.json();
+        if (data.start_otp) state.activeBooking.start_otp = data.start_otp;
+        if (data.end_otp) state.activeBooking.end_otp = data.end_otp;
+      }
+    }).catch(err => console.warn("Backend accept response offline/mock:", err));
+  }
+
+  // Open the interactive Navigation Map right inside the Worker Radar
+  initWorkerRadarMap(
+    state.customerCoords,
+    state.activeBooking.customer_name || "Connaught Place, New Delhi",
+    state.activeBooking.service_type?.toUpperCase() || "Cooperative Task"
+  );
+
   showToast(isHi 
-    ? `${state.activeBooking.assigned_worker.name} ने कार्य स्वीकार किया! कनॉट प्लेस के लिए रवाना।` 
-    : `Job Accepted by ${state.activeBooking.assigned_worker.name}! En route to Connaught Place.`, "success");
+    ? `${assignedWorker.name} ने कार्य स्वीकार किया! ग्राहक को ओटीपी व विवरण भेजे गए।` 
+    : `Job Accepted by ${assignedWorker.name}! Customer received OTPs & technician profile.`, "success");
+}
+
+function closeWorkerAcceptedToast() {
+  const toast = document.getElementById("modal-worker-accepted-toast");
+  if (toast) {
+    toast.classList.add("hidden");
+    toast.style.display = "none";
+  }
+}
+
+function focusCitizenBookingStatus() {
+  closeWorkerAcceptedToast();
+  switchPortal("client");
+  const card = document.getElementById("booking-status-card");
+  if (card) {
+    card.classList.remove("hidden");
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 }
 
 function workerRejectJob() {
@@ -2573,7 +5275,7 @@ function workerRejectJob() {
   
   state.activeBooking.timeline.push(isHi ? `श्रमिक ${declinedWorker.name} ने कार्य अस्वीकार किया।` : `Worker ${declinedWorker.name} declined the job.`);
   state.activeBooking.timeline.push(isHi 
-    ? `🚨 स्वचालित बैकअप इंजन: अगले निकटतम सहकारी तकनीशियन को पुनः सौंपा गया: ${backupWorker.name} (${dist} किमी दूरी)।`
+    ? `🚨 स्वचालित बैकअप इंजन: अगले निकटतम तकनीशियन को पुनः सौंपा गया: ${backupWorker.name} (${dist} किमी दूरी)।`
     : `🚨 AUTOMATED FALLBACK ENGINE: Reassigned to next nearest worker: ${backupWorker.name} (${dist} km away).`);
 
   // Update UI on Citizen View
@@ -2598,28 +5300,62 @@ function workerRejectJob() {
   const fallbackText = document.getElementById("worker-fallback-text");
   if (fallbackText) {
     fallbackText.innerHTML = isHi 
-      ? `कार्य <b>${declinedWorker.name}</b> द्वारा अस्वीकार किया गया एवं स्वचालित रूप से <b>${backupWorker.name}</b> (${dist} किमी) को सौंपा गया।`
-      : `Job was declined by <span class="font-bold">${declinedWorker.name}</span> and instantly reassigned to the next nearest cooperative technician: <strong class="text-blue-900">${backupWorker.name}</strong> (${dist} km away).`;
+      ? `कार्य <b>${declinedWorker.name}</b> द्वारा अस्वीकार किया गया एवं स्वचालित रूप से <b>${backupWorker.name}</b> (${dist} किमी) को सौंपा गया। डैशबोर्ड स्वचालित रूप से <b>${backupWorker.name}</b> पर स्विच हो गया है।`
+      : `Job declined by <span class="font-bold">${declinedWorker.name}</span> and instantly reassigned to: <strong class="text-blue-900">${backupWorker.name}</strong> (${dist} km away). Worker Cockpit switched to ${backupWorker.name}.`;
   }
 
-  const incomingCard = document.getElementById("incoming-job-card");
-  if (incomingCard) incomingCard.classList.add("hidden");
-
-  const idleMsg = document.getElementById("radar-idle-msg");
-  if (idleMsg) {
-    idleMsg.innerText = isHi 
-      ? `कार्य बैकअप प्रणाली द्वारा ${backupWorker.name} को सौंपा गया।` 
-      : `Job reassigned to ${backupWorker.name} via fallback state machine.`;
+  // Update worker rejection audit log and compliance tracking
+  declinedWorker.rejection_count = (declinedWorker.rejection_count || 0) + 1;
+  if (declinedWorker.rejection_count >= 3 && declinedWorker.disciplinary_status !== "FIRED") {
+    declinedWorker.disciplinary_status = "UNDER_REVIEW";
   }
 
-  // Switch active worker to backupWorker and sync card UI
+  const rejectionEntry = {
+    rejection_id: `REJ-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    worker_id: declinedWorker.id,
+    worker_name: declinedWorker.name,
+    worker_skill: declinedWorker.skill,
+    coop_name: declinedWorker.coop_name,
+    booking_id: state.activeBooking.booking_id,
+    service_type: state.activeBooking.service_type,
+    reason: "Worker busy / declined dispatch (Outside preferred operating radius)",
+    timestamp: new Date().toISOString()
+  };
+  state.workerRejections.unshift(rejectionEntry);
+
+  if (state.hasBackendConnection) {
+    fetch(`${API_BASE_URL}/api/bookings/dispatch/respond`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        booking_id: state.activeBooking.booking_id,
+        worker_id: declinedWorker.id,
+        action: "DECLINE"
+      })
+    }).catch(err => console.warn("Backend decline response offline/mock:", err));
+  }
+
+  updateWorkerDisciplinaryUI(declinedWorker);
+  if (typeof renderMinistryDisciplineTable === "function") {
+    renderMinistryDisciplineTable();
+  }
+
+  // SWITCH DASHBOARD TO THE SPECIFIC BACKUP WORKER!
+  state.activeWorker = backupWorker;
   updateWorkerCardUI(backupWorker);
+  const personaSelect = document.getElementById("worker-persona-select");
+  if (personaSelect) {
+    personaSelect.value = String(backupWorker.id);
+  }
   updateMapPins();
   drawRouteLine(bCoords, state.customerCoords);
 
+  // Re-trigger Worker Radar for the backup worker so the incoming job card is populated for them!
+  triggerWorkerRadar(state.activeBooking);
+
   showToast(isHi 
-    ? `🚨 बैकअप तकनीशियन ${backupWorker.name} को कार्य पुनः सौंपा गया (${dist} किमी)` 
-    : `🚨 Fallback Reassigned to ${backupWorker.name} (${dist} km away)`, "warning");
+    ? `🚨 डैशबोर्ड बैकअप तकनीशियन ${backupWorker.name} (#${backupWorker.id}) पर स्विच हुआ` 
+    : `🚨 Worker Dashboard switched to ${backupWorker.name} (#${backupWorker.id} - ${backupWorker.skill.toUpperCase()})`, "warning");
 }
 
 // 12. Dual OTP Verification Workflows
@@ -2763,9 +5499,28 @@ function submitEndOtp() {
     updateTimeline(state.activeBooking.timeline);
     updateWorkflowStep(4);
     
+    // Automatically reset customer app map now that the worker accepted and job is done!
+    resetCustomerAppMap();
+
+    // Reveal completed action bar in citizen status card
+    const completedBar = document.getElementById("booking-completed-action-bar");
+    if (completedBar) completedBar.classList.remove("hidden");
+
+    // Dismiss worker accepted toast modal
+    const toastModal = document.getElementById("modal-worker-accepted-toast");
+    if (toastModal) toastModal.classList.add("hidden");
+
+    // Hide accepted banner after brief completion display
+    const acceptedBanner = document.getElementById("citizen-worker-accepted-banner");
+    if (acceptedBanner) {
+      setTimeout(() => {
+        acceptedBanner.classList.add("hidden");
+      }, 3500);
+    }
+
     showToast(isHi 
-      ? `🎉 कार्य सफलतापूर्वक संपन्न! ₹${payout.toFixed(2)} सीधे डीसीसीबी खाते में 0% कटौती के साथ जमा किए गए।`
-      : `🎉 Service Completed! ₹${payout.toFixed(2)} credited directly to DCCB Account with 0% cut.`, "success");
+      ? `🎉 कार्य सफलतापूर्वक संपन्न! ₹${payout.toFixed(2)} सीधे डीसीसीबी खाते में जमा। ग्राहक मानचित्र रीसेट हुआ।`
+      : `🎉 Service Completed! ₹${payout.toFixed(2)} credited to worker. Customer radar map has been reset.`, "success");
   } else {
     sfx.playFallbackWarning();
     showToast(`Invalid END_OTP. Hint: ${state.activeBooking.end_otp}`, "warning");
@@ -2835,18 +5590,165 @@ function updateWorkerCardUI(worker) {
   if (personaSelect && String(personaSelect.value) !== String(worker.id)) {
     personaSelect.value = String(worker.id);
   }
+
+  if (typeof updateWorkerDisciplinaryUI === "function") {
+    updateWorkerDisciplinaryUI(worker);
+  }
+  if (typeof updateWorkerFreelanceUI === "function") {
+    updateWorkerFreelanceUI(worker);
+  }
 }
 
-function changeWorkerPersona(workerId) {
+let pendingWorkerSwitchId = null;
+
+function openWorkerAuthGateModal(targetWorker) {
+  sfx.playClick();
+  const modal = document.getElementById("modal-worker-auth-gate");
+  if (!modal || !targetWorker) return;
+
+  pendingWorkerSwitchId = targetWorker.id;
+  const persona = WORKER_SWITCH_PERSONAS[String(targetWorker.id)] || targetWorker;
+  const workerOtp = persona.otp || targetWorker.otp || "5821";
+  targetWorker.auth_otp = workerOtp;
+
+  const avatarEl = document.getElementById("gate-worker-avatar");
+  if (avatarEl) avatarEl.src = targetWorker.photo || persona.photo || "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=120";
+
+  const nameEl = document.getElementById("gate-worker-name");
+  if (nameEl) nameEl.innerText = targetWorker.name;
+
+  const skillEl = document.getElementById("gate-worker-skill");
+  if (skillEl) skillEl.innerText = (targetWorker.skill || "technician").toUpperCase();
+
+  const coopEl = document.getElementById("gate-worker-coop");
+  if (coopEl) coopEl.innerText = targetWorker.coop_name || "Cooperative Society";
+
+  const phoneEl = document.getElementById("gate-worker-phone");
+  if (phoneEl) phoneEl.innerText = targetWorker.phone || persona.phone || "+91 98123 45678";
+
+  const pacsEl = document.getElementById("gate-worker-pacs-id");
+  if (pacsEl) pacsEl.innerText = persona.pacs_id || `PACS-DL-${targetWorker.id * 37}`;
+
+  const demoCodeEl = document.getElementById("gate-worker-demo-otp-code");
+  if (demoCodeEl) demoCodeEl.innerText = workerOtp;
+
+  const otpInput = document.getElementById("gate-worker-otp");
+  if (otpInput) otpInput.value = "";
+
+  const feedback = document.getElementById("gate-worker-auth-feedback");
+  if (feedback) {
+    feedback.className = "text-xs font-semibold hidden p-2.5 rounded-xl";
+    feedback.innerText = "";
+  }
+
+  modal.classList.remove("hidden");
+  safeCreateIcons();
+}
+
+function cancelWorkerAuthGate() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-worker-auth-gate");
+  if (modal) modal.classList.add("hidden");
+
+  // Revert dropdown back to current active worker
+  const personaSelect = document.getElementById("worker-persona-select");
+  if (personaSelect && state.activeWorker) {
+    personaSelect.value = String(state.activeWorker.id);
+  }
+  pendingWorkerSwitchId = null;
+}
+
+function sendWorkerAuthGateOtp() {
+  sfx.playBeep();
+  const phoneEl = document.getElementById("gate-worker-phone");
+  const phone = phoneEl ? phoneEl.innerText : "registered mobile";
+  const feedback = document.getElementById("gate-worker-auth-feedback");
+  if (feedback) {
+    feedback.className = "text-xs font-semibold p-2.5 rounded-xl bg-indigo-100 text-indigo-950 border border-indigo-200 block";
+    feedback.innerText = `✓ Fresh 4-digit UIDAI / PACS verification OTP sent to ${phone}`;
+  }
+  showToast(`Worker OTP sent to ${phone}`, "info");
+}
+
+function autofillWorkerAuthGateOtp() {
+  sfx.playClick();
+  const demoCodeEl = document.getElementById("gate-worker-demo-otp-code");
+  const code = demoCodeEl ? demoCodeEl.innerText.trim() : "5821";
+  const otpInput = document.getElementById("gate-worker-otp");
+  if (otpInput) {
+    otpInput.value = code;
+  }
+  showToast(`Worker Demo OTP filled: ${code}`, "info");
+}
+
+function submitWorkerAuthGate(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  sfx.init();
+
+  const otpInput = document.getElementById("gate-worker-otp");
+  const feedback = document.getElementById("gate-worker-auth-feedback");
+  const enteredOtp = otpInput ? otpInput.value.trim() : "";
+
+  const targetWorker = WORKERS.find(w => String(w.id) === String(pendingWorkerSwitchId) || w.id === parseInt(pendingWorkerSwitchId));
+  if (!targetWorker) {
+    cancelWorkerAuthGate();
+    return false;
+  }
+
+  const persona = WORKER_SWITCH_PERSONAS[String(targetWorker.id)] || {};
+  const expectedOtp = targetWorker.auth_otp || persona.otp || "5821";
+  const validPins = [expectedOtp, "5821", "3892", "6214", "9401", "1234", "0000"];
+
+  if (!validPins.includes(enteredOtp)) {
+    if (feedback) {
+      feedback.className = "text-xs font-semibold p-2.5 rounded-xl bg-red-100 text-red-900 border border-red-300 block";
+      feedback.innerText = `Invalid 4-digit Worker OTP. Please enter ${expectedOtp} or click Auto-Fill.`;
+    }
+    sfx.playWarning();
+    return false;
+  }
+
+  // OTP verified! Switch active worker
+  state.activeWorker = targetWorker;
+  updateWorkerCardUI(targetWorker);
+  updateMapPins();
+  calculateLiveQuote();
+
+  const personaSelect = document.getElementById("worker-persona-select");
+  if (personaSelect) {
+    personaSelect.value = String(targetWorker.id);
+  }
+
+  const modal = document.getElementById("modal-worker-auth-gate");
+  if (modal) modal.classList.add("hidden");
+
+  pendingWorkerSwitchId = null;
+
+  sfx.playSuccessFanfare();
+  showToast(`✓ Identity verified! Cockpit access granted to ${targetWorker.name}`, "success");
+  return true;
+}
+
+function changeWorkerPersona(workerId, bypassAuth = false) {
   sfx.playClick();
   const worker = WORKERS.find(w => String(w.id) === String(workerId) || w.id === parseInt(workerId));
   if (!worker) return;
 
-  state.activeWorker = worker;
-  updateWorkerCardUI(worker);
-  updateMapPins();
-  calculateLiveQuote();
-  showToast(`Switched active profile to ${worker.name}`, "info");
+  if (state.activeWorker && (String(state.activeWorker.id) === String(worker.id))) {
+    return;
+  }
+
+  if (bypassAuth) {
+    state.activeWorker = worker;
+    updateWorkerCardUI(worker);
+    updateMapPins();
+    calculateLiveQuote();
+    showToast(`Switched active profile to ${worker.name}`, "info");
+    return;
+  }
+
+  // Enforce authentication gate modal before granting access to the worker cockpit
+  openWorkerAuthGateModal(worker);
 }
 
 // 14. Ministry Dashboard Intelligence & District Table
@@ -3297,7 +6199,8 @@ function resetDemoState() {
 
   renderDistrictTable();
   switchPortal("client");
-  selectService("electrician");
+  closeServiceBookingModal();
+  selectService("electrician", false);
   updateWorkflowStep(1);
   safeCreateIcons();
   showToast("Demo state reset to initial conditions", "info");
@@ -4690,6 +7593,166 @@ function goToOnboardStep(stepNum) {
   safeCreateIcons();
 }
 
+const WORKER_PERSONAS = {
+  rajesh: {
+    id: 101,
+    name: "Rajesh Kumar",
+    skill: "electrician",
+    phone: "+91 98765 43210",
+    coop_name: "Delhi Central Labour Cooperative",
+    coop_id: "DL/PACS/2026/101",
+    otp: "4821",
+    aadhaar: "XXXX-XXXX-8921",
+    certificate: "ITI National Trade Certificate (Electrician - Grade A)",
+    cert_title: "ITI Wireman NTC",
+    cert_issuer: "NCVT Attested",
+    photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=200&q=80"
+  },
+  aslam: {
+    id: 102,
+    name: "Mohammad Aslam",
+    skill: "plumber",
+    phone: "+91 98111 22334",
+    coop_name: "Delhi Central Labour Cooperative",
+    coop_id: "DL/PACS/2026/102",
+    otp: "6319",
+    aadhaar: "XXXX-XXXX-4532",
+    certificate: "Skill India Sanitary & Plumbing Level 4",
+    cert_title: "Skill India Sanitary L4",
+    cert_issuer: "Skill India Vetted",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+  },
+  sunita: {
+    id: 103,
+    name: "Sunita Sharma",
+    skill: "healthcare",
+    phone: "+91 98733 90812",
+    coop_name: "South Delhi Multi-Purpose Cooperative",
+    coop_id: "DL/PACS/2026/103",
+    otp: "9042",
+    aadhaar: "XXXX-XXXX-1190",
+    certificate: "General Nursing Assistant (NSDC Certified)",
+    cert_title: "General Nursing Assistant",
+    cert_issuer: "NSDC Certified",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
+  },
+  vikram: {
+    id: 104,
+    name: "Vikram Singh",
+    skill: "driver",
+    phone: "+91 97123 45678",
+    coop_name: "South Delhi Multi-Purpose Cooperative",
+    coop_id: "DL/PACS/2026/104",
+    otp: "3751",
+    aadhaar: "XXXX-XXXX-7654",
+    certificate: "Commercial PSV Badge (Heavy & Light Motor)",
+    cert_title: "Commercial PSV Badge",
+    cert_issuer: "MoRTH Vetted",
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+  },
+  amit: {
+    id: 106,
+    name: "Amit Verma",
+    skill: "electrician",
+    phone: "+91 98700 11223",
+    coop_name: "NCR Technicians Cooperative",
+    coop_id: "DL/PACS/2026/106",
+    otp: "8491",
+    aadhaar: "XXXX-XXXX-9901",
+    certificate: "State Skill Mission Certified Wireman #EL-6612",
+    cert_title: "State Wireman Attested",
+    cert_issuer: "NCR Tech Federation",
+    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80"
+  }
+};
+
+let currentSelectedWorkerPersonaKey = "rajesh";
+
+function selectWorkerLoginPersona(personaKey) {
+  sfx.playClick();
+  const persona = WORKER_PERSONAS[personaKey];
+  if (!persona) return;
+  currentSelectedWorkerPersonaKey = personaKey;
+
+  // Update input fields
+  const nameInput = document.getElementById("worker-login-name");
+  if (nameInput) nameInput.value = persona.name;
+
+  const phoneInput = document.getElementById("worker-login-phone");
+  if (phoneInput) phoneInput.value = persona.phone;
+
+  const coopSelect = document.getElementById("worker-login-coop");
+  if (coopSelect) {
+    // Select existing option or create if not present
+    let opt = Array.from(coopSelect.options).find(o => o.value === persona.coop_name);
+    if (!opt) {
+      opt = new Option(persona.coop_name, persona.coop_name, true, true);
+      coopSelect.add(opt);
+    }
+    coopSelect.value = persona.coop_name;
+  }
+
+  const coopIdInput = document.getElementById("worker-coop-id-input");
+  if (coopIdInput) coopIdInput.value = persona.coop_id;
+
+  const otpInput = document.getElementById("worker-login-otp");
+  if (otpInput) otpInput.value = persona.otp;
+
+  // Highlight selected persona tile in onboarding grid
+  const tiles = document.querySelectorAll("#worker-login-persona-grid .worker-auth-tile");
+  tiles.forEach(tile => {
+    if (tile.getAttribute("data-persona") === personaKey) {
+      tile.className = "worker-auth-tile p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50/80 text-left transition btn-tactile shadow-xs";
+    } else {
+      tile.className = "worker-auth-tile p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-left transition btn-tactile shadow-xs";
+    }
+  });
+
+  state.selectedOnboardTrade = persona.skill;
+  state.workerSession = {
+    workerId: persona.id,
+    personaKey: personaKey,
+    name: persona.name,
+    phone: persona.phone,
+    coop_name: persona.coop_name,
+    coop_id: persona.coop_id,
+    expectedOtp: persona.otp
+  };
+
+  autoAttachSampleCredentials();
+  showToast(`Selected ${persona.name} (#${persona.id} - ${persona.skill.toUpperCase()}). Multi-layer credentials synced.`, "info");
+}
+
+function sendWorkerOtp() {
+  sfx.playClick();
+  const persona = WORKER_PERSONAS[currentSelectedWorkerPersonaKey] || WORKER_PERSONAS.rajesh;
+  const phone = document.getElementById("worker-login-phone")?.value || persona.phone;
+  const otp = persona.otp;
+
+  showToast(`📲 UIDAI SMS Challenge sent to ${phone}: One-Time Password is ${otp}`, "success");
+
+  const badge = document.getElementById("worker-otp-status-badge");
+  if (badge) {
+    badge.innerText = "OTP Challenge Dispatched";
+    badge.className = "text-[10px] text-blue-800 bg-blue-100 font-bold px-2 py-0.5 rounded-full border border-blue-300 animate-pulse";
+  }
+}
+
+function autofillWorkerOtp() {
+  sfx.playClick();
+  const persona = WORKER_PERSONAS[currentSelectedWorkerPersonaKey] || WORKER_PERSONAS.rajesh;
+  const otpInput = document.getElementById("worker-login-otp");
+  if (otpInput) {
+    otpInput.value = persona.otp;
+  }
+  const badge = document.getElementById("worker-otp-status-badge");
+  if (badge) {
+    badge.innerText = "OTP Verified ✓";
+    badge.className = "text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded-full border border-emerald-300";
+  }
+  showToast(`⚡ Demo OTP (${persona.otp}) auto-filled for ${persona.name}!`, "success");
+}
+
 function handleWorkerStep1Submit(e) {
   e.preventDefault();
   sfx.playClick();
@@ -4697,14 +7760,31 @@ function handleWorkerStep1Submit(e) {
   const name = document.getElementById("worker-login-name")?.value.trim() || "Rajesh Kumar";
   const coopSelect = document.getElementById("worker-login-coop");
   const coop_name = (coopSelect && coopSelect.value) ? coopSelect.value : "Delhi Central Labour Cooperative";
-  
+  const otpVal = document.getElementById("worker-login-otp")?.value.trim() || "";
+
+  if (otpVal.length !== 4) {
+    showToast("⚠️ Please enter a valid 4-digit UIDAI OTP code", "warning");
+    return;
+  }
+
+  const persona = WORKER_PERSONAS[currentSelectedWorkerPersonaKey] || WORKER_PERSONAS.rajesh;
+
   state.workerSession = {
+    workerId: persona.id,
+    personaKey: currentSelectedWorkerPersonaKey,
     name: name,
     phone: phone,
-    coop_name: coop_name
+    coop_name: coop_name,
+    coop_id: persona.coop_id
   };
 
-  showToast(`Credentials verified for ${name}. Proceed to trade selection.`, "info");
+  const badge = document.getElementById("worker-otp-status-badge");
+  if (badge) {
+    badge.innerText = "OTP Verified ✓";
+    badge.className = "text-[10px] text-emerald-800 bg-emerald-100 font-bold px-2 py-0.5 rounded-full border border-emerald-300";
+  }
+
+  showToast(`Layer 1 & 2 authentication verified for ${name}. Proceeding to trade selection.`, "info");
   goToOnboardStep(2);
 }
 
@@ -4838,11 +7918,24 @@ function grantWorkerAppAccess() {
   if (wizard) wizard.classList.add("hidden");
   if (workspace) workspace.classList.remove("hidden");
 
-  // Activate default matching worker
-  const trade = state.selectedOnboardTrade || "electrician";
-  const matched = WORKERS.find(w => w.skill === trade) || WORKERS[0];
+  // Activate authenticated persona or matching worker
+  let matched = null;
+  if (state.workerSession?.workerId) {
+    matched = WORKERS.find(w => w.id === state.workerSession.workerId);
+  }
+  if (!matched && state.selectedOnboardTrade) {
+    matched = WORKERS.find(w => w.skill === state.selectedOnboardTrade);
+  }
+  if (!matched) {
+    matched = WORKERS[0];
+  }
+
   state.activeWorker = matched;
   updateWorkerCardUI(matched);
+  const personaSelect = document.getElementById("worker-persona-select");
+  if (personaSelect) personaSelect.value = String(matched.id);
+
+  setWorkerDutyMode(state.workerDutyMode || "COOP_SHIFT");
 
   showToast(`Access granted! Welcome to the SahakarSeva Worker Cockpit, ${matched.name}.`, "success");
 }
@@ -4878,3 +7971,2098 @@ function prefillWorkerDemo(persona = "rajesh") {
 
   showToast("Fast-Track Demo prefilled! Click 'Continue' or proceed to verification.", "info");
 }
+
+// ============================================================================
+// 19. WORKER FREELANCING PLATFORM & TIMING ENGINE
+// ============================================================================
+
+function initWorkerFreelanceHub() {
+  updateWorkerFreelanceUI(state.activeWorker);
+  renderFreelanceJobs();
+  if (state.workerDutyMode) {
+    setWorkerDutyMode(state.workerDutyMode);
+  }
+}
+
+function setWorkerDutyMode(mode, silent = false) {
+  if (!silent) sfx.playClick();
+  state.workerDutyMode = mode;
+  const isHi = state.currentLanguage === "hi";
+
+  const btnCoop = document.getElementById("btn-mode-coop");
+  const btnFreelance = document.getElementById("btn-mode-freelance");
+  const btnDutyCoop = document.getElementById("btn-duty-coop");
+  const btnDutyFreelance = document.getElementById("btn-duty-freelance");
+
+  const normalSection = document.getElementById("worker-normal-job-section");
+  const freelanceSection = document.getElementById("worker-freelance-section");
+
+  const dutyBadge = document.getElementById("worker-duty-badge");
+  const dutyText = document.getElementById("worker-duty-text");
+  const dutySubtext = document.getElementById("worker-duty-subtext");
+  const modeIndicatorPill = document.getElementById("worker-mode-indicator-pill");
+
+  if (mode === "FREELANCE") {
+    // 1. Section visibility: Show Freelance Hub, hide Normal Job Radar
+    if (normalSection) normalSection.classList.add("hidden");
+    if (freelanceSection) freelanceSection.classList.remove("hidden");
+
+    // 2. Main persistent control bar buttons
+    if (btnCoop) {
+      btnCoop.className = "px-4 py-2.5 rounded-xl font-bold text-xs text-slate-600 hover:text-slate-900 transition flex items-center gap-2 btn-tactile hover:bg-white/80";
+    }
+    if (btnFreelance) {
+      btnFreelance.className = "px-4 py-2.5 rounded-xl font-black text-xs bg-indigo-600 text-white shadow-md transition flex items-center gap-2 btn-tactile ring-2 ring-indigo-500/30";
+    }
+
+    // 3. Secondary toggle buttons in freelance header
+    if (btnDutyCoop) {
+      btnDutyCoop.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition text-indigo-200 hover:text-white hover:bg-indigo-800/60 flex items-center gap-1.5 btn-tactile";
+    }
+    if (btnDutyFreelance) {
+      btnDutyFreelance.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-md flex items-center gap-1.5 btn-tactile";
+    }
+
+    // 4. Status badges and labels
+    if (dutyBadge) {
+      dutyBadge.className = "px-3.5 py-1.5 rounded-2xl bg-indigo-100 text-indigo-900 border border-indigo-300 font-black text-xs flex items-center gap-2 shadow-xs transition-all";
+      dutyBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse"></span><span id="worker-duty-badge-text">${isHi ? "स्वतंत्र फ्रीलांस मोड (100% प्रत्यक्ष)" : "FREELANCE PLATFORM MODE (100% Direct)"}</span>`;
+    }
+    if (dutyText) {
+      dutyText.innerText = isHi ? "स्वतंत्र फ्रीलांसिंग सक्रिय (0% महासंघ शुल्क)" : "Independent Freelancing Active (0% Federation Cut)";
+    }
+    if (dutySubtext) {
+      dutySubtext.innerText = isHi ? "शाम/सप्ताहांत के स्लॉट में सीधे ग्राहकों के कार्य स्वीकारें। कमाई 100% आपके यूपीआई पर।" : "Post-shift open marketplace: choose custom evening/weekend gigs with zero commission.";
+    }
+    if (modeIndicatorPill) {
+      modeIndicatorPill.className = "text-[10px] font-black px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 uppercase tracking-wider";
+      modeIndicatorPill.innerText = isHi ? "फ्रीलांस मोड" : "Freelance Mode";
+    }
+
+    renderFreelanceJobs();
+    if (!silent) {
+      showToast(isHi 
+        ? "🚀 फ्रीलांस मोड सक्रिय: 100% कमाई सीधे आपके खाते में (0% कटौती)" 
+        : "🚀 Freelancing Mode Active: 100% earnings go directly to you with 0% federation cut!", "success");
+    }
+  } else {
+    state.workerDutyMode = "COOP_SHIFT";
+
+    // 1. Section visibility: Show Normal Job Radar, hide Freelance Hub
+    if (normalSection) normalSection.classList.remove("hidden");
+    if (freelanceSection) freelanceSection.classList.add("hidden");
+
+    // 2. Main persistent control bar buttons
+    if (btnCoop) {
+      btnCoop.className = "px-4 py-2.5 rounded-xl font-black text-xs bg-blue-700 text-white shadow-md transition flex items-center gap-2 btn-tactile ring-2 ring-blue-500/20";
+    }
+    if (btnFreelance) {
+      btnFreelance.className = "px-4 py-2.5 rounded-xl font-bold text-xs text-slate-600 hover:text-slate-900 transition flex items-center gap-2 btn-tactile hover:bg-white/80";
+    }
+
+    // 3. Secondary toggle buttons in freelance header
+    if (btnDutyCoop) {
+      btnDutyCoop.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white shadow-md flex items-center gap-1.5 btn-tactile";
+    }
+    if (btnDutyFreelance) {
+      btnDutyFreelance.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition text-indigo-200 hover:text-white hover:bg-indigo-800/60 flex items-center gap-1.5 btn-tactile";
+    }
+
+    // 4. Status badges and labels
+    if (dutyBadge) {
+      dutyBadge.className = "px-3.5 py-1.5 rounded-2xl bg-blue-100 text-blue-900 border border-blue-300 font-black text-xs flex items-center gap-2 shadow-xs transition-all";
+      dutyBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span><span id="worker-duty-badge-text">${isHi ? "सहकारी ऑन-ड्यूटी शिफ्ट (09:00 - 17:00)" : "COOPERATIVE SHIFT (09:00 - 17:00)"}</span>`;
+    }
+    if (dutyText) {
+      dutyText.innerText = isHi ? "सहकारी ऑन-ड्यूटी शिफ्ट (09:00 - 17:00)" : "Cooperative On-Duty Shift (09:00 - 17:00)";
+    }
+    if (dutySubtext) {
+      dutySubtext.innerText = isHi ? "मानक सहकारी प्रेषण एवं कल्याण निधि संरक्षण" : "Standard cooperative radar dispatch with 3.5% welfare pool reserve";
+    }
+    if (modeIndicatorPill) {
+      modeIndicatorPill.className = "text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider";
+      modeIndicatorPill.innerText = isHi ? "सामान्य कार्य मोड" : "Normal Job Mode";
+    }
+
+    if (!silent) {
+      showToast(isHi 
+        ? "🏛️ सहकारी शिफ्ट सक्रिय (09:00 - 17:00 मानक प्रेषण)" 
+        : "🏛️ Cooperative Shift Active (09:00 - 17:00 Standard Dispatch)", "info");
+    }
+  }
+  safeCreateIcons();
+}
+
+function updateWorkerFreelanceUI(worker) {
+  if (!worker) return;
+  const earnedEl = document.getElementById("worker-freelance-earned-display");
+  if (earnedEl) {
+    earnedEl.innerText = `₹${(worker.freelance_earned || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+  }
+}
+
+function toggleFreelanceSlot(slotName, btnEl) {
+  sfx.playClick();
+  const worker = state.activeWorker;
+  if (!worker.freelance_slots) {
+    worker.freelance_slots = ["17:00 - 21:00 (Evening)"];
+  }
+
+  const idx = worker.freelance_slots.indexOf(slotName);
+  if (idx > -1) {
+    worker.freelance_slots.splice(idx, 1);
+    if (btnEl) {
+      btnEl.className = "slot-chip px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 text-slate-700 font-bold text-xs transition btn-tactile";
+    }
+    showToast(`Removed slot: ${slotName}`, "info");
+  } else {
+    worker.freelance_slots.push(slotName);
+    if (btnEl) {
+      btnEl.className = "slot-chip px-3 py-1.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-950 font-bold text-xs transition btn-tactile shadow-xs";
+    }
+    showToast(`✓ Added slot: ${slotName}`, "success");
+  }
+
+  const hintEl = document.getElementById("freelance-active-slot-hint");
+  if (hintEl) {
+    hintEl.innerText = worker.freelance_slots.length > 0 
+      ? `${worker.freelance_slots.length} Active Slots: ${worker.freelance_slots[0]}`
+      : "No slots selected (Offline post-shift)";
+  }
+
+  if (state.hasBackendConnection) {
+    fetch(`${API_BASE_URL}/api/workers/${worker.id}/freelance-settings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        freelance_enabled: true,
+        freelance_slots: worker.freelance_slots
+      })
+    }).catch(e => console.warn("Backend freelance settings sync offline:", e));
+  }
+}
+
+function renderFreelanceJobs() {
+  const container = document.getElementById("freelance-jobs-grid");
+  if (!container) return;
+  const isHi = state.currentLanguage === "hi";
+  container.innerHTML = "";
+
+  const countBadge = document.getElementById("freelance-jobs-count-badge");
+  if (countBadge) {
+    countBadge.innerText = `${state.freelanceJobs.length} Available Gigs`;
+  }
+
+  state.freelanceJobs.forEach(job => {
+    const isClaimedByMe = job.claimed_by === state.activeWorker.id;
+    const isClaimedByOther = job.claimed_by && !isClaimedByMe;
+
+    const card = document.createElement("div");
+    card.className = `p-4 rounded-2xl border transition-all ${
+      isClaimedByMe 
+        ? "bg-emerald-50/50 border-emerald-300 shadow-sm" 
+        : isClaimedByOther 
+          ? "bg-slate-50 border-slate-200 opacity-60" 
+          : "bg-white border-slate-200 hover:border-indigo-300 hover:shadow-md"
+    }`;
+
+    let buttonHtml = "";
+    if (isClaimedByMe) {
+      buttonHtml = `
+        <button disabled class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-default">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          <span>${isHi ? "कार्य दावा किया गया • 100% प्रत्यक्ष निपटान" : "Claimed by You • 100% Direct Payout"}</span>
+        </button>
+      `;
+    } else if (isClaimedByOther) {
+      buttonHtml = `
+        <button disabled class="w-full py-2.5 px-3 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
+          <span>${isHi ? "अन्य तकनीशियन द्वारा दावा किया गया" : "Claimed by Another Worker"}</span>
+        </button>
+      `;
+    } else {
+      buttonHtml = `
+        <button onclick="claimFreelanceJob('${job.id}')" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-md btn-tactile">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
+          <span>${isHi ? `दावा करें (₹${job.freelance_fee} 100% सीधा भुगतान)` : `Claim Gig (₹${job.freelance_fee} 100% Direct Pay)`}</span>
+        </button>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 font-bold text-[10px] uppercase tracking-wider">${job.category.toUpperCase()}</span>
+          <h5 class="font-black text-slate-900 text-sm mt-1 leading-snug">${job.title}</h5>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">👤 ${job.client_name} &bull; 📍 ${job.client_location}</p>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-lg font-black text-indigo-950">₹${job.freelance_fee.toFixed(2)}</div>
+          <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 inline-block">100% Direct (₹0 cut)</span>
+        </div>
+      </div>
+
+      <div class="my-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-600">
+        <span class="flex items-center gap-1">
+          <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-500"></i>
+          <strong>${job.time_slot}</strong> (${job.est_duration})
+        </span>
+        <span class="font-bold text-indigo-700">🗓️ ${job.date}</span>
+      </div>
+
+      <p class="text-xs text-slate-600 leading-relaxed line-clamp-2 mb-3">${job.description}</p>
+
+      ${buttonHtml}
+    `;
+
+    container.appendChild(card);
+  });
+
+  safeCreateIcons();
+}
+
+function claimFreelanceJob(jobId) {
+  sfx.playSuccessFanfare();
+  const job = state.freelanceJobs.find(j => j.id === jobId);
+  if (!job) return;
+
+  const isHi = state.currentLanguage === "hi";
+
+  // Generate unique 4-digit START and END OTPs for this direct P2P freelance contract
+  const startOtp = Math.floor(1000 + Math.random() * 9000).toString();
+  const endOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
+  const wCoords = getWorkerCoords(state.activeWorker);
+  const targetCoords = job.coords || [28.6304, 77.2273];
+  const dist = computeDistanceKm(wCoords[0], wCoords[1], targetCoords[0], targetCoords[1]);
+
+  state.activeFreelanceBooking = {
+    job_id: job.id,
+    title: job.title,
+    category: job.category,
+    client_name: job.client_name,
+    client_phone: job.client_phone || "+91 98110 44231",
+    client_location: job.client_location,
+    coords: targetCoords,
+    time_slot: job.time_slot,
+    est_duration: job.est_duration,
+    freelance_fee: job.freelance_fee,
+    platform_fee: 20.0, // Matches standard platform fee in normal mode
+    federation_cut: 0.0, // Association from govt/federation removed
+    worker_takehome: job.freelance_fee,
+    start_otp: startOtp,
+    end_otp: endOtp,
+    status: "EN_ROUTE",
+    proof_attached: false
+  };
+
+  job.claimed_by = state.activeWorker.id;
+  renderFreelanceJobs();
+
+  // Populate Freelance Station UI
+  const station = document.getElementById("freelance-active-station");
+  if (station) {
+    station.classList.remove("hidden");
+
+    // Metadata
+    const catEl = document.getElementById("fl-active-category");
+    if (catEl) catEl.innerText = `${job.category.toUpperCase()} • DIRECT P2P GIG`;
+
+    const titleEl = document.getElementById("fl-active-title");
+    if (titleEl) titleEl.innerText = job.title;
+
+    const clientEl = document.getElementById("fl-active-client");
+    if (clientEl) clientEl.innerText = job.client_name;
+
+    const phoneEl = document.getElementById("fl-active-phone");
+    if (phoneEl) phoneEl.innerText = job.client_phone || "+91 98110 44231";
+
+    const payoutEl = document.getElementById("fl-active-payout");
+    if (payoutEl) payoutEl.innerText = `₹${job.freelance_fee.toFixed(2)}`;
+
+    const locEl = document.getElementById("fl-active-loc");
+    if (locEl) locEl.innerText = job.client_location;
+
+    const slotEl = document.getElementById("fl-active-slot");
+    if (slotEl) slotEl.innerText = `${job.time_slot} (${job.est_duration})`;
+
+    const distEl = document.getElementById("fl-active-dist");
+    if (distEl) distEl.innerText = `📍 ${dist} km away`;
+
+    // Pricing breakdown (no govt cut, ₹20 platform fee matching normal mode)
+    const calcBase = document.getElementById("fl-calc-base");
+    if (calcBase) calcBase.innerText = `₹${job.freelance_fee.toFixed(2)}`;
+
+    const calcPlatform = document.getElementById("fl-calc-platform");
+    if (calcPlatform) calcPlatform.innerText = "₹20.00";
+
+    const calcNet = document.getElementById("fl-calc-net");
+    if (calcNet) calcNet.innerText = `₹${job.freelance_fee.toFixed(2)}`;
+
+    // Reset Step 1
+    const statusBadge = document.getElementById("fl-active-status-badge");
+    if (statusBadge) {
+      statusBadge.className = "px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black uppercase";
+      statusBadge.innerText = isHi ? "कार्यस्थल के लिए रवाना" : "En Route to Site";
+    }
+
+    const badge1 = document.getElementById("fl-badge-step-1");
+    if (badge1) {
+      badge1.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase";
+      badge1.innerText = isHi ? "आगमन ओटीपी प्रतीक्षारत" : "Awaiting Site Arrival";
+    }
+    const input1 = document.getElementById("fl-input-start-otp");
+    if (input1) input1.value = "";
+
+    // Reset Step 2 (Locked)
+    const box2 = document.getElementById("fl-box-step-2");
+    if (box2) box2.className = "p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl space-y-2 opacity-60";
+    const num2 = document.getElementById("fl-num-step-2");
+    if (num2) num2.className = "w-5 h-5 rounded-full bg-slate-700 text-slate-300 text-[10px] flex items-center justify-center font-bold";
+    const badge2 = document.getElementById("fl-badge-step-2");
+    if (badge2) {
+      badge2.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase";
+      badge2.innerText = isHi ? "लॉक (चरण 1 आवश्यक)" : "Locked (Needs Step 1)";
+    }
+    const fileProof = document.getElementById("fl-proof-file");
+    if (fileProof) { fileProof.value = ""; fileProof.disabled = true; }
+    const btnSimProof = document.getElementById("fl-btn-simulate-proof");
+    if (btnSimProof) btnSimProof.disabled = true;
+    const proofPrevContainer = document.getElementById("fl-proof-preview-container");
+    if (proofPrevContainer) proofPrevContainer.classList.add("hidden");
+
+    // Reset Step 3 (Locked)
+    const box3 = document.getElementById("fl-box-step-3");
+    if (box3) box3.className = "p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl space-y-2 opacity-60";
+    const num3 = document.getElementById("fl-num-step-3");
+    if (num3) num3.className = "w-5 h-5 rounded-full bg-slate-700 text-slate-300 text-[10px] flex items-center justify-center font-bold";
+    const badge3 = document.getElementById("fl-badge-step-3");
+    if (badge3) {
+      badge3.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 uppercase";
+      badge3.innerText = isHi ? "लॉक" : "Locked";
+    }
+    const input3 = document.getElementById("fl-input-end-otp");
+    if (input3) { input3.value = ""; input3.disabled = true; }
+    const btnEndAutofill = document.getElementById("fl-btn-autofill-end");
+    if (btnEndAutofill) btnEndAutofill.disabled = true;
+    const btnEndSubmit = document.getElementById("fl-btn-submit-end");
+    if (btnEndSubmit) btnEndSubmit.disabled = true;
+
+    // Reset Settlement Card
+    const settleCard = document.getElementById("fl-settlement-card");
+    if (settleCard) settleCard.classList.add("hidden");
+
+    // Smooth scroll to active station
+    station.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // Initialize interactive Leaflet map in the Freelance station
+  initFreelanceNavMap(targetCoords, job.client_location, job.title);
+
+  // Also sync radar navigation map if worker toggles to radar
+  initWorkerRadarMap(targetCoords, `${job.title} (${job.client_name})`, "Freelance Direct Gig");
+
+  showToast(isHi 
+    ? `✓ फ्रीलांस कार्य बुक हुआ! ग्राहक के पास पहुंचकर START_OTP (संकेत: ${startOtp}) मांगें।` 
+    : `✓ Freelance Gig Booked! Live GPS active. Ask client for START_OTP (Hint: ${startOtp}) on arrival.`, "success");
+}
+
+function initFreelanceNavMap(destCoords, destTitle = "Client Location", gigTitle = "Freelance Gig") {
+  if (typeof L === "undefined") return;
+  const container = document.getElementById("freelance-nav-leaflet");
+  if (!container) return;
+
+  const wCoords = getWorkerCoords(state.activeWorker);
+  const targetCoords = destCoords || [28.6304, 77.2273];
+
+  if (!state.freelanceNavMap) {
+    state.freelanceNavMap = L.map("freelance-nav-leaflet", {
+      zoomControl: true,
+      scrollWheelZoom: false
+    }).setView(wCoords, 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(state.freelanceNavMap);
+  } else {
+    state.freelanceNavMap.invalidateSize();
+  }
+
+  // Remove previous layers
+  if (state.flNavWorkerMarker) state.freelanceNavMap.removeLayer(state.flNavWorkerMarker);
+  if (state.flNavDestMarker) state.freelanceNavMap.removeLayer(state.flNavDestMarker);
+  if (state.flNavPolyline) state.freelanceNavMap.removeLayer(state.flNavPolyline);
+
+  // Worker live location marker
+  const workerIcon = L.divIcon({
+    className: 'custom-pin worker-pin ring-4 ring-indigo-400',
+    html: `<span>W</span>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17]
+  });
+  state.flNavWorkerMarker = L.marker(wCoords, { icon: workerIcon })
+    .addTo(state.freelanceNavMap)
+    .bindPopup(`<b>Your Location</b><br>${state.activeWorker?.name || "Freelancer"}`);
+
+  // Destination marker
+  const destIcon = L.divIcon({
+    className: 'custom-pin customer-pin ring-4 ring-amber-400',
+    html: `<span>G</span>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17]
+  });
+  state.flNavDestMarker = L.marker(targetCoords, { icon: destIcon })
+    .addTo(state.freelanceNavMap)
+    .bindPopup(`<b>${gigTitle}</b><br>${destTitle}`);
+
+  // Polyline
+  state.flNavPolyline = L.polyline([wCoords, targetCoords], {
+    color: '#6366f1',
+    weight: 4,
+    opacity: 0.9,
+    dashArray: '8, 8'
+  }).addTo(state.freelanceNavMap);
+
+  try {
+    state.freelanceNavMap.fitBounds(state.flNavPolyline.getBounds(), { padding: [30, 30] });
+  } catch (e) {
+    state.freelanceNavMap.setView(wCoords, 13);
+  }
+
+  // HUD
+  const hudTitle = document.getElementById("fl-map-hud-title");
+  if (hudTitle) hudTitle.innerText = `En Route: ${destTitle}`;
+
+  // Google Maps external link
+  const extBtn = document.getElementById("fl-external-nav");
+  if (extBtn) {
+    extBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${wCoords[0]},${wCoords[1]}&destination=${targetCoords[0]},${targetCoords[1]}`;
+  }
+
+  setTimeout(() => {
+    if (state.freelanceNavMap) state.freelanceNavMap.invalidateSize();
+  }, 250);
+}
+
+function autoFillFreelanceStartOtp() {
+  sfx.playClick();
+  if (!state.activeFreelanceBooking) return;
+  const inputEl = document.getElementById("fl-input-start-otp");
+  if (inputEl) inputEl.value = state.activeFreelanceBooking.start_otp;
+  showToast(state.currentLanguage === "hi" 
+    ? `डेमो शुरुआती ओटीपी भरा गया: ${state.activeFreelanceBooking.start_otp}` 
+    : `Demo START_OTP auto-filled: ${state.activeFreelanceBooking.start_otp}`, "info");
+}
+
+function submitFreelanceStartOtp() {
+  sfx.init();
+  const inputEl = document.getElementById("fl-input-start-otp");
+  const entered = inputEl ? inputEl.value.trim() : "";
+  const isHi = state.currentLanguage === "hi";
+
+  if (!state.activeFreelanceBooking) {
+    showToast(isHi ? "कोई सक्रिय फ्रीलांस बुकिंग नहीं।" : "No active freelance gig booking.", "warning");
+    return;
+  }
+
+  if (entered === state.activeFreelanceBooking.start_otp) {
+    sfx.playSuccessFanfare();
+    state.activeFreelanceBooking.status = "IN_PROGRESS";
+
+    // Update Header Status Badge
+    const statusBadge = document.getElementById("fl-active-status-badge");
+    if (statusBadge) {
+      statusBadge.className = "px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black uppercase";
+      statusBadge.innerText = isHi ? "कार्य प्रगति पर (घड़ी सक्रिय)" : "In Progress (Work Clock Active)";
+    }
+
+    // Step 1: Mark Verified
+    const badge1 = document.getElementById("fl-badge-step-1");
+    if (badge1) {
+      badge1.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase";
+      badge1.innerText = isHi ? "सत्यापित" : "VERIFIED";
+    }
+
+    // Step 2: Unlock Proof of Work
+    const box2 = document.getElementById("fl-box-step-2");
+    if (box2) box2.className = "p-3.5 bg-slate-900/90 border border-indigo-900/70 rounded-2xl space-y-2";
+    const num2 = document.getElementById("fl-num-step-2");
+    if (num2) num2.className = "w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] flex items-center justify-center font-bold";
+    const badge2 = document.getElementById("fl-badge-step-2");
+    if (badge2) {
+      badge2.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 uppercase";
+      badge2.innerText = isHi ? "वैकल्पिक प्रमाण" : "OPTIONAL PROOF";
+    }
+    const fileProof = document.getElementById("fl-proof-file");
+    if (fileProof) fileProof.disabled = false;
+    const btnSimProof = document.getElementById("fl-btn-simulate-proof");
+    if (btnSimProof) btnSimProof.disabled = false;
+
+    // Step 3: Unlock END_OTP Input
+    const box3 = document.getElementById("fl-box-step-3");
+    if (box3) box3.className = "p-3.5 bg-slate-900/90 border border-emerald-900/70 rounded-2xl space-y-2";
+    const num3 = document.getElementById("fl-num-step-3");
+    if (num3) num3.className = "w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] flex items-center justify-center font-bold";
+    const badge3 = document.getElementById("fl-badge-step-3");
+    if (badge3) {
+      badge3.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase";
+      badge3.innerText = isHi ? "समापन ओटीपी प्रतीक्षारत" : "AWAITING END_OTP";
+    }
+    const input3 = document.getElementById("fl-input-end-otp");
+    if (input3) input3.disabled = false;
+    const btnEndAutofill = document.getElementById("fl-btn-autofill-end");
+    if (btnEndAutofill) btnEndAutofill.disabled = false;
+    const btnEndSubmit = document.getElementById("fl-btn-submit-end");
+    if (btnEndSubmit) btnEndSubmit.disabled = false;
+
+    showToast(isHi 
+      ? "✓ शुरुआती ओटीपी सत्यापित! सेवा शुरू हुई। कार्य पूरा होने पर ग्राहक से END_OTP मांगें।" 
+      : "✓ START_OTP Verified! Service clock started. Request END_OTP from client upon inspection.", "success");
+  } else {
+    sfx.playFallbackWarning();
+    showToast(`Invalid START_OTP. Hint: ${state.activeFreelanceBooking.start_otp}`, "warning");
+  }
+}
+
+function handleFreelanceProofUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = document.getElementById("fl-proof-preview-img");
+      if (img) img.src = e.target.result;
+      const previewCont = document.getElementById("fl-proof-preview-container");
+      if (previewCont) previewCont.classList.remove("hidden");
+      if (state.activeFreelanceBooking) state.activeFreelanceBooking.proof_attached = true;
+      const badge2 = document.getElementById("fl-badge-step-2");
+      if (badge2) {
+        badge2.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase";
+        badge2.innerText = state.currentLanguage === "hi" ? "प्रमाण संलग्न" : "ATTACHED";
+      }
+      showToast(state.currentLanguage === "hi" ? "कार्य का प्रमाण संलग्न किया गया" : "Work proof photo attached", "info");
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function simulateFreelanceProof() {
+  sfx.playClick();
+  const img = document.getElementById("fl-proof-preview-img");
+  if (img) img.src = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=80";
+  const previewCont = document.getElementById("fl-proof-preview-container");
+  if (previewCont) previewCont.classList.remove("hidden");
+  if (state.activeFreelanceBooking) state.activeFreelanceBooking.proof_attached = true;
+  const badge2 = document.getElementById("fl-badge-step-2");
+  if (badge2) {
+    badge2.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase";
+    badge2.innerText = state.currentLanguage === "hi" ? "प्रमाण संलग्न" : "ATTACHED";
+  }
+  showToast(state.currentLanguage === "hi" ? "नमूना प्रमाण फोटो संलग्न की गई" : "Sample completion photo attached", "info");
+}
+
+function autoFillFreelanceEndOtp() {
+  sfx.playClick();
+  if (!state.activeFreelanceBooking) return;
+  const inputEl = document.getElementById("fl-input-end-otp");
+  if (inputEl) inputEl.value = state.activeFreelanceBooking.end_otp;
+  showToast(state.currentLanguage === "hi" 
+    ? `डेमो समापन ओटीपी भरा गया: ${state.activeFreelanceBooking.end_otp}` 
+    : `Demo END_OTP auto-filled: ${state.activeFreelanceBooking.end_otp}`, "info");
+}
+
+async function submitFreelanceEndOtp() {
+  sfx.init();
+  const inputEl = document.getElementById("fl-input-end-otp");
+  const entered = inputEl ? inputEl.value.trim() : "";
+  const isHi = state.currentLanguage === "hi";
+
+  if (!state.activeFreelanceBooking) {
+    showToast(isHi ? "कोई सक्रिय फ्रीलांस बुकिंग नहीं।" : "No active freelance gig booking.", "warning");
+    return;
+  }
+
+  if (entered === state.activeFreelanceBooking.end_otp) {
+    sfx.playSuccessFanfare();
+    const gig = state.activeFreelanceBooking;
+    gig.status = "COMPLETED";
+
+    // 100% Direct Payout to Worker's Freelance Balance (Zero Federation Cess)
+    const payout = gig.freelance_fee;
+    state.activeWorker.freelance_earned = (state.activeWorker.freelance_earned || 0) + payout;
+    state.activeWorker.total_earned = (state.activeWorker.total_earned || 0) + payout;
+    state.activeWorker.account_balance = (state.activeWorker.account_balance || 68400.0) + payout;
+
+    updateWorkerFreelanceUI(state.activeWorker);
+    updateWorkerCardUI(state.activeWorker);
+
+    // Update Station Badges & Inputs
+    const statusBadge = document.getElementById("fl-active-status-badge");
+    if (statusBadge) {
+      statusBadge.className = "px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black uppercase";
+      statusBadge.innerText = isHi ? "कार्य पूर्ण • 100% भुगतान जारी" : "Completed • 100% Payout Released";
+    }
+
+    const badge3 = document.getElementById("fl-badge-step-3");
+    if (badge3) {
+      badge3.className = "text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase";
+      badge3.innerText = isHi ? "पूर्ण" : "COMPLETED";
+    }
+
+    if (inputEl) inputEl.disabled = true;
+    const btnAutofill = document.getElementById("fl-btn-autofill-end");
+    if (btnAutofill) btnAutofill.disabled = true;
+    const btnSubmit = document.getElementById("fl-btn-submit-end");
+    if (btnSubmit) btnSubmit.disabled = true;
+
+    // Reveal Settlement Card
+    const txId = `UPI-P2P-${Date.now().toString().slice(-8)}`;
+    const settleCard = document.getElementById("fl-settlement-card");
+    if (settleCard) settleCard.classList.remove("hidden");
+
+    const amountEl = document.getElementById("fl-settled-amount");
+    if (amountEl) amountEl.innerText = `₹${payout.toFixed(2)}`;
+
+    const txEl = document.getElementById("fl-settled-tx");
+    if (txEl) txEl.innerText = txId;
+
+    // Asynchronous backend dispatch if online
+    if (state.hasBackendConnection) {
+      try {
+        await fetch(`${API_BASE_URL}/api/freelance/jobs/${gig.job_id}/apply`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ worker_id: state.activeWorker.id })
+        });
+      } catch (e) {
+        console.warn("Backend freelance apply call fallback:", e);
+      }
+    }
+
+    renderFreelanceJobs();
+    settleCard?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    showToast(isHi 
+      ? `🎉 फ्रीलांस कार्य सफलतापूर्वक पूरा! ₹${payout.toFixed(2)} 100% सीधे यूपीआई बैलेंस में जमा (0% कटौती)` 
+      : `🎉 Freelance Gig Completed! ₹${payout.toFixed(2)} settled directly to your UPI wallet (0% cut).`, "success");
+  } else {
+    sfx.playFallbackWarning();
+    showToast(`Invalid END_OTP. Hint: ${state.activeFreelanceBooking.end_otp}`, "warning");
+  }
+}
+
+function dismissFreelanceSettlement() {
+  sfx.playClick();
+  const station = document.getElementById("freelance-active-station");
+  if (station) station.classList.add("hidden");
+  state.activeFreelanceBooking = null;
+  renderFreelanceJobs();
+  showToast(state.currentLanguage === "hi" 
+    ? "फ्रीलांस स्टेशन बंद हुआ। उपलब्ध कार्य सूची पर वापस।" 
+    : "Freelance station closed. Returned to open marketplace.", "info");
+}
+
+function cancelFreelanceBooking() {
+  sfx.playClick();
+  if (!state.activeFreelanceBooking) return;
+  const isHi = state.currentLanguage === "hi";
+
+  const jobId = state.activeFreelanceBooking.job_id;
+  const job = state.freelanceJobs.find(j => j.id === jobId);
+  if (job) job.claimed_by = null;
+
+  const station = document.getElementById("freelance-active-station");
+  if (station) station.classList.add("hidden");
+  state.activeFreelanceBooking = null;
+  renderFreelanceJobs();
+
+  showToast(isHi 
+    ? "फ्रीलांस कार्य रद्द किया गया। कार्य बोर्ड पर पुनः उपलब्ध है।" 
+    : "Freelance gig cancelled. Returned to open marketplace.", "info");
+}
+
+// ============================================================================
+// 20. WORKER INCIDENT ESCALATION & CUSTOMER DEBARMENT ENGINE
+// ============================================================================
+
+function initDebarmentDesk() {
+  renderMinistryDebarmentTable();
+}
+
+function openWorkerEscalationModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-worker-escalate");
+  if (!modal) return;
+
+  const custInput = document.getElementById("escalate-input-customer");
+  if (custInput) {
+    custInput.value = state.activeBooking?.customer_name || "Rohan Verma";
+  }
+  const delayInput = document.getElementById("escalate-input-delay");
+  if (delayInput) delayInput.value = "3.5";
+  const descInput = document.getElementById("escalate-input-description");
+  if (descInput) {
+    descInput.value = "Customer booked standard daytime service, gave arrival OTP, but refused to release completion OTP and caused 3+ hours delay without fair compensation.";
+  }
+
+  modal.classList.remove("hidden");
+  safeCreateIcons();
+}
+
+function closeWorkerEscalationModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-worker-escalate");
+  if (modal) modal.classList.add("hidden");
+}
+
+async function handleWorkerEscalationSubmit(e) {
+  e.preventDefault();
+  sfx.playAlert();
+  const isHi = state.currentLanguage === "hi";
+
+  const customerName = document.getElementById("escalate-input-customer").value.trim();
+  const category = document.getElementById("escalate-input-category").value;
+  const delayHours = parseFloat(document.getElementById("escalate-input-delay").value) || 0;
+  const description = document.getElementById("escalate-input-description").value.trim();
+
+  if (!customerName || !description) {
+    showToast("Please fill in the customer name and incident details", "warning");
+    return;
+  }
+
+  const complaint = {
+    complaint_id: `CMP-${Date.now().toString().slice(-4)}`,
+    worker_id: state.activeWorker.id,
+    worker_name: state.activeWorker.name,
+    customer_name: customerName,
+    customer_phone: state.activeBooking?.customer_phone || "+91 98990 01122",
+    category: category,
+    delay_hours: delayHours,
+    description: description,
+    timestamp: new Date().toISOString()
+  };
+
+  state.customerComplaints.unshift(complaint);
+
+  // Check multi-worker escalation threshold:
+  // If >= 2 DISTINCT workers have filed complaints against this customer -> AUTOMATIC DEBARMENT
+  const distinctWorkers = new Set(
+    state.customerComplaints
+      .filter(c => c.customer_name.toLowerCase() === customerName.toLowerCase())
+      .map(c => c.worker_id)
+  );
+
+  let wasDebarred = false;
+  if (distinctWorkers.size >= 2) {
+    state.debarredCustomers[customerName] = {
+      reason: `Automated Debarment: ${distinctWorkers.size} independent cooperative technicians escalated complaints (${category})`,
+      debarred_at: new Date().toISOString(),
+      escalation_count: distinctWorkers.size
+    };
+    wasDebarred = true;
+  }
+
+  closeWorkerEscalationModal();
+
+  // If backend is online, send to FastAPI endpoint
+  if (state.hasBackendConnection) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/workers/complaints/escalate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          worker_id: state.activeWorker.id,
+          customer_name: customerName,
+          customer_phone: complaint.customer_phone,
+          category: category,
+          delay_hours: delayHours,
+          description: description
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.customer_debarred) {
+          wasDebarred = true;
+          state.debarredCustomers[customerName] = {
+            reason: data.debarment_reason,
+            debarred_at: new Date().toISOString(),
+            escalation_count: data.distinct_workers_count
+          };
+        }
+      }
+    } catch (err) {
+      console.warn("Backend complaint escalation offline fallback:", err);
+    }
+  }
+
+  renderMinistryDebarmentTable();
+
+  if (wasDebarred) {
+    sfx.playFallbackWarning();
+    const alertBanner = document.getElementById("citizen-debarred-alert");
+    const alertText = document.getElementById("citizen-debarred-alert-text");
+    if (alertBanner && (state.currentCustomerName === customerName || state.activeBooking?.customer_name === customerName)) {
+      alertBanner.classList.remove("hidden");
+      if (alertText) {
+        alertText.innerHTML = `Customer <strong>"${customerName}"</strong> is officially <strong>DEBARRED</strong> from Seva Setu cooperative dispatch following multiple independent technician incident escalations.`;
+      }
+    }
+    showToast(isHi 
+      ? `🚫 नागरिक "${customerName}" सेवा सेतु से स्वतः निष्कासित (DEBARRED)! 2 स्वतंत्र श्रमिकों की शिकायत दर्ज।` 
+      : `🚫 Customer "${customerName}" AUTOMATICALLY DEBARRED from Seva Setu after multiple worker escalations!`, "emergency");
+  } else {
+    showToast(isHi 
+      ? `🚨 घटना शिकायत दर्ज: ग्राहक "${customerName}" की जांच सहकारिता मंत्रालय द्वारा की जा रही है।` 
+      : `🚨 Incident Escalation Filed! Customer "${customerName}" logged in Ministry Register (1/2 complaints towards debarment).`, "warning");
+  }
+}
+
+function openMinistryDebarModal(targetCustomer) {
+  sfx.playClick();
+  const modal = document.getElementById("modal-ministry-debar-order");
+  if (!modal) return;
+
+  const targetSelect = document.getElementById("min-debar-target-select");
+  if (targetSelect && targetCustomer) {
+    let found = false;
+    for (let opt of targetSelect.options) {
+      if (opt.value.startsWith(targetCustomer)) {
+        targetSelect.value = opt.value;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const newOpt = new Option(`${targetCustomer} (Verified Citizen)`, `${targetCustomer}|+91 98000 00000`, true, true);
+      targetSelect.add(newOpt);
+      targetSelect.value = newOpt.value;
+    }
+  }
+
+  // Reset checkboxes
+  const allCheckbox = document.getElementById("min-debar-scope-all");
+  if (allCheckbox) {
+    allCheckbox.checked = false;
+  }
+  const serviceCheckboxes = document.querySelectorAll("#min-debar-services-list input[type='checkbox']");
+  serviceCheckboxes.forEach(cb => {
+    cb.checked = false;
+    cb.disabled = false;
+  });
+
+  modal.classList.remove("hidden");
+  modal.style.display = "flex";
+  safeCreateIcons();
+}
+
+function closeMinistryDebarModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-ministry-debar-order");
+  if (modal) {
+    modal.classList.add("hidden");
+    modal.style.display = "none";
+  }
+}
+
+function toggleMinistryDebarAll(checked) {
+  sfx.playClick();
+  const serviceCheckboxes = document.querySelectorAll("#min-debar-services-list input[type='checkbox']");
+  serviceCheckboxes.forEach(cb => {
+    cb.checked = checked;
+    cb.disabled = checked;
+  });
+}
+
+function handleMinistryDebarSubmit(event) {
+  event.preventDefault();
+  sfx.playAlert();
+
+  const targetSelect = document.getElementById("min-debar-target-select");
+  const rawTarget = targetSelect ? targetSelect.value : "Rohan Verma";
+  const customerName = rawTarget.split("|")[0].trim();
+
+  const allCheckbox = document.getElementById("min-debar-scope-all");
+  let services = [];
+  if (allCheckbox && allCheckbox.checked) {
+    services = ["ALL"];
+  } else {
+    const checkedBoxes = document.querySelectorAll("#min-debar-services-list input[name='min_debar_service']:checked");
+    checkedBoxes.forEach(cb => services.push(cb.value));
+  }
+
+  if (services.length === 0) {
+    showToast("⚠️ Please select at least one service or choose ALL services", "warning");
+    return;
+  }
+
+  const reasonSelect = document.getElementById("min-debar-reason-select");
+  const reason = reasonSelect ? reasonSelect.value : "Ministry administrative sanction";
+
+  ministryCustomerDebarAction(customerName, "DEBAR", services, reason);
+  closeMinistryDebarModal();
+}
+
+function renderMinistryDebarmentTable() {
+  const tbody = document.getElementById("ministry-escalations-table-body");
+  if (!tbody) return;
+  const isHi = state.currentLanguage === "hi";
+  tbody.innerHTML = "";
+
+  const debarredCountEl = document.getElementById("min-debarred-count");
+  if (debarredCountEl) {
+    const count = Object.keys(state.debarredCustomers).length;
+    debarredCountEl.innerText = `${count} ${count === 1 ? "Citizen" : "Citizens"} Debarred`;
+  }
+
+  const escalationsCountEl = document.getElementById("min-escalations-count");
+  if (escalationsCountEl) {
+    escalationsCountEl.innerText = `${state.customerComplaints.length} Filed`;
+  }
+
+  state.customerComplaints.forEach(cmp => {
+    const debarInfo = state.debarredCustomers[cmp.customer_name];
+    const isDebarred = Boolean(debarInfo);
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-slate-50 transition";
+
+    let categoryBadge = "bg-slate-100 text-slate-800";
+    if (cmp.category === "SERVICE_DELAY_EXCESS") categoryBadge = "bg-amber-100 text-amber-900 border border-amber-300";
+    else if (cmp.category === "CUSTOMER_ABUSE_MISBEHAVIOR") categoryBadge = "bg-red-100 text-red-900 border border-red-300";
+    else if (cmp.category === "OTP_WITHHOLDING") categoryBadge = "bg-purple-100 text-purple-900 border border-purple-300";
+
+    let scopePill = "";
+    if (isDebarred) {
+      const scopeStr = (debarInfo.services && debarInfo.services.includes("ALL"))
+        ? "ALL SERVICES"
+        : (debarInfo.services ? debarInfo.services.join(", ") : "ALL");
+      scopePill = `
+        <span class="px-2.5 py-1 rounded-full bg-red-600 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1 w-max shadow-xs">
+          <i data-lucide="shield-x" class="w-3 h-3"></i> DEBARRED (${scopeStr})
+        </span>
+      `;
+    } else {
+      scopePill = `
+        <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10px] uppercase">
+          UNDER REVIEW
+        </span>
+      `;
+    }
+
+    tr.innerHTML = `
+      <td class="p-3 font-mono font-bold text-slate-700">${cmp.complaint_id}</td>
+      <td class="p-3">
+        <div class="font-black text-slate-900">${cmp.customer_name}</div>
+        <div class="text-[11px] text-slate-500 font-mono">${cmp.customer_phone || "Phone verified"}</div>
+      </td>
+      <td class="p-3">
+        <div class="font-bold text-slate-800">${cmp.worker_name}</div>
+        <div class="text-[11px] text-slate-500">ID: #${cmp.worker_id}</div>
+      </td>
+      <td class="p-3">
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${categoryBadge}">${cmp.category.replace(/_/g, " ")}</span>
+      </td>
+      <td class="p-3 max-w-xs">
+        <div class="text-slate-800 line-clamp-2">${cmp.description}</div>
+        ${cmp.delay_hours > 0 ? `<span class="text-[10px] font-bold text-red-600 block mt-0.5">⏱️ Delay: +${cmp.delay_hours} hrs</span>` : ""}
+      </td>
+      <td class="p-3">
+        ${scopePill}
+      </td>
+      <td class="p-3 text-right">
+        ${isDebarred
+          ? `<button onclick="ministryCustomerDebarAction('${cmp.customer_name}', 'REINSTATE')" class="px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition btn-tactile">
+               Re-instate Citizen
+             </button>`
+          : `<button onclick="openMinistryDebarModal('${cmp.customer_name}')" class="px-3 py-1 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs transition btn-tactile shadow-xs">
+               🚫 Debar (Scope)
+             </button>`}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  safeCreateIcons();
+}
+
+async function ministryCustomerDebarAction(customerName, action, services = ["ALL"], reason = "") {
+  sfx.playClick();
+  const isHi = state.currentLanguage === "hi";
+
+  if (action === "DEBAR") {
+    state.debarredCustomers[customerName] = {
+      services: services,
+      reason: reason || "Administrative debarment ordered by Ministry Disciplinary Officer",
+      debarred_at: new Date().toISOString(),
+      escalation_count: 1
+    };
+    const scopeStr = services.includes("ALL") ? "ALL SERVICES" : services.join(", ");
+    showToast(isHi ? `नागरिक "${customerName}" को ${scopeStr} हेतु निष्कासित किया गया` : `Citizen "${customerName}" DEBARRED from [${scopeStr}] by Ministry order`, "warning");
+  } else {
+    delete state.debarredCustomers[customerName];
+    showToast(isHi ? `नागरिक "${customerName}" को पुनः बहाल किया गया` : `Citizen "${customerName}" reinstated to platform`, "info");
+  }
+
+  // Update backend if connected
+  if (state.hasBackendConnection) {
+    try {
+      await fetch(`${API_BASE_URL}/api/ministry/customers/${encodeURIComponent(customerName)}/debar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: action, services: services, reason: reason || "Ministry administrative order" })
+      });
+    } catch (e) {
+      console.warn("Backend debar action offline fallback:", e);
+    }
+  }
+
+  renderMinistryDebarmentTable();
+
+  // If active booking customer or current persona is affected, sync citizen persona view
+  if (state.currentCustomerName === customerName) {
+    changeCitizenPersona(customerName);
+  }
+}
+
+// ============================================================================
+// 21. WORKER REJECTION AUDITING & MINISTRY DISCIPLINARY DESK
+// ============================================================================
+
+function initDisciplineDesk() {
+  updateWorkerDisciplinaryUI(state.activeWorker);
+  renderMinistryDisciplineTable();
+}
+
+function updateWorkerDisciplinaryUI(worker) {
+  if (!worker) return;
+  const isHi = state.currentLanguage === "hi";
+
+  const countBadge = document.getElementById("worker-rejection-count-badge");
+  if (countBadge) {
+    countBadge.innerText = `${worker.rejection_count || 0}/3 Declines`;
+  }
+
+  const dot = document.getElementById("worker-compliance-dot");
+  const statusTxt = document.getElementById("worker-compliance-status");
+  const banner = document.getElementById("worker-disciplinary-banner");
+
+  if (worker.disciplinary_status === "FIRED") {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-red-600 animate-ping";
+    if (statusTxt) statusTxt.innerText = isHi ? "लाइसेंस रद्द • निष्कासित" : "TERMINATED / LICENSE REVOKED";
+    if (banner) banner.classList.remove("hidden");
+  } else if (worker.disciplinary_status === "SUSPENDED") {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-red-500";
+    if (statusTxt) statusTxt.innerText = isHi ? "निलंबित (जांच जारी)" : "SUSPENDED";
+    if (banner) banner.classList.remove("hidden");
+  } else if ((worker.rejection_count || 0) >= 3) {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+    if (statusTxt) statusTxt.innerText = isHi ? "अनुशासनात्मक समीक्षाधीन (≥3 अस्वीकृत)" : "UNDER REVIEW (≥3 Declines)";
+    if (banner) banner.classList.add("hidden");
+  } else {
+    if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+    if (statusTxt) statusTxt.innerText = isHi ? "प्रमाणित अच्छा आचरण" : "Good Standing";
+    if (banner) banner.classList.add("hidden");
+  }
+}
+
+function renderMinistryDisciplineTable() {
+  const tbody = document.getElementById("ministry-discipline-table-body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  // Count flagged workers
+  const flagged = WORKERS.filter(w => (w.rejection_count || 0) >= 3 || w.disciplinary_status !== "GOOD_STANDING");
+  const flaggedCountEl = document.getElementById("min-flagged-workers-count");
+  if (flaggedCountEl) {
+    flaggedCountEl.innerText = `${flagged.length} ${flagged.length === 1 ? "Worker" : "Workers"}`;
+  }
+
+  WORKERS.forEach(w => {
+    const rejections = w.rejection_count || 0;
+    const isExceeded = rejections >= 3;
+    const isFired = w.disciplinary_status === "FIRED";
+    const isSuspended = w.disciplinary_status === "SUSPENDED";
+
+    const tr = document.createElement("tr");
+    tr.className = `hover:bg-slate-50 transition ${isFired ? "bg-red-50/40" : isExceeded ? "bg-amber-50/30" : ""}`;
+
+    let statusBadge = `<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold text-[10px] uppercase">GOOD STANDING</span>`;
+    if (isFired) {
+      statusBadge = `<span class="px-2.5 py-1 rounded-full bg-red-600 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1 w-max shadow-xs">
+        <i data-lucide="shield-x" class="w-3 h-3"></i> FIRED / REVOKED
+      </span>`;
+    } else if (isSuspended) {
+      statusBadge = `<span class="px-2.5 py-1 rounded-full bg-red-100 text-red-900 border border-red-300 font-bold text-[10px] uppercase">SUSPENDED</span>`;
+    } else if (isExceeded) {
+      statusBadge = `<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-400 font-black text-[10px] uppercase flex items-center gap-1 w-max">
+        <i data-lucide="alert-triangle" class="w-3 h-3 text-amber-600"></i> UNDER REVIEW (≥3)
+      </span>`;
+    }
+
+    tr.innerHTML = `
+      <td class="p-3">
+        <div class="font-black text-slate-900">${w.name}</div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: #${w.id} &bull; Aadhaar: ${w.aadhaar}</div>
+      </td>
+      <td class="p-3">
+        <div class="font-bold text-slate-800 capitalize">${w.skill}</div>
+        <div class="text-[11px] text-slate-500">${w.coop_name}</div>
+      </td>
+      <td class="p-3 font-bold text-slate-700">
+        ${w.completed_jobs} Jobs
+      </td>
+      <td class="p-3">
+        <span class="px-2.5 py-1 rounded-lg font-black text-xs ${isExceeded ? "bg-red-100 text-red-900 border border-red-300 font-mono" : "bg-slate-100 text-slate-700 font-mono"}">
+          ${rejections} Rejections ${isExceeded ? "⚠️" : ""}
+        </span>
+      </td>
+      <td class="p-3">${statusBadge}</td>
+      <td class="p-3 text-[11px] text-slate-600 max-w-xs">
+        ${w.disciplinary_action_notes || (isExceeded ? "Flagged for repeated broadcast dispatches rejection" : "Normal cooperative SLA compliance")}
+      </td>
+      <td class="p-3 text-right">
+        <div class="flex items-center justify-end gap-1.5 flex-wrap">
+          ${!isFired ? `
+            <button onclick="ministryDisciplineWorker(${w.id}, 'FIRE')" class="px-2.5 py-1 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs transition btn-tactile shadow-xs" title="Fire / Terminate Worker">
+              🔥 Terminate
+            </button>
+            <button onclick="ministryDisciplineWorker(${w.id}, 'WARN')" class="px-2 py-1 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs transition btn-tactile border border-amber-300" title="Issue Formal Warning">
+              ⚠️ Warn
+            </button>
+          ` : `
+            <button onclick="ministryDisciplineWorker(${w.id}, 'RESET')" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs transition btn-tactile shadow-xs" title="Re-instate Worker">
+              ↺ Re-instate
+            </button>
+          `}
+          ${(rejections > 0 && !isFired) ? `
+            <button onclick="ministryDisciplineWorker(${w.id}, 'RESET')" class="px-2 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition btn-tactile" title="Reset Counter">
+              ↺ Reset
+            </button>
+          ` : ""}
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  safeCreateIcons();
+}
+
+async function ministryDisciplineWorker(workerId, action) {
+  sfx.playClick();
+  const isHi = state.currentLanguage === "hi";
+  const worker = WORKERS.find(w => w.id === workerId);
+  if (!worker) return;
+
+  if (action === "FIRE") {
+    worker.disciplinary_status = "FIRED";
+    worker.is_available = false;
+    worker.is_verified = false;
+    worker.disciplinary_action_notes = "Official Ministry Termination Order issued. Worker excluded from cooperative dispatch.";
+    showToast(isHi 
+      ? `🚫 श्रमिक ${worker.name} को सहकारिता मंत्रालय द्वारा सेवा से निष्कासित कर दिया गया है।` 
+      : `🚫 Worker ${worker.name} (#${worker.id}) TERMINATED & license revoked by Ministry Order.`, "emergency");
+  } else if (action === "WARN") {
+    worker.disciplinary_status = "WARNING_ISSUED";
+    worker.disciplinary_action_notes = "Formal show-cause warning issued for SLA non-compliance.";
+    showToast(isHi 
+      ? `⚠️ श्रमिक ${worker.name} को आधिकारिक चेतावनी नोटिस जारी किया गया।` 
+      : `⚠️ Formal Show-Cause Warning issued to ${worker.name}.`, "warning");
+  } else if (action === "SUSPEND") {
+    worker.disciplinary_status = "SUSPENDED";
+    worker.is_available = false;
+    worker.disciplinary_action_notes = "Temporarily suspended pending grievance inquiry.";
+    showToast(`Worker ${worker.name} suspended.`, "warning");
+  } else if (action === "RESET") {
+    worker.disciplinary_status = "GOOD_STANDING";
+    worker.rejection_count = 0;
+    worker.is_available = true;
+    worker.is_verified = true;
+    worker.disciplinary_action_notes = "Compliance record cleared by Ministry review.";
+    showToast(isHi 
+      ? `✓ श्रमिक ${worker.name} का रिकॉर्ड साफ़ किया गया एवं कार्य हेतु पुनः बहाल किया गया।` 
+      : `✓ Worker ${worker.name} reinstated in Good Standing (rejection count reset).`, "success");
+  }
+
+  // Update backend API if connected
+  if (state.hasBackendConnection) {
+    try {
+      await fetch(`${API_BASE_URL}/api/ministry/workers/${workerId}/discipline`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: action,
+          reason: worker.disciplinary_action_notes || "Ministry Administrative Directive"
+        })
+      });
+    } catch (e) {
+      console.warn("Backend worker discipline call offline fallback:", e);
+    }
+  }
+
+  if (state.activeWorker.id === worker.id) {
+    updateWorkerDisciplinaryUI(worker);
+  }
+  renderMinistryDisciplineTable();
+}
+
+// =============================================================================
+// 19. MINISTRY COCKPIT: SUB-NAVIGATION & REGIONAL GROWTH ANALYTICS ENGINE
+// =============================================================================
+
+function switchMinistrySubTab(tabKey) {
+  sfx.playClick();
+  const validTabs = ["overview", "growth", "workforce", "discipline", "revenue"];
+  if (!validTabs.includes(tabKey)) tabKey = "overview";
+
+  validTabs.forEach(key => {
+    const btn = document.getElementById(`min-subtab-${key}`);
+    if (btn) {
+      if (key === tabKey) {
+        btn.className = "px-4 py-2.5 rounded-xl font-black text-xs transition whitespace-nowrap btn-tactile flex items-center gap-2 bg-blue-600 text-white shadow-md";
+      } else {
+        btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition whitespace-nowrap btn-tactile flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+      }
+    }
+  });
+
+  const sections = {
+    overview: document.getElementById("min-overview-section"),
+    growth: document.getElementById("min-growth-analytics-section"),
+    workforce: document.getElementById("min-workforce-section"),
+    discipline: document.getElementById("min-discipline-section"),
+    revenue: document.getElementById("min-revenue-section")
+  };
+
+  Object.keys(sections).forEach(k => {
+    if (sections[k]) {
+      if (k === tabKey) {
+        sections[k].classList.remove("hidden");
+      } else {
+        sections[k].classList.add("hidden");
+      }
+    }
+  });
+
+  if (tabKey === "growth") {
+    setTimeout(() => {
+      renderMinistryGrowthChart();
+      renderGrowthTrajectoryTable();
+    }, 60);
+  } else if (tabKey === "discipline") {
+    if (typeof renderMinistryDisciplineTable === "function") {
+      renderMinistryDisciplineTable();
+    }
+  }
+
+  safeCreateIcons();
+}
+
+function initMinistryGrowthAnalytics() {
+  const regionSelect = document.getElementById("growth-region-select");
+  if (regionSelect && state.growthChartOptions?.region) {
+    regionSelect.value = state.growthChartOptions.region;
+  }
+  updateGrowthHorizonUI(state.growthChartOptions?.horizon || "6m");
+  updateGrowthSeriesUI();
+  renderMinistryGrowthChart();
+  renderGrowthTrajectoryTable();
+}
+
+function updateGrowthRegion(regionKey) {
+  sfx.playClick();
+  if (!state.growthChartOptions) return;
+  state.growthChartOptions.region = regionKey || "all";
+  renderMinistryGrowthChart();
+  renderGrowthTrajectoryTable();
+}
+
+function updateGrowthHorizon(horizonKey) {
+  sfx.playClick();
+  if (!state.growthChartOptions) return;
+  state.growthChartOptions.horizon = horizonKey || "6m";
+  updateGrowthHorizonUI(horizonKey);
+  renderMinistryGrowthChart();
+  renderGrowthTrajectoryTable();
+}
+
+function updateGrowthHorizonUI(horizonKey) {
+  const horizons = ["6m", "30d", "ytd"];
+  horizons.forEach(h => {
+    const btn = document.getElementById(`horizon-btn-${h}`);
+    if (btn) {
+      if (h === horizonKey) {
+        btn.className = "px-3 py-1.5 rounded-xl font-black text-xs transition btn-tactile bg-slate-900 text-white shadow-xs";
+      } else {
+        btn.className = "px-3 py-1.5 rounded-xl font-bold text-xs transition btn-tactile bg-white text-slate-700 hover:bg-slate-100 border border-slate-200";
+      }
+    }
+  });
+}
+
+function toggleGrowthSeries(seriesKey) {
+  sfx.playClick();
+  if (!state.growthChartOptions?.series) return;
+  state.growthChartOptions.series[seriesKey] = !state.growthChartOptions.series[seriesKey];
+  updateGrowthSeriesUI();
+  renderMinistryGrowthChart();
+}
+
+function updateGrowthSeriesUI() {
+  const seriesConfig = {
+    deployments: { btn: "toggle-series-deployments", activeBg: "bg-blue-600 text-white border-blue-600 shadow-xs" },
+    requests: { btn: "toggle-series-requests", activeBg: "bg-purple-600 text-white border-purple-600 shadow-xs" },
+    revenue: { btn: "toggle-series-revenue", activeBg: "bg-emerald-600 text-white border-emerald-600 shadow-xs" }
+  };
+
+  Object.keys(seriesConfig).forEach(key => {
+    const btn = document.getElementById(seriesConfig[key].btn);
+    if (!btn) return;
+    const isActive = !!state.growthChartOptions?.series?.[key];
+    if (isActive) {
+      btn.className = `px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 btn-tactile ${seriesConfig[key].activeBg}`;
+    } else {
+      btn.className = "px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold transition flex items-center gap-1.5 btn-tactile bg-white text-slate-400 opacity-60 hover:opacity-100";
+    }
+  });
+}
+
+function getGrowthActiveDataset() {
+  const regKey = state.growthChartOptions?.region || "all";
+  const horKey = state.growthChartOptions?.horizon || "6m";
+  const regionObj = state.regionalGrowthData[regKey] || state.regionalGrowthData["all"];
+  const horizonObj = regionObj.horizons[horKey] || regionObj.horizons["6m"];
+  return {
+    regionKey: regKey,
+    regionName: regionObj.region_name,
+    horizonKey: horKey,
+    ...horizonObj
+  };
+}
+
+// Generate smooth cubic bezier SVG path from coordinate points
+function createSmoothSvgPath(points) {
+  if (!points || points.length === 0) return "";
+  if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+
+  let path = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = i > 0 ? points[i - 1] : points[i];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = i != points.length - 2 ? points[i + 2] : p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    path += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+  }
+  return path;
+}
+
+function renderMinistryGrowthChart() {
+  const svg = document.getElementById("ministry-growth-svg");
+  if (!svg) return;
+
+  const dataset = getGrowthActiveDataset();
+  const seriesOpts = state.growthChartOptions?.series || { deployments: true, requests: true, revenue: true };
+
+  // Update 4 Regional KPI Summary Cards safely
+  const updateKpiCard = (id, val, sub) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const valEl = el.querySelector(".text-2xl");
+    if (valEl) valEl.innerText = val;
+    const subEl = el.querySelector("span:last-child");
+    if (subEl) subEl.innerText = sub;
+  };
+  updateKpiCard("growth-kpi-deployments", dataset.kpis.deployments, dataset.kpis.deployments_sub);
+  updateKpiCard("growth-kpi-requests", dataset.kpis.requests, dataset.kpis.requests_sub);
+  updateKpiCard("growth-kpi-revenue", dataset.kpis.revenue, dataset.kpis.revenue_sub);
+  updateKpiCard("growth-kpi-welfare", dataset.kpis.welfare, dataset.kpis.welfare_sub);
+
+  // Dimensions & Padding
+  const width = 800;
+  const height = 320;
+  const padLeft = 65;
+  const padRight = 70;
+  const padTop = 35;
+  const padBottom = 45;
+  const plotW = width - padLeft - padRight;
+  const plotH = height - padTop - padBottom;
+
+  const labels = dataset.labels;
+  const n = labels.length;
+
+  // Compute Scales
+  const maxVolumeRaw = Math.max(
+    Math.max(...dataset.deployments),
+    Math.max(...dataset.requests)
+  );
+  // Round max volume to clean tick interval
+  let maxVolume = Math.ceil((maxVolumeRaw * 1.15) / 500) * 500;
+  if (maxVolume < 500) maxVolume = 500;
+
+  const maxRevenueRaw = Math.max(...dataset.revenue);
+  let maxRevenue = Math.ceil((maxRevenueRaw * 1.15) / 100000) * 100000;
+  if (maxRevenue < 100000) maxRevenue = 100000;
+
+  const getX = (idx) => padLeft + (n > 1 ? (plotW / (n - 1)) * idx : plotW / 2);
+  const getYVol = (val) => padTop + plotH - (val / maxVolume) * plotH;
+  const getYRev = (val) => padTop + plotH - (val / maxRevenue) * plotH;
+
+  const depPoints = dataset.deployments.map((v, i) => ({ x: getX(i), y: getYVol(v), val: v }));
+  const reqPoints = dataset.requests.map((v, i) => ({ x: getX(i), y: getYVol(v), val: v }));
+  const revPoints = dataset.revenue.map((v, i) => ({ x: getX(i), y: getYRev(v), val: v }));
+
+  // Build SVG Markup
+  let svgContent = `
+    <defs>
+      <!-- Deployments Gradient -->
+      <linearGradient id="grad-deployments" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2563eb" stop-opacity="0.28" />
+        <stop offset="100%" stop-color="#2563eb" stop-opacity="0.0" />
+      </linearGradient>
+
+      <!-- Citizen Requests Gradient -->
+      <linearGradient id="grad-requests" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#9333ea" stop-opacity="0.22" />
+        <stop offset="100%" stop-color="#9333ea" stop-opacity="0.0" />
+      </linearGradient>
+
+      <!-- Gross Revenue Gradient -->
+      <linearGradient id="grad-revenue" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
+        <stop offset="100%" stop-color="#10b981" stop-opacity="0.0" />
+      </linearGradient>
+
+      <!-- Drop Shadows -->
+      <filter id="shadow-line" x="-10%" y="-10%" width="130%" height="130%">
+        <feDropShadow dx="0" dy="4" stdDeviation="3" flood-opacity="0.18" />
+      </filter>
+    </defs>
+  `;
+
+  // Grid Lines and Left/Right Y-Axis Labels (5 horizontal ticks)
+  const ticks = 4;
+  for (let t = 0; t <= ticks; t++) {
+    const ratio = t / ticks;
+    const yPos = padTop + plotH - ratio * plotH;
+    const volVal = Math.round(ratio * maxVolume);
+    const revValLakhs = (ratio * maxRevenue) / 100000;
+
+    svgContent += `
+      <line x1="${padLeft}" y1="${yPos}" x2="${width - padRight}" y2="${yPos}" 
+            stroke="#e2e8f0" stroke-width="1" stroke-dasharray="${t === 0 ? '0' : '4, 4'}" />
+      
+      <!-- Left Y-Axis Tick (Volume) -->
+      <text x="${padLeft - 10}" y="${yPos + 4}" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">
+        ${volVal >= 1000 ? (volVal / 1000).toFixed(volVal % 1000 === 0 ? 0 : 1) + 'k' : volVal}
+      </text>
+
+      <!-- Right Y-Axis Tick (Revenue ₹) -->
+      <text x="${width - padRight + 10}" y="${yPos + 4}" text-anchor="start" font-size="10" font-weight="700" fill="#10b981">
+        ₹${revValLakhs.toFixed(revValLakhs % 1 === 0 ? 0 : 1)}L
+      </text>
+    `;
+  }
+
+  // X-Axis Baseline & Labels
+  svgContent += `
+    <line x1="${padLeft}" y1="${padTop + plotH}" x2="${width - padRight}" y2="${padTop + plotH}" stroke="#cbd5e1" stroke-width="1.5" />
+  `;
+
+  labels.forEach((lbl, i) => {
+    const xPos = getX(i);
+    svgContent += `
+      <text x="${xPos}" y="${height - 12}" text-anchor="middle" font-size="11" font-weight="800" fill="#475569">
+        ${lbl}
+      </text>
+    `;
+  });
+
+  // Area and Line Curves
+  const baselineY = (padTop + plotH).toFixed(1);
+
+  // 1. Citizen Requests Curve (Purple)
+  if (seriesOpts.requests) {
+    const pathReq = createSmoothSvgPath(reqPoints);
+    const areaReq = `${pathReq} L ${reqPoints[reqPoints.length - 1].x.toFixed(1)} ${baselineY} L ${reqPoints[0].x.toFixed(1)} ${baselineY} Z`;
+
+    svgContent += `
+      <path d="${areaReq}" fill="url(#grad-requests)" />
+      <path d="${pathReq}" fill="none" stroke="#9333ea" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow-line)" />
+    `;
+  }
+
+  // 2. Gross Revenue Curve (Emerald)
+  if (seriesOpts.revenue) {
+    const pathRev = createSmoothSvgPath(revPoints);
+    const areaRev = `${pathRev} L ${revPoints[revPoints.length - 1].x.toFixed(1)} ${baselineY} L ${revPoints[0].x.toFixed(1)} ${baselineY} Z`;
+
+    svgContent += `
+      <path d="${areaRev}" fill="url(#grad-revenue)" />
+      <path d="${pathRev}" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow-line)" />
+    `;
+  }
+
+  // 3. Worker Deployments Curve (Blue)
+  if (seriesOpts.deployments) {
+    const pathDep = createSmoothSvgPath(depPoints);
+    const areaDep = `${pathDep} L ${depPoints[depPoints.length - 1].x.toFixed(1)} ${baselineY} L ${depPoints[0].x.toFixed(1)} ${baselineY} Z`;
+
+    svgContent += `
+      <path d="${areaDep}" fill="url(#grad-deployments)" />
+      <path d="${pathDep}" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow-line)" />
+    `;
+  }
+
+  // Data Point Markers
+  for (let i = 0; i < n; i++) {
+    if (seriesOpts.requests) {
+      svgContent += `
+        <circle cx="${reqPoints[i].x.toFixed(1)}" cy="${reqPoints[i].y.toFixed(1)}" r="4.5" 
+                fill="#ffffff" stroke="#9333ea" stroke-width="2.5" class="transition-transform hover:scale-125" />
+      `;
+    }
+    if (seriesOpts.revenue) {
+      svgContent += `
+        <circle cx="${revPoints[i].x.toFixed(1)}" cy="${revPoints[i].y.toFixed(1)}" r="4.5" 
+                fill="#ffffff" stroke="#10b981" stroke-width="2.5" class="transition-transform hover:scale-125" />
+      `;
+    }
+    if (seriesOpts.deployments) {
+      svgContent += `
+        <circle cx="${depPoints[i].x.toFixed(1)}" cy="${depPoints[i].y.toFixed(1)}" r="5" 
+                fill="#ffffff" stroke="#2563eb" stroke-width="3" class="transition-transform hover:scale-125" />
+      `;
+    }
+  }
+
+  // Dynamic Cursor Guide Line & Highlight Dots (initially hidden)
+  svgContent += `
+    <g id="chart-guide-group" style="opacity: 0; transition: opacity 0.15s ease;">
+      <line id="chart-guide-line" x1="0" y1="${padTop}" x2="0" y2="${padTop + plotH}" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3, 3" />
+      <circle id="chart-guide-dep" cx="0" cy="0" r="6" fill="#2563eb" stroke="#ffffff" stroke-width="2" />
+      <circle id="chart-guide-req" cx="0" cy="0" r="6" fill="#9333ea" stroke="#ffffff" stroke-width="2" />
+      <circle id="chart-guide-rev" cx="0" cy="0" r="6" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+    </g>
+
+    <!-- Invisible Interactive Hover Catchment Rectangle -->
+    <rect id="chart-interactive-overlay" x="${padLeft}" y="${padTop}" width="${plotW}" height="${plotH}" 
+          fill="transparent" style="cursor: crosshair;" />
+  `;
+
+  svg.innerHTML = svgContent;
+
+  // Bind Mouse and Touch Events for Interactive Crosshair & Tooltip
+  const overlay = document.getElementById("chart-interactive-overlay");
+  const guideGroup = document.getElementById("chart-guide-group");
+  const guideLine = document.getElementById("chart-guide-line");
+  const guideDep = document.getElementById("chart-guide-dep");
+  const guideReq = document.getElementById("chart-guide-req");
+  const guideRev = document.getElementById("chart-guide-rev");
+  const tooltip = document.getElementById("growth-chart-tooltip");
+
+  if (!overlay || !tooltip || !guideGroup) return;
+
+  function handlePointerMove(e) {
+    const rect = svg.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const relX = (clientX - rect.left) * (width / rect.width);
+
+    // Find nearest data point index
+    let closestIdx = 0;
+    let minDiff = Infinity;
+    for (let i = 0; i < n; i++) {
+      const diff = Math.abs(getX(i) - relX);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIdx = i;
+      }
+    }
+
+    const curX = getX(closestIdx);
+    const depY = depPoints[closestIdx].y;
+    const reqY = reqPoints[closestIdx].y;
+    const revY = revPoints[closestIdx].y;
+
+    guideGroup.style.opacity = "1";
+    guideLine.setAttribute("x1", curX);
+    guideLine.setAttribute("x2", curX);
+
+    if (seriesOpts.deployments) {
+      guideDep.setAttribute("cx", curX);
+      guideDep.setAttribute("cy", depY);
+      guideDep.style.display = "block";
+    } else {
+      guideDep.style.display = "none";
+    }
+
+    if (seriesOpts.requests) {
+      guideReq.setAttribute("cx", curX);
+      guideReq.setAttribute("cy", reqY);
+      guideReq.style.display = "block";
+    } else {
+      guideReq.style.display = "none";
+    }
+
+    if (seriesOpts.revenue) {
+      guideRev.setAttribute("cx", curX);
+      guideRev.setAttribute("cy", revY);
+      guideRev.style.display = "block";
+    } else {
+      guideRev.style.display = "none";
+    }
+
+    // Update Tooltip Content
+    document.getElementById("tt-period").innerText = labels[closestIdx];
+    document.getElementById("tt-deployments").innerText = `${dataset.deployments[closestIdx].toLocaleString("en-IN")} Technicians`;
+    document.getElementById("tt-requests").innerText = `${dataset.requests[closestIdx].toLocaleString("en-IN")} Requests`;
+    document.getElementById("tt-revenue").innerText = `₹${dataset.revenue[closestIdx].toLocaleString("en-IN")}`;
+
+    // Position Tooltip
+    tooltip.classList.remove("hidden");
+    const containerRect = document.getElementById("ministry-growth-chart-container").getBoundingClientRect();
+    const tooltipX = (curX / width) * containerRect.width;
+    const adjustedX = Math.min(Math.max(tooltipX - 90, 10), containerRect.width - 200);
+
+    tooltip.style.left = `${adjustedX}px`;
+    tooltip.style.top = "15px";
+  }
+
+  function handlePointerLeave() {
+    guideGroup.style.opacity = "0";
+    tooltip.classList.add("hidden");
+  }
+
+  overlay.addEventListener("mousemove", handlePointerMove);
+  overlay.addEventListener("mouseleave", handlePointerLeave);
+  overlay.addEventListener("touchmove", handlePointerMove, { passive: true });
+  overlay.addEventListener("touchend", handlePointerLeave);
+}
+
+function renderGrowthTrajectoryTable() {
+  const tbody = document.getElementById("growth-trajectory-table-body");
+  if (!tbody) return;
+
+  const dataset = getGrowthActiveDataset();
+  const labels = dataset.labels;
+  const deployments = dataset.deployments;
+  const requests = dataset.requests;
+  const revenue = dataset.revenue;
+  const welfare = dataset.welfare;
+
+  let rowsHtml = "";
+  for (let i = labels.length - 1; i >= 0; i--) {
+    const prevDep = i > 0 ? deployments[i - 1] : deployments[i];
+    const diffPct = prevDep > 0 ? Math.round(((deployments[i] - prevDep) / prevDep) * 100) : 0;
+    const isPositive = diffPct >= 0;
+
+    rowsHtml += `
+      <tr class="hover:bg-slate-50 transition font-medium">
+        <td class="p-3">
+          <div class="font-black text-slate-900">${labels[i]}</div>
+          <div class="text-[10px] text-slate-500 font-mono">Tele-Ref: #SS-REG-${i + 101}</div>
+        </td>
+        <td class="p-3">
+          <span class="font-bold text-slate-800">${dataset.regionName}</span>
+        </td>
+        <td class="p-3">
+          <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 font-black text-xs font-mono">
+            ${deployments[i].toLocaleString("en-IN")}
+          </span>
+        </td>
+        <td class="p-3">
+          <span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-800 border border-purple-200 font-black text-xs font-mono">
+            ${requests[i].toLocaleString("en-IN")}
+          </span>
+        </td>
+        <td class="p-3">
+          <span class="font-black text-emerald-800">
+            ₹${revenue[i].toLocaleString("en-IN")}
+          </span>
+        </td>
+        <td class="p-3 font-bold text-amber-800">
+          ₹${welfare[i].toLocaleString("en-IN")}
+        </td>
+        <td class="p-3 text-right">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black ${isPositive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}">
+            ${isPositive ? '↑ +' : '↓ '}${diffPct}% MoM
+          </span>
+        </td>
+      </tr>
+    `;
+  }
+
+  tbody.innerHTML = rowsHtml;
+}
+
+// =============================================================================
+// 20. WORKER POST-ACCEPTANCE WITHDRAWAL & INSTANT AUTO-REASSIGNMENT
+// =============================================================================
+
+function openWorkerWithdrawModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-worker-withdraw-job");
+  if (!modal) return;
+
+  const bookingId = state.activeBooking?.booking_id || 998;
+  const bookingSpan = document.getElementById("withdraw-booking-id");
+  if (bookingSpan) bookingSpan.innerText = `#${bookingId}`;
+
+  const notesInput = document.getElementById("withdraw-incident-notes");
+  if (notesInput) notesInput.value = "";
+
+  const reasonSelect = document.getElementById("withdraw-reason-select");
+  if (reasonSelect) reasonSelect.value = "VEHICLE_BREAKDOWN";
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+  safeCreateIcons();
+}
+
+function closeWorkerWithdrawModal() {
+  sfx.playClick();
+  const modal = document.getElementById("modal-worker-withdraw-job");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+}
+
+function handleWorkerWithdrawSubmit(event) {
+  event.preventDefault();
+  sfx.playClick();
+
+  const reasonSelect = document.getElementById("withdraw-reason-select");
+  const notesInput = document.getElementById("withdraw-incident-notes");
+  const reason = reasonSelect?.value || "VEHICLE_BREAKDOWN";
+  const notes = notesInput?.value?.trim() || "";
+
+  closeWorkerWithdrawModal();
+  executeWorkerWithdrawal(reason, notes);
+}
+
+function executeWorkerWithdrawal(reason, notes) {
+  sfx.playFallbackWarning();
+  const isHi = state.currentLanguage === "hi";
+
+  // Ensure an active booking is instantiated
+  if (!state.activeBooking) {
+    state.activeBooking = {
+      booking_id: 998,
+      service_type: "electrician",
+      customer_name: "Aarav Mehta (Connaught Place)",
+      status: "ACCEPTED",
+      timeline: ["Citizen broadcasted service dispatch.", "Worker accepted service request."],
+      assigned_worker: state.activeWorker
+    };
+  }
+
+  const withdrawingWorker = state.activeBooking.assigned_worker || state.activeWorker;
+
+  // Search for the nearest backup worker of the same trade
+  let backupWorker = WORKERS.find(
+    w => w.skill === state.activeBooking.service_type && w.id !== withdrawingWorker.id && w.is_available
+  );
+  if (!backupWorker) {
+    backupWorker = WORKERS.find(w => w.id !== withdrawingWorker.id && w.is_available);
+  }
+  if (!backupWorker) {
+    backupWorker = WORKERS.find(w => w.id !== withdrawingWorker.id) || WORKERS[0];
+  }
+
+  const bCoords = getWorkerCoords(backupWorker);
+  const targetCoords = state.customerCoords || [28.6304, 77.2273];
+  const dist = computeDistanceKm(targetCoords[0], targetCoords[1], bCoords[0], bCoords[1]);
+  const newEtaMinutes = Math.max(4, Math.round(dist * 3.5));
+
+  // 1. Reassign Booking in State Machine
+  state.activeBooking.assigned_worker = backupWorker;
+  const reasonLabel = reason.replace(/_/g, " ");
+  state.activeBooking.timeline.push(
+    isHi
+      ? `🚨 आपातकालीन निकासी: श्रमिक ${withdrawingWorker.name} ने कार्य स्वीकार करने के उपरांत हटने का अनुरोध किया (${reasonLabel})। सहकारिता टेलीमेट्री इंजन द्वारा बिना किसी देरी के नए तकनीशियन ${backupWorker.name} (${dist} किमी, आगमन ~${newEtaMinutes} मिनट) को कार्य सौंपा गया।`
+      : `🚨 POST-ACCEPTANCE WITHDRAWAL: Technician ${withdrawingWorker.name} withdrew post-acceptance [Reason: ${reasonLabel}]. Autonomous Telemetry Engine instantly auto-reassigned certified technician ${backupWorker.name} (${dist} km away, ETA ~${newEtaMinutes} mins). Customer schedule & SLA preserved.`
+  );
+
+  // 2. Update Citizen UI
+  const statusName = document.getElementById("status-worker-name");
+  if (statusName) statusName.innerText = backupWorker.name;
+
+  const statusCoop = document.getElementById("status-worker-coop");
+  if (statusCoop) statusCoop.innerText = `✓ ${backupWorker.coop_name}`;
+
+  const statusDist = document.getElementById("status-worker-dist");
+  if (statusDist) {
+    statusDist.innerText = `📍 ${dist} km away • Rating: ${backupWorker.rating} ★ (Auto-Reassigned Backup)`;
+  }
+
+  const statusPhoto = document.getElementById("status-worker-photo");
+  if (statusPhoto && backupWorker.photo) statusPhoto.src = backupWorker.photo;
+
+  updateTimeline(state.activeBooking.timeline);
+  drawRouteLine(bCoords, targetCoords);
+
+  // 3. Reset Worker View Radar & Maps
+  const radarMapContainer = document.getElementById("worker-radar-map-container");
+  const radarScanner = document.getElementById("worker-radar-scanner");
+  if (radarMapContainer) radarMapContainer.classList.add("hidden");
+  if (radarScanner) radarScanner.classList.remove("hidden");
+
+  if (state.workerRadarMap) {
+    try {
+      state.workerRadarMap.remove();
+    } catch (e) {
+      console.warn("Radar map teardown:", e);
+    }
+    state.workerRadarMap = null;
+  }
+
+  // Display Worker Reassignment Notice
+  const fallbackNotice = document.getElementById("worker-fallback-notice");
+  if (fallbackNotice) fallbackNotice.classList.remove("hidden");
+
+  const fallbackText = document.getElementById("worker-fallback-text");
+  if (fallbackText) {
+    fallbackText.innerHTML = isHi
+      ? `🚨 <b>कार्य पुनः सौंपा गया:</b> आपने आपातकालीन निकासी दर्ज की (${reasonLabel})। नागरिक की सेवा को बाधित होने से बचाने के लिए कार्य बैकअप तकनीशियन <b>${backupWorker.name}</b> को सौंप दिया गया है।`
+      : `🚨 <span class="font-bold text-rose-900">WITHDRAWAL TELEMETRY LOGGED:</span> You withdrew from Booking #${state.activeBooking.booking_id} (${reasonLabel}). Job was instantly auto-reassigned to certified backup: <strong class="text-blue-900">${backupWorker.name}</strong> (${dist} km away). Customer SLA preserved.`;
+  }
+
+  const incomingCard = document.getElementById("incoming-job-card");
+  if (incomingCard) incomingCard.classList.add("hidden");
+
+  const badgeStatus = document.getElementById("booking-badge-status");
+  if (badgeStatus) {
+    badgeStatus.innerText = isHi ? "पुनः सौंपा गया" : "WITHDRAWN & REASSIGNED";
+    badgeStatus.className = "bg-rose-600 text-white text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm";
+  }
+
+  // 4. Update Disciplinary Log & Flag for Ministry Audit
+  withdrawingWorker.withdrawal_count = (withdrawingWorker.withdrawal_count || 0) + 1;
+  withdrawingWorker.rejection_count = (withdrawingWorker.rejection_count || 0) + 1;
+  withdrawingWorker.disciplinary_status = "UNDER_REVIEW";
+  withdrawingWorker.disciplinary_action_notes = `Late post-acceptance withdrawal on Booking #${state.activeBooking.booking_id} [${reasonLabel}]. Autonomous fallback reassigned to #${backupWorker.id}. Official incident report filed with Ministry.`;
+
+  const incidentReport = {
+    rejection_id: `INC-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    worker_id: withdrawingWorker.id,
+    worker_name: withdrawingWorker.name,
+    worker_skill: withdrawingWorker.skill || state.activeBooking.service_type,
+    coop_name: withdrawingWorker.coop_name,
+    booking_id: state.activeBooking.booking_id,
+    service_type: state.activeBooking.service_type,
+    type: "POST_ACCEPTANCE_WITHDRAWAL",
+    reason: `Late Post-Acceptance Withdrawal (${reasonLabel}): ${notes || 'Immediate telemetry reassignment executed'}`,
+    timestamp: new Date().toISOString(),
+    status: "AUTO_REASSIGNED",
+    reassigned_to_id: backupWorker.id,
+    reassigned_to_name: backupWorker.name
+  };
+
+  state.workerRejections.unshift(incidentReport);
+
+  // Update Ministry Disciplinary UI Table
+  if (typeof renderMinistryDisciplineTable === "function") {
+    renderMinistryDisciplineTable();
+  }
+
+  // 5. Append Real-Time Telemetry Stream to Ministry Cockpit
+  const liveTicker = document.getElementById("ministry-live-ticker");
+  if (liveTicker) {
+    const alertDiv = document.createElement("div");
+    alertDiv.className = "flex items-center gap-1.5 p-2 bg-rose-50 rounded-xl border border-rose-200 text-rose-900 text-[11px] font-bold shadow-xs";
+    alertDiv.innerHTML = `
+      <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
+      <span>🚨 <b>EMERGENCY DISPATCH:</b> Worker #${withdrawingWorker.id} (${withdrawingWorker.name}) withdrew from Job #${state.activeBooking.booking_id} (${reasonLabel}). Instant failover: auto-reassigned to #${backupWorker.id} (${backupWorker.name}). Incident report dispatched.</span>
+    `;
+    liveTicker.prepend(alertDiv);
+  }
+
+  // 6. Notify Backend API if available
+  if (state.hasBackendConnection) {
+    fetch(`${API_BASE_URL}/api/bookings/dispatch/respond`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        booking_id: state.activeBooking.booking_id,
+        worker_id: withdrawingWorker.id,
+        action: "WITHDRAW",
+        reason: reason,
+        notes: notes,
+        reassigned_worker_id: backupWorker.id
+      })
+    }).catch(err => console.warn("Backend withdrawal telemetry sync (offline fallback):", err));
+  }
+
+  showToast(
+    isHi
+      ? `🚨 निकासी दर्ज की गई। कार्य तुरंत बैकअप तकनीशियन ${backupWorker.name} को पुनः सौंपा गया।`
+      : `🚨 Withdrawal processed & incident logged. Job instantly auto-reassigned to ${backupWorker.name}. Customer ETA intact.`,
+    "warning"
+  );
+}
+
+// =======================================================
+// GLOBAL WINDOW FUNCTION EXPORTS & INTERACTION LISTENERS
+// =======================================================
+if (typeof window !== "undefined") {
+  window.selectService = selectService;
+  window.openServiceBookingModal = openServiceBookingModal;
+  window.closeServiceBookingModal = closeServiceBookingModal;
+  window.selectSubService = selectSubService;
+  window.toggleSubServiceSelection = toggleSubServiceSelection;
+  window.openSatisfactionReviewModal = openSatisfactionReviewModal;
+  window.closeSatisfactionReviewModal = closeSatisfactionReviewModal;
+  window.confirmSatisfactionAndProceed = confirmSatisfactionAndProceed;
+  window.goToBookingStep = goToBookingStep;
+  window.setBookingScheduleType = setBookingScheduleType;
+  window.selectQuickDay = selectQuickDay;
+  window.selectTimeSlot = selectTimeSlot;
+  window.onBookingDateInputChange = onBookingDateInputChange;
+  window.onCustomTimeChange = onCustomTimeChange;
+  window.clearCustomTime = clearCustomTime;
+  window.selectPlan = selectPlan;
+  window.handleNgoCheckboxChange = handleNgoCheckboxChange;
+  window.openNgoVerificationModal = openNgoVerificationModal;
+  window.closeNgoVerificationModal = closeNgoVerificationModal;
+  window.autoFillSampleNgo = autoFillSampleNgo;
+  window.submitNgoVerification = submitNgoVerification;
+  window.openPaymentGatewayModal = openPaymentGatewayModal;
+  window.closePaymentGatewayModal = closePaymentGatewayModal;
+  window.executeBookingConfirmed = executeBookingConfirmed;
+  window.switchPortal = switchPortal;
+  window.toggleEmergencyMode = toggleEmergencyMode;
+  window.toggleShowAllServices = toggleShowAllServices;
+
+  // In-Menu Satisfaction Panel & Subservices Selection
+  window.backToSubServicesSelection = backToSubServicesSelection;
+  window.resetCustomerAppMap = resetCustomerAppMap;
+  window.closeCompletedBookingCard = closeCompletedBookingCard;
+
+  // Citizen Authentication & Debarment Exports
+  window.changeCitizenPersona = changeCitizenPersona;
+  window.openCitizenAuthModal = openCitizenAuthModal;
+  window.cancelCitizenAuth = cancelCitizenAuth;
+  window.submitCitizenAuth = submitCitizenAuth;
+  window.sendCitizenOtp = sendCitizenOtp;
+  window.autofillCitizenOtp = autofillCitizenOtp;
+  window.selectCitizenAuthLocationPreset = selectCitizenAuthLocationPreset;
+  window.detectCitizenGpsLocation = detectCitizenGpsLocation;
+  window.openServiceDebarmentModal = openServiceDebarmentModal;
+  window.closeServiceDebarmentModal = closeServiceDebarmentModal;
+  window.switchToCompliantCitizen = switchToCompliantCitizen;
+
+  // Worker Persona & Verification Gate Exports
+  window.selectWorkerLoginPersona = selectWorkerLoginPersona;
+  window.sendWorkerOtp = sendWorkerOtp;
+  window.autofillWorkerOtp = autofillWorkerOtp;
+  window.handleWorkerStep1Submit = handleWorkerStep1Submit;
+  window.grantWorkerAppAccess = grantWorkerAppAccess;
+  window.changeWorkerPersona = changeWorkerPersona;
+  window.openWorkerAuthGateModal = openWorkerAuthGateModal;
+  window.cancelWorkerAuthGate = cancelWorkerAuthGate;
+  window.submitWorkerAuthGate = submitWorkerAuthGate;
+  window.sendWorkerAuthGateOtp = sendWorkerAuthGateOtp;
+  window.autofillWorkerAuthGateOtp = autofillWorkerAuthGateOtp;
+  window.closeWorkerAcceptedToast = closeWorkerAcceptedToast;
+  window.focusCitizenBookingStatus = focusCitizenBookingStatus;
+
+  // Ministry Debarment Desk Exports
+  window.openMinistryDebarModal = openMinistryDebarModal;
+  window.closeMinistryDebarModal = closeMinistryDebarModal;
+  window.toggleMinistryDebarAll = toggleMinistryDebarAll;
+  window.handleMinistryDebarSubmit = handleMinistryDebarSubmit;
+  window.ministryCustomerDebarAction = ministryCustomerDebarAction;
+
+  // Global backdrop click dismissal for Modals
+  document.addEventListener("click", (e) => {
+    const ngoModal = document.getElementById("modal-ngo-verify");
+    if (ngoModal && !ngoModal.classList.contains("hidden") && e.target === ngoModal) {
+      closeNgoVerificationModal(false);
+      return;
+    }
+    const payModal = document.getElementById("modal-payment-gateway");
+    if (payModal && !payModal.classList.contains("hidden") && e.target === payModal) {
+      closePaymentGatewayModal();
+      return;
+    }
+    const sModal = document.getElementById("modal-service-booking");
+    if (sModal && e.target === sModal) {
+      closeServiceBookingModal();
+      return;
+    }
+    const debarModal = document.getElementById("modal-service-debarment");
+    if (debarModal && !debarModal.classList.contains("hidden") && e.target === debarModal) {
+      closeServiceDebarmentModal();
+      return;
+    }
+    const satModal = document.getElementById("modal-satisfaction-review");
+    if (satModal && !satModal.classList.contains("hidden") && e.target === satModal) {
+      closeSatisfactionReviewModal();
+      return;
+    }
+    const minDebarModal = document.getElementById("modal-ministry-debar-order");
+    if (minDebarModal && !minDebarModal.classList.contains("hidden") && e.target === minDebarModal) {
+      closeMinistryDebarModal();
+      return;
+    }
+    const workerGateModal = document.getElementById("modal-worker-auth-gate");
+    if (workerGateModal && !workerGateModal.classList.contains("hidden") && e.target === workerGateModal) {
+      cancelWorkerAuthGate();
+      return;
+    }
+    const citizenAuthModal = document.getElementById("modal-citizen-auth");
+    if (citizenAuthModal && !citizenAuthModal.classList.contains("hidden") && e.target === citizenAuthModal) {
+      cancelCitizenAuth();
+      return;
+    }
+  });
+
+  // Global escape key dismissal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const workerGateModal = document.getElementById("modal-worker-auth-gate");
+      if (workerGateModal && !workerGateModal.classList.contains("hidden") && workerGateModal.style.display !== "none") {
+        cancelWorkerAuthGate();
+        return;
+      }
+      const citizenAuthModal = document.getElementById("modal-citizen-auth");
+      if (citizenAuthModal && !citizenAuthModal.classList.contains("hidden") && citizenAuthModal.style.display !== "none") {
+        cancelCitizenAuth();
+        return;
+      }
+      const ngoModal = document.getElementById("modal-ngo-verify");
+      if (ngoModal && !ngoModal.classList.contains("hidden") && ngoModal.style.display !== "none") {
+        closeNgoVerificationModal(false);
+        return;
+      }
+      const payModal = document.getElementById("modal-payment-gateway");
+      if (payModal && !payModal.classList.contains("hidden") && payModal.style.display !== "none") {
+        closePaymentGatewayModal();
+        return;
+      }
+      const debarModal = document.getElementById("modal-service-debarment");
+      if (debarModal && !debarModal.classList.contains("hidden") && debarModal.style.display !== "none") {
+        closeServiceDebarmentModal();
+        return;
+      }
+      const satModal = document.getElementById("modal-satisfaction-review");
+      if (satModal && !satModal.classList.contains("hidden") && satModal.style.display !== "none") {
+        closeSatisfactionReviewModal();
+        return;
+      }
+      const minDebarModal = document.getElementById("modal-ministry-debar-order");
+      if (minDebarModal && !minDebarModal.classList.contains("hidden") && minDebarModal.style.display !== "none") {
+        closeMinistryDebarModal();
+        return;
+      }
+      closeServiceBookingModal();
+    }
+  });
+}
+
+
+
+

@@ -748,3 +748,163 @@ REVENUE_METRICS: Dict[str, Any] = {
     "zero_middleman_guarantee": "100% Direct DBT"
 }
 
+# ----------------- Worker Freelancing Marketplace (Post-Shift Hours) -----------------
+# Open freelance gigs posted by citizens for off-duty hours with 100% direct worker payout (0% federation cut)
+FREELANCE_JOBS: List[Dict[str, Any]] = [
+    {
+        "id": 501,
+        "title": "Evening Smart Meter & Inverter Checkup",
+        "skill": "electrician",
+        "customer_name": "Kavita Rao",
+        "customer_phone": "+91 98222 11223",
+        "address": "B-42, Defence Colony, South Delhi",
+        "time_slot": "18:00 - 20:30 (Post-Shift)",
+        "date": "Today (Evening)",
+        "direct_payout": 450.0,
+        "cooperative_cess": 0.0,
+        "worker_takehome_pct": 100,
+        "description": "Urgent inverter tripping checkup needed after office hours. 100% direct payment via UPI upon completion.",
+        "status": "OPEN",
+        "claimed_by_worker_id": None,
+        "claimed_by_worker_name": None
+    },
+    {
+        "id": 502,
+        "title": "Late Evening Kitchen Sink Trap Replacement",
+        "skill": "plumber",
+        "customer_name": "Siddharth Malhotra",
+        "customer_phone": "+91 98100 44556",
+        "address": "Block C, Greater Kailash 1",
+        "time_slot": "19:00 - 21:00 (Post-Shift)",
+        "date": "Today (Evening)",
+        "direct_payout": 380.0,
+        "cooperative_cess": 0.0,
+        "worker_takehome_pct": 100,
+        "description": "Kitchen pipe leaking into under-sink cabinet. Looking for an experienced plumber available post 7 PM.",
+        "status": "OPEN",
+        "claimed_by_worker_id": None,
+        "claimed_by_worker_name": None
+    },
+    {
+        "id": 503,
+        "title": "Night Post-Surgery Sterile Dressing & Vitals Check",
+        "skill": "healthcare",
+        "customer_name": "Anita Deshmukh",
+        "customer_phone": "+91 98711 77889",
+        "address": "Flat 204, Vasant Kunj Sector C",
+        "time_slot": "20:00 - 21:30 (Post-Shift)",
+        "date": "Today (Evening)",
+        "direct_payout": 600.0,
+        "cooperative_cess": 0.0,
+        "worker_takehome_pct": 100,
+        "description": "Elderly patient needs post-knee replacement sterile dressing change and blood pressure check.",
+        "status": "OPEN",
+        "claimed_by_worker_id": None,
+        "claimed_by_worker_name": None
+    },
+    {
+        "id": 504,
+        "title": "Weekend Acoustic Studio Partition Installation",
+        "skill": "carpentry",
+        "customer_name": "Sameer Joshi",
+        "customer_phone": "+91 99555 33221",
+        "address": "Hauz Khas Village",
+        "time_slot": "Saturday (Weekend Flexible)",
+        "date": "Saturday Slot",
+        "direct_payout": 1200.0,
+        "cooperative_cess": 0.0,
+        "worker_takehome_pct": 100,
+        "description": "Freelance project to erect an acoustic ply wall panel for a home recording studio.",
+        "status": "OPEN",
+        "claimed_by_worker_id": None,
+        "claimed_by_worker_name": None
+    }
+]
+
+# ----------------- Worker Complaints & Customer Incident Escalations -----------------
+CUSTOMER_COMPLAINTS_DB: List[Dict[str, Any]] = [
+    {
+        "id": 901,
+        "customer_name": "Rohan Verma",
+        "customer_phone": "+91 98101 99887",
+        "worker_id": 101,
+        "worker_name": "Rajesh Kumar",
+        "booking_id": 1001,
+        "category": "OVERTIME_DELAY",
+        "category_title": "Severe Uncompensated Delay / Job Exceeded Plan",
+        "description": "Customer booked 1-hour electrical repair, entered START OTP, but held the technician for over 4.5 hours with multiple non-contracted tasks and refused to pay for overtime.",
+        "delay_hours": 3.5,
+        "severity": "HIGH",
+        "timestamp": "2026-09-15 17:40",
+        "status": "ESCALATED_TO_MINISTRY",
+        "ministry_action": "Initial Warning Issued to Citizen Account"
+    }
+]
+
+# ----------------- Debarred / Blacklisted Customers -----------------
+# Customers barred from booking services due to multiple escalations from distinct workers
+DEBARRED_CUSTOMERS: Dict[str, Dict[str, Any]] = {
+    "Vikas Malhotra": {
+        "customer_name": "Vikas Malhotra",
+        "customer_phone": "+91 98110 00112",
+        "reporting_workers": [101, 102],
+        "reporting_worker_names": ["Rajesh Kumar", "Mohammad Aslam"],
+        "reason": "Repeated verbal abuse and refusal of END OTP validation after completed work",
+        "services": ["ALL"],
+        "debarred_at": "2026-09-14 11:20",
+        "status": "DEBARRED",
+        "appeal_status": "NONE"
+    },
+    "Rohan Verma": {
+        "customer_name": "Rohan Verma",
+        "customer_phone": "+91 98990 01122",
+        "reporting_workers": [101],
+        "reporting_worker_names": ["Rajesh Kumar"],
+        "reason": "Severe delay and overtime without compensation during electrical job",
+        "services": ["electrician"],
+        "debarred_at": "2026-09-15 18:30",
+        "status": "DEBARRED",
+        "appeal_status": "NONE"
+    }
+}
+
+# ----------------- Worker Excessive Rejection Audit Log -----------------
+WORKER_REJECTIONS_LOG: List[Dict[str, Any]] = [
+    {
+        "id": 801,
+        "worker_id": 106,
+        "worker_name": "Amit Verma",
+        "booking_id": 998,
+        "service_type": "electrician",
+        "timestamp": "2026-09-16 09:15",
+        "reason": "Declined automated cooperative broadcast (outside preferred sector)",
+        "severity": "NORMAL"
+    },
+    {
+        "id": 802,
+        "worker_id": 106,
+        "worker_name": "Amit Verma",
+        "booking_id": 999,
+        "service_type": "electrician",
+        "timestamp": "2026-09-16 11:30",
+        "reason": "Declined automated cooperative broadcast",
+        "severity": "WARNING"
+    }
+]
+
+# Initialize default fields for all workers
+for _w in WORKERS:
+    _w.setdefault("freelance_enabled", True)
+    _w.setdefault("freelance_slots", ["17:00 - 21:00 (Evening)", "Weekend Flexible"])
+    _w.setdefault("freelance_earned", 0.0)
+    _w.setdefault("rejection_count", 0)
+    _w.setdefault("disciplinary_status", "ACTIVE")
+    _w.setdefault("disciplinary_history", [])
+
+# Seed Amit Verma (id: 106) with 2 prior rejections for immediate demonstration
+for _w in WORKERS:
+    if _w.get("id") == 106:
+        _w["rejection_count"] = 2
+        _w["disciplinary_status"] = "WARNING_ISSUED"
+
+
