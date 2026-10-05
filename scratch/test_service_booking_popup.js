@@ -99,10 +99,9 @@ console.log("=======================================================");
 console.log("  TESTING POP-UP SERVICE BOOKING WORKFLOW");
 console.log("=======================================================");
 
-// Test 1: Verify all 12 services have entries in SUB_SERVICES_CATALOG
+// Test 1: Verify all 6 services have entries in SUB_SERVICES_CATALOG
 const requiredServices = [
-  "electrician", "plumber", "carpentry", "cleaning", "painting", "healthcare",
-  "masonry", "pottery", "blacksmith", "tailoring", "driver", "waste_management"
+  "electrician", "plumber", "carpentry", "cleaning", "tailoring", "driver"
 ];
 
 requiredServices.forEach(sId => {
@@ -111,7 +110,7 @@ requiredServices.forEach(sId => {
     process.exit(1);
   }
 });
-console.log(`[PASS] SUB_SERVICES_CATALOG contains robust sub-services for all 12 certified trades.`);
+console.log(`[PASS] SUB_SERVICES_CATALOG contains robust sub-services for all 6 certified trades.`);
 
 // Test 2: Select Service and verify modal opens in Step 1
 selectService("plumber", true);
@@ -138,6 +137,7 @@ console.log(`[PASS] Rendered ${gridChildren.length} specific plumbing sub-servic
 
 // Test 4: Select a sub-service and verify advance to Step 2
 selectSubService("tap_pipe_leakage");
+confirmSatisfactionAndProceed();
 if (!state.selectedSubService || state.selectedSubService.id !== "tap_pipe_leakage") {
   console.error("[FAIL] state.selectedSubService was not set to tap_pipe_leakage");
   process.exit(1);

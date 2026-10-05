@@ -1,0 +1,74 @@
+=== FOUND pottery in SERVICES ===
+
+ीवार"]
+  },
+  {
+    id: "pottery",
+    name: "Pottery & Terracotta Craft",
+    name_hi: "कुम्हार एवं मृत्तिका शिल्प",
+    icon: "package",
+    base: 95,
+    badge: "KVIC Khadi & Clay Vetted",
+    badge_hi: "खादी ग्रामोद्योग प्रमाणित",
+    rating: 5.0,
+    time: "18 mins",
+    time_hi: "18 मिनट",
+    keywords: ["potter", "clay", "terracotta", "matti", "matka", "diya", "pottery", "ceramic", "artisan", "kumhar", "gamla", "planter", "कुम्हार", "मिट्टी", "मटका", "दीया", "गमला", "टेराकोटा", "मृत्तिका", "हस्तशिल्प"]
+  },
+  {
+    id: "blacksmith",
+    name: "Blacksmith & Metalcraft",
+    name_hi: "लुहार एवं धातु शिल्प",
+    icon: "shield",
+    base: 120,
+    badge: "Lab
+=== FOUND blacksmith in SERVICES ===
+
+िल्प"]
+  },
+  {
+    id: "blacksmith",
+    name: "Blacksmith & Metalcraft",
+    name_hi: "लुहार एवं धातु शिल्प",
+    icon: "shield",
+    base: 120,
+    badge: "Labour Coop Guild Vetted",
+    badge_hi: "श्रम गिल्ड सत्यापित",
+    rating: 4.8,
+    time: "14 mins",
+    time_hi: "14 मिनट",
+    keywords: ["blacksmith", "iron", "metal", "grill", "gate", "weld", "welding", "loha", "luhar", "hinge", "shutter", "लुहार", "लोहा", "वेल्डिंग", "ग्रिल", "गेट", "कब्जा", "धातु", "शिल्प"]
+  },
+  {
+    id: "tailoring",
+    name: "Tailoring & Handloom Repair",
+    name_hi: "दर्जी एवं हथकरघा शिल्प",
+    icon: "scissors",
+    base: 90,
+    badge: "Weavers Federation Vetted",
+    badge
+=== FOUND painting in SERVICES ===
+
+किचन"]
+  },
+  {
+    id: "painting",
+    name: "Painting & Wall Artisan",
+    name_hi: "रंगाई-पुताई एवं भित्ति शिल्प",
+    icon: "brush",
+    base: 105,
+    badge: "NSDC Decorative Finishing",
+    badge_hi: "एनएसडीसी पेंटिंग प्रमाणित",
+    rating: 4.9,
+    time: "15 mins",
+    time_hi: "15 मिनट",
+    keywords: ["paint", "color", "wall", "distemper", "whitewash", "waterproof", "texture", "rang", "rangai", "putai", "चित्रकार", "पेंट", "रंगाई", "पुताई", "सफेदी", "दीवार", "टेक्सचर"]
+  },
+  {
+    id: "healthcare",
+    name: "Elder Healthcare",
+    name_hi: "स्वास्थ्य / बुजुर्ग सेवा",
+    icon: "heart-pulse",
+    base: 150,
+    badge: "NSDC Nursing",
+    badge_hi: "एनए

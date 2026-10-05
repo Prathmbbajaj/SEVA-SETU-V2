@@ -10,7 +10,7 @@
 ### Key Capabilities
 
 1. **Citizen Portal**:
-   - **Expanded Services & Artisan Trades**: Electrician, Plumber, Deep Cleaning, Emergency Driver, Elder Healthcare, Municipal Waste Management, **Carpentry & Woodcraft**, **Masonry & Tile Craft**, **Pottery & Terracotta Artistry**, **Blacksmithing & Metalcraft**, **Tailoring & Handloom Repair**, and **Painting & Wall Artisan**.
+   - **Essential Services & Artisan Trades**: Electrician, Plumber, Deep Cleaning, Emergency Driver, Carpentry & Woodcraft, and Tailoring & Handloom Repair.
    - **Streamlined Subscription Tiers**:
      - **Monthly Pass (₹199/mo)**: 20% flat discount, zero platform welfare cess (3.5% saved), unlimited priority emergency triage (<15 min), and monthly household safety audits.
      - **Yearly Pass (₹1,999/yr)**: **Includes ALL Monthly Pass Benefits** + enhanced 30% flat discount across all tasks & artisan crafts, 4-member family emergency coverage, dedicated PACS concierge desk, and ₹500 seasonal festival artisan vouchers.

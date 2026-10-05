@@ -1,0 +1,207 @@
+  painting: [
+    {
+      id: "room_wall_paint",
+      title: "Single Room Repainting",
+      title_hi: "एक कमरे का रंग रोगन",
+      desc: "Putty patch filling, acrylic primer & 2 smooth coats of emulsion paint",
+      desc_hi: "पुट्टी भराव, ऐक्रेलिक प्राइमर और इमल्शन पेंट के 2 फिनिश कोट",
+      icon: "palette",
+      badge: "Smooth Finish",
+      badge_hi: "चिकनी फिनिश",
+      base: 350
+    },
+    {
+      id: "waterproof_dampproof",
+      title: "Damp Proofing & Seepage Seal",
+      title_hi: "सीलन व जलरोधी उपचार",
+      desc: "Doctor Fixit / Asian Paints damp seal coating for peeling walls & ceilings",
+      desc_hi: "दीवारों व छत की पपड़ी और सीलन हेतु विशेष वॉटरप्रूफ कोटिंग",
+      icon: "shield",
+      badge: "Leak Proof",
+      badge_hi: "सीलन मुक्त",
+      base: 400
+    },
+    {
+      id: "wood_metal_paint",
+      title: "Wood Polish & Metal Enamel",
+      title_hi: "लकड़ी पॉलिश व ग्रिल पेंट",
+      desc: "Door melamine/PU polish or anti-rust synthetic enamel on iron gates & grills",
+      desc_hi: "दरवाजों की मेलामाइन पॉलिश या लोहे के गेट-ग्रिल पर जंगरोधी एनामेल पेंट",
+      icon: "feather",
+      badge: "Artisan Coat",
+      badge_hi: "कारीगरी कोट",
+      base: 250
+    },
+    {
+      id: "texture_stencil",
+      title: "Texture & Accent Feature Wall",
+      title_hi: "टेक्सचर व डिज़ाइनर दीवार",
+      desc: "Royale play, metallic texture, stencil patterns & feature wall styling",
+      desc_hi: "रॉयल प्ले, मेटैलिक टेक्सचर, स्टेंसिल आर्ट व लिविंग रूम फीचर वॉल",
+      icon: "eye",
+      badge: "Design Specialist",
+      badge_hi: "डिज़ाइनर काम",
+      base: 450
+    },
+    {
+      id: "full_home_painting",
+      title: "Complete Flat / House Painting",
+      title_hi: "सम्पूर्ण घर का पेंटिंग कार्य",
+      desc: "Full interior & exterior painting contract executed by cooperative guild painters",
+      desc_hi: "सहकारी गिल्ड के कुशल पेंटरों द्वारा पूरे घर का अंदरूनी व बाहरी रंग-रोगन",
+      icon: "home",
+      badge: "Co-op Warranty",
+      badge_hi: "सहकारी वारंटी",
+      base: 600
+    },
+    {
+      id: "other_painting",
+      title: "Touch-up & Minor Patchwork",
+      title_hi: "टचअप व छोटी मरम्मत",
+      desc: "Drill hole putty touch-up, water spot coat or single wall repair",
+      desc_hi: "कील के छेद भरना, पानी के दाग छुपाना या छोटी दीवार का पैच पेंट",
+      icon: "paintbrush",
+      badge: "Quick Touch",
+      badge_hi: "त्वरित कार्य",
+      base: 180
+    }
+  ],
+
+  pottery: [
+    {
+      id: "earthen_pots_tandoor",
+      title: "Clay Tandoor & Earthen Cookware",
+      title_hi: "मिट्टी का तंदूर व हांडी निर्माण",
+      desc: "Traditional clay tandoor setup, unglazed earthen handi, biryani pots & restoration",
+      desc_hi: "पारंपरिक मिट्टी का तंदूर, कच्ची मिट्टी की हांडी, मटका व बर्तनों का निर्माण",
+      icon: "sun",
+      badge: "Handmade Art",
+      badge_hi: "हस्तनिर्मित कला",
+      base: 150
+    },
+    {
+      id: "decorative_terracotta",
+      title: "Terracotta Decor & Garden Planters",
+      title_hi: "टेराकोटा गमले व सजावटी शिल्प",
+      desc: "Handmade porous terracotta flower pots, hanging planters, garden murals & wind chimes",
+      desc_hi: "हाथ से बने टेराकोटा गमले, हैंगिंग पॉट्स, गार्डन भित्ति चित्र व विंड चाइम्स",
+      icon: "flower-2",
+      badge: "Eco-Friendly",
+      badge_hi: "पर्यावरण अनुकूल",
+      base: 180
+    },
+    {
+      id: "clay_diyas_festival",
+      title: "Festival Diyas & Sacred Pottery",
+      title_hi: "त्योहार दीये व पूजा सामग्री",
+      desc: "Artisan hand-pressed Diwali oil diyas, kulhars, temple kalash & havan kunds",
+      desc_hi: "दीपावली दीये, कुल्हड़, मंदिर कलश, धूपदानी व पारम्परिक पूजा मिट्टी के बर्तन",
+      icon: "flame",
+      badge: "Traditional",
+      badge_hi: "पारंपरिक",
+      base: 120
+    },
+    {
+      id: "pottery_wheel_workshop",
+      title: "Live Pottery Wheel Demonstration",
+      title_hi: "कुम्हार चाक प्रशिक्षण व कार्यशाला",
+      desc: "Interactive pottery wheel experience & clay shaping workshop for schools or events",
+      desc_hi: "स्कूलों या आयोजनों हेतु कुम्हार के चाक पर जीवंत मिट्टी कला प्रशिक्षण",
+      icon: "rotate-cw",
+      badge: "Master Artisan",
+      badge_hi: "मास्टर कारीगर",
+      base: 300
+    },
+    {
+      id: "clay_water_dispenser",
+      title: "Alkaline Clay Matka / Water Pot",
+      title_hi: "शीतल जल मटका व सुराही",
+      desc: "Natural cooling alkaline clay matka with brass tap assembly & stand",
+      desc_hi: "पीतल की टोंटी वाला शुद्ध प्राकृतिक मिट्टी का मटका व सुराही स्थापना",
+      icon: "droplet",
+      badge: "100% Pure Clay",
+      badge_hi: "100% शुद्ध मिट्टी",
+      base: 160
+    },
+    {
+      id: "other_pottery",
+      title: "Custom Terracotta Craft Assignment",
+      title_hi: "अन्य मृत्तिका शिल्प कार्य",
+      desc: "Bespoke terracotta sculpture, clay wall relief or customized clay artifacts",
+      desc_hi: "विशेष टेराकोटा मूर्तियां, मिट्टी की नक्काशी या अन्य हस्तशिल्प कार्य",
+      icon: "sparkles",
+      badge: "Heritage Guild",
+      badge_hi: "धरोहर संघ",
+      base: 140
+    }
+  ],
+
+  blacksmith: [
+    {
+      id: "gate_grill_welding",
+      title: "Iron Gate & Grill Arc Welding",
+      title_hi: "लोहे का गेट व ग्रिल वेल्डिंग",
+      desc: "Electric arc welding on broken hinges, security grills, gates & reinforcement",
+      desc_hi: "टूटे कब्जे, खिड़की की ग्रिल, लोहे के मुख्य द्वार की इलेक्ट्रिक आर्क वेल्डिंग",
+      icon: "zap",
+      badge: "High Tensile",
+      badge_hi: "मजबूत वेल्डिंग",
+      base: 180
+    },
+    {
+      id: "tool_sharpening_forging",
+      title: "Tool Forging, Tempering & Sharpening",
+      title_hi: "औजार निर्माण व धार लगाना",
+      desc: "Axe, sickle, chisel, knife forging, tempering on hot anvil & diamond wheel sharpening",
+      desc_hi: "कुल्हाड़ी, दरांती, छेनी की भट्टी पर गर्म फोर्जिंग व धार लगाना",
+      icon: "shield",
+      badge: "Traditional Forge",
+      badge_hi: "पारंपरिक भट्टी",
+      base: 140
+    },
+    {
+      id: "shutter_channel_fix",
+      title: "Shop Rolling Shutter & Spring Repair",
+      title_hi: "रोलिंग शटर व स्प्रिंग मरम्मत",
+      desc: "Commercial shutter tension spring balancing, side channel straightening & locks",
+      desc_hi: "दुकान के रोलिंग शटर का स्प्रिंग बदलना, साइड चैनल सीधा करना व सेंटर लॉक",
+      icon: "sliders",
+      badge: "Heavy Duty",
+      badge_hi: "हैवी ड्यूटी",
+      base: 260
+    },
+    {
+      id: "railing_safety_bars",
+      title: "Staircase Railing & Balcony Safety",
+      title_hi: "रेलिंग व बालकनी सुरक्षा बार",
+      desc: "Wrought iron railing installation, safety grills for kids and pet barriers",
+      desc_hi: "लोहे की सीढ़ी रेलिंग लगाना, बालकनी सेफ्टी ग्रिल व बच्चों की सुरक्षा जाल",
+      icon: "lock",
+      badge: "ISI Certified",
+      badge_hi: "आईएसआई प्रमाणित",
+      base: 320
+    },
+    {
+      id: "metal_fabrication",
+      title: "Custom Structural Iron Fabrication",
+      title_hi: "कस्टम धातु निर्माण कार्य",
+      desc: "MS angle iron racks, tin sheet roofing shed frames or utility stands",
+      desc_hi: "लोहे के रैक, शेड का ढांचा, वाशिंग मशीन स्टैंड या कस्टम स्ट्रक्चर",
+      icon: "box",
+      badge: "Master Blacksmith",
+      badge_hi: "मास्टर लुहार",
+      base: 380
+    },
+    {
+      id: "other_blacksmith",
+      title: "Custom On-Site Metal Repair",
+      title_hi: "अन्य धातु शिल्प कार्य",
+      desc: "Cold metal cutting, pad-eye welding, chain link fence repair or metal fittings",
+      desc_hi: "लोहा कटाई, कुंडा वेल्डिंग, जालीदार तार फेंसिंग या अन्य लोहे की मरम्मत",
+      icon: "tool",
+      badge: "Fair Wage",
+      badge_hi: "उचित मजदूरी",
+      base: 150
+    }
+  ],
+

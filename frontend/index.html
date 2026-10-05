@@ -210,7 +210,7 @@
         <div class="flex flex-col lg:flex-row items-center justify-between gap-5">
           
           <!-- Left: Voice & Working Real-Time Search Bar -->
-          <div class="w-full lg:w-3/5">
+          <div class="w-full" id="search-bar-col">
             <div class="flex items-center justify-between mb-1.5">
               <label class="block text-xs font-black uppercase tracking-wider text-slate-500" id="lbl-search" data-i18n="lbl-search">
                 Search Certified Cooperative Service
@@ -222,7 +222,7 @@
             </div>
 
             <div class="relative flex items-center">
-              <input type="text" id="service-search-input" oninput="filterServicesByText(this.value)" placeholder="Type a trade (e.g. Electrician, Plumber, Emergency Nursing)..." class="w-full pl-11 pr-36 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-slate-900 text-sm font-medium shadow-sm transition" />
+              <input type="text" id="service-search-input" oninput="filterServicesByText(this.value)" placeholder="Type a trade (e.g. Electrician, Plumber, Carpentry, Driver)..." class="w-full pl-11 pr-36 py-3.5 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-600 focus:outline-none text-slate-900 text-sm font-medium shadow-sm transition" />
               <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-3.5"></i>
               
               <!-- Clear Search Button -->
@@ -249,17 +249,28 @@
             <!-- Quick Voice / Prompt Chips for 1-click test -->
             <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
               <span class="text-[11px] text-slate-400 font-medium" data-i18n="txt-quick-suggestions">Quick Suggestions:</span>
-              <button onclick="applyQuickSearch('carpentry')" class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🔨 Carpentry (₹115/hr)</button>
-              <button onclick="applyQuickSearch('pottery')" class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🏺 Pottery Art (₹95/hr)</button>
-              <button onclick="applyQuickSearch('blacksmith')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">⚒️ Blacksmith (₹120/hr)</button>
               <button onclick="applyQuickSearch('electrician')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">⚡ Electrician (₹120/hr)</button>
               <button onclick="applyQuickSearch('plumber')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🔧 Plumber (₹110/hr)</button>
-              <button onclick="applyQuickSearch('healthcare')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🩺 Elder Care (₹150/hr)</button>
+              <button onclick="applyQuickSearch('carpentry')" class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🔨 Carpentry (₹115/hr)</button>
+              <button onclick="applyQuickSearch('cleaning')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">✨ Cleaning (₹90/hr)</button>
+              <button onclick="applyQuickSearch('tailoring')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">✂️ Tailoring (₹90/hr)</button>
+              <button onclick="applyQuickSearch('driver')" class="text-[11px] bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-200 transition btn-tactile">🚗 Driver (₹130/hr)</button>
+            </div>
+
+            <!-- Additional Artisan Quick Chips (Revealed when NGO Verified) -->
+            <div id="artisan-quick-chips" class="hidden flex flex-wrap items-center gap-1.5 mt-2 transition-all">
+              <span class="text-[11px] text-amber-800 font-black flex items-center gap-1">
+                <i data-lucide="sparkles" class="w-3 h-3 text-amber-600"></i>
+                <span data-i18n="txt-artisan-quick-label">Additional NGO Artisan Guilds:</span>
+              </span>
+              <button type="button" onclick="applyQuickSearch('pottery')" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🏺 Pottery (₹95/hr)</button>
+              <button type="button" onclick="applyQuickSearch('blacksmith')" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🛡️ Blacksmith (₹120/hr)</button>
+              <button type="button" onclick="applyQuickSearch('painting')" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition btn-tactile">🎨 Painting (₹105/hr)</button>
             </div>
           </div>
 
-          <!-- Right: Emergency / Premium Triage Toggle -->
-          <div class="w-full lg:w-2/5">
+          <!-- Right: Emergency / Premium Triage Toggle (ONLY visible for Premium/Subscribed Users) -->
+          <div class="w-full lg:w-2/5 hidden" id="emergency-triage-col">
             <div id="emergency-box" class="flex items-center space-x-3.5 bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 p-4 rounded-2xl transition duration-300">
               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-red-700 text-white flex items-center justify-center flex-shrink-0 shadow-md">
                 <i data-lucide="siren" class="w-6 h-6" id="siren-icon"></i>
@@ -269,6 +280,9 @@
                   <span class="text-sm font-black text-red-950 flex items-center gap-1.5" id="txt-emergency-title" data-i18n="txt-emergency-title">
                     Emergency Triage Mode
                     <span class="bg-red-600 text-white text-[9px] font-black uppercase px-1.5 py-0.5 rounded">SOS</span>
+                    <span id="emergency-sub-badge" class="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-black uppercase px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                      <i data-lucide="crown" class="w-2.5 h-2.5 text-amber-600"></i> Subscribers Only
+                    </span>
                   </span>
                   <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="emergency-toggle" onchange="toggleEmergencyMode()" class="sr-only peer" />
@@ -276,7 +290,7 @@
                   </label>
                 </div>
                 <p class="text-xs text-red-800 font-medium mt-0.5" id="txt-emergency-desc" data-i18n="txt-emergency-desc">
-                  Priority sub-30m dispatch for gas leak, short circuit, or medical transit.
+                  Priority sub-30m dispatch for gas leak, short circuit, or medical transit (Pass Subscribers Exclusive).
                 </p>
               </div>
             </div>
@@ -307,16 +321,89 @@
               </span>
             </div>
             
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5" id="service-grid">
-              <!-- Dynamically populated via app.js with reduced prices and active search filter -->
+            <!-- NGO & Institutional Partner Verification Bar -->
+            <div id="ngo-portal-status-bar" class="mb-4 transition-all duration-300">
+              <!-- When NOT verified -->
+              <div id="ngo-unverified-state" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-purple-50/40 border border-indigo-200 p-3.5 rounded-2xl shadow-xs">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-700 text-white flex items-center justify-center shadow-xs flex-shrink-0">
+                    <i data-lucide="landmark" class="w-5 h-5 text-amber-300"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-xs font-black text-slate-900" data-i18n="ngo-banner-title">NGO, Non-Profit & Institutional Partner Portal</span>
+                      <span class="text-[10px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">20% Social Subsidy</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 mt-0.5" data-i18n="ngo-banner-desc">
+                      Verify your <strong>NITI Aayog DARPAN ID</strong> to unlock <strong>20% social welfare subsidy</strong> and direct access to <strong>Heritage Artisan Guilds (Pottery, Blacksmith, Painting)</strong>.
+                    </p>
+                  </div>
+                </div>
+                <button type="button" onclick="openNgoVerificationModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 whitespace-nowrap btn-tactile">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-300"></i>
+                  <span data-i18n="ngo-banner-btn">Verify NGO Credentials</span>
+                </button>
+              </div>
+
+              <!-- When VERIFIED -->
+              <div id="ngo-verified-state" class="hidden flex flex-col justify-between gap-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100/60 border-2 border-emerald-400 p-4 rounded-2xl shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-xs flex-shrink-0">
+                      <i data-lucide="check-check" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs font-black text-emerald-950" id="ngo-bar-org-name">Goonj Community Welfare Foundation</span>
+                        <span class="text-[10px] font-black bg-emerald-600 text-white px-2.5 py-0.5 rounded-full uppercase tracking-wider">DARPAN Verified</span>
+                        <span class="text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <i data-lucide="sparkles" class="w-3 h-3 text-amber-600"></i> 3 Artisan Services Unlocked
+                        </span>
+                      </div>
+                      <p class="text-[11px] text-emerald-800 mt-0.5">
+                        <strong>20% Welfare Subsidy Active</strong> on all bookings • <strong>Heritage Artisan Guilds Unlocked:</strong> Pottery & Terracotta, Blacksmith & Metalcraft, and Painting Artisans are now accessible.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <button type="button" onclick="openNgoVerificationModal()" class="px-3 py-1.5 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-xs rounded-xl transition shadow-xs btn-tactile">
+                      Update DARPAN
+                    </button>
+                    <button type="button" onclick="resetNgoVerification()" title="Revert to standard citizen view" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition shadow-xs btn-tactile">
+                      Reset
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Dedicated 1-Click Additional Services Action Strip -->
+                <div class="pt-3 border-t border-emerald-200/80 flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600"></i>
+                      <span data-i18n="txt-ngo-artisan-quick-label">Additionally Unlocked Services:</span>
+                    </span>
+                    <button type="button" onclick="selectService('pottery', true)" id="btn-quick-pottery" class="px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-950 border border-amber-300 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-xs transition hover:scale-105 btn-tactile">
+                      <span>🏺</span>
+                      <span>Pottery & Terracotta (₹95/hr)</span>
+                    </button>
+                    <button type="button" onclick="selectService('blacksmith', true)" id="btn-quick-blacksmith" class="px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-950 border border-amber-300 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-xs transition hover:scale-105 btn-tactile">
+                      <span>🛡️</span>
+                      <span>Blacksmith & Metalcraft (₹120/hr)</span>
+                    </button>
+                    <button type="button" onclick="selectService('painting', true)" id="btn-quick-painting" class="px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-950 border border-amber-300 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-xs transition hover:scale-105 btn-tactile">
+                      <span>🎨</span>
+                      <span>Painting & Wall Artisan (₹105/hr)</span>
+                    </button>
+                  </div>
+                  <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Click to Book Directly
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <!-- Toggle Show All / Show Less Services -->
-            <div class="mt-4 flex justify-center" id="service-toggle-container">
-              <button id="btn-toggle-services" onclick="toggleShowAllServices()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 text-blue-900 text-xs font-black transition-all flex items-center gap-2 shadow-xs hover:shadow-sm btn-tactile">
-                <span id="txt-toggle-services" data-i18n="txt-show-all-services">Show All 12 Services</span>
-                <i data-lucide="chevron-down" class="w-4 h-4 text-blue-600 transition-transform duration-300" id="icon-toggle-services"></i>
-              </button>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5" id="service-grid">
+              <!-- Dynamically populated via app.js with reduced prices and active search filter -->
             </div>
           </div>
 
@@ -733,7 +820,7 @@
                   <span>Sunita Sharma</span>
                   <span class="text-[9px] bg-purple-600 text-white px-1.5 py-0.2 rounded font-mono">#103</span>
                 </div>
-                <div class="text-[10px] text-purple-700 font-bold mt-0.5">🩺 Healthcare (South Delhi)</div>
+                <div class="text-[10px] text-purple-700 font-bold mt-0.5">✂️ Tailoring (South Delhi)</div>
               </button>
 
               <button type="button" onclick="selectWorkerLoginPersona('vikram')" class="worker-auth-tile p-2.5 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-left transition btn-tactile shadow-xs" data-persona="vikram">
@@ -1025,7 +1112,7 @@
               <select id="worker-persona-select" onchange="changeWorkerPersona(this.value)" class="bg-white px-2.5 py-1.5 rounded-xl font-bold text-slate-800 outline-none border border-slate-200 cursor-pointer text-xs">
                 <option value="101">Rajesh Kumar (Electrician)</option>
                 <option value="102">Mohammad Aslam (Plumber)</option>
-                <option value="103">Sunita Sharma (Healthcare)</option>
+                <option value="103">Sunita Sharma (Tailoring)</option>
                 <option value="106">Amit Verma (Backup Electrician)</option>
               </select>
             </div>
@@ -1826,7 +1913,7 @@
               <span class="px-1.5 py-0.2 bg-amber-200 text-amber-900 text-[10px] font-black rounded-md">3.5% Reserve</span>
             </div>
             <div class="text-2xl font-black text-amber-950 mt-1" id="growth-kpi-welfare">₹25,375</div>
-            <span class="text-[11px] text-amber-700 font-semibold mt-0.5 block" id="growth-kpi-welfare-sub">Dedicated Worker Healthcare & Safety</span>
+            <span class="text-[11px] text-amber-700 font-semibold mt-0.5 block" id="growth-kpi-welfare-sub">Dedicated Worker Welfare & Safety</span>
           </div>
         </div>
 
@@ -2077,19 +2164,13 @@
               <i data-lucide="filter" class="w-4 h-4 text-blue-600"></i>
               <label for="min-service-select" class="sr-only">Select Service</label>
               <select id="min-service-select" onchange="onMinistryServiceChange(this.value)" class="bg-transparent text-xs font-black text-slate-800 outline-none cursor-pointer pr-2">
-                <option value="all">📊 All 12 Services (Consolidated Report)</option>
+                <option value="all">📊 All 6 Services (Consolidated Report)</option>
                 <option value="electrician">⚡ Electrician Services</option>
                 <option value="plumber">🔧 Plumbing & Sanitation</option>
                 <option value="carpentry">🪚 Carpentry & Woodcraft</option>
                 <option value="cleaning">🧹 Deep Sanitation & Facility Care</option>
-                <option value="painting">🎨 Wall Painting & Primer</option>
-                <option value="healthcare">🩺 Elder Care & Health Assist</option>
-                <option value="masonry">🧱 Masonry & Construction</option>
-                <option value="pottery">🏺 Pottery & Terracotta Artisan</option>
-                <option value="blacksmith">⚒️ Blacksmith & Metalcraft</option>
                 <option value="tailoring">🧵 Tailoring & Apparel</option>
                 <option value="driver">🚗 Chauffeur & Commercial Transit</option>
-                <option value="waste_management">♻️ Waste Management & Upcycling</option>
               </select>
             </div>
 
@@ -2526,35 +2607,37 @@
               <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
               <span id="txt-dispatch-mode-title">1. Choose Dispatch Mode</span>
             </h4>
-            <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full" id="badge-schedule-status">Immediate Dispatch (&lt;30 mins)</span>
+            <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full" id="badge-schedule-status">Schedule for Later</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-            <button type="button" onclick="setBookingScheduleType('immediate')" id="btn-mode-immediate" class="p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20">
+            <button type="button" onclick="setBookingScheduleType('immediate')" id="btn-mode-immediate" class="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-black text-blue-950 flex items-center gap-1.5">
+                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5" id="txt-mode-immediate-title">
                   <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
                   <span data-i18n="opt-immediate-title">Instant Dispatch</span>
                 </span>
-                <span class="text-[9px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Fastest</span>
+                <span id="badge-immediate-access" class="text-[9px] bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                  <i data-lucide="crown" class="w-2.5 h-2.5"></i> Subscribers Only
+                </span>
               </div>
-              <p class="text-[11px] text-slate-600 mt-1" data-i18n="opt-immediate-desc">Technician dispatched immediately (&lt;30 min average arrival)</p>
+              <p class="text-[11px] text-slate-500 mt-1" id="desc-immediate-mode" data-i18n="opt-immediate-desc">Technician dispatched immediately (&lt;30 min average arrival) • 🔒 Pass Exclusive</p>
             </button>
 
-            <button type="button" onclick="setBookingScheduleType('scheduled')" id="btn-mode-scheduled" class="p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs">
+            <button type="button" onclick="setBookingScheduleType('scheduled')" id="btn-mode-scheduled" class="p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                <span class="text-xs font-black text-blue-950 flex items-center gap-1.5">
                   <i data-lucide="calendar-clock" class="w-4 h-4 text-blue-600"></i>
                   <span data-i18n="opt-scheduled-title">Schedule for Later</span>
                 </span>
-                <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Advance</span>
+                <span class="text-[9px] bg-blue-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">All Customers</span>
               </div>
-              <p class="text-[11px] text-slate-500 mt-1" data-i18n="opt-scheduled-desc">Choose convenient date & preferred arrival window</p>
+              <p class="text-[11px] text-slate-600 mt-1" data-i18n="opt-scheduled-desc">Choose convenient date & preferred arrival window</p>
             </button>
           </div>
 
-          <!-- Schedule Detail Picker (Revealed when 'scheduled' is active) -->
-          <div id="scheduled-picker-details" class="space-y-3 pt-3 border-t border-slate-100 hidden">
+          <!-- Schedule Detail Picker (Revealed for scheduled mode) -->
+          <div id="scheduled-picker-details" class="space-y-3 pt-3 border-t border-slate-100">
             <!-- Date Picker & Quick Chips -->
             <div>
               <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2 flex items-center justify-between">
@@ -3035,7 +3118,7 @@
             Community Service Purpose *
           </label>
           <select id="ngo-input-purpose" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
-            <option value="elder">Elderly Healthcare & Assisted Living</option>
+            <option value="elder">Elderly Support & Assisted Living</option>
             <option value="disaster">Disaster Response & Emergency Home Relief</option>
             <option value="sanitation">Slum & Community Sanitation Campaign</option>
             <option value="education">Non-Profit Education Facility Maintenance</option>
@@ -3197,7 +3280,7 @@
   </div>
 
   <!-- ================= MODAL: SUBSCRIPTION PAYMENT GATEWAY ================= -->
-  <div id="modal-subscription-gateway" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+  <div id="modal-subscription-gateway" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100">
         <div class="flex items-center space-x-3">
@@ -3260,7 +3343,7 @@
   </div>
 
   <!-- ================= MODAL: SPECIAL DISCOUNTED OFFERS REWARD VAULT ================= -->
-  <div id="modal-subscription-success" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+  <div id="modal-subscription-success" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[210] flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-amber-300 space-y-5 max-h-[92vh] overflow-y-auto">
       <div class="text-center space-y-2 pt-2">
         <div class="w-16 h-16 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-md">
@@ -3344,10 +3427,13 @@
             <select id="review-input-service" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
               <option value="electrician">Electrician</option>
               <option value="plumber">Plumber</option>
-              <option value="healthcare">Healthcare & Nursing</option>
               <option value="driver">Emergency Driver</option>
+              <option value="tailoring">Tailoring & Handloom</option>
               <option value="cleaning">Deep Cleaning</option>
-              <option value="waste_management">Waste Management</option>
+              <option value="carpentry">Carpentry & Woodcraft</option>
+              <option value="pottery">Pottery & Terracotta</option>
+              <option value="blacksmith">Blacksmith & Metalcraft</option>
+              <option value="painting">Painting & Wall Artisan</option>
             </select>
           </div>
           <div>
@@ -3355,9 +3441,13 @@
             <select id="review-input-worker" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
               <option value="101">Rajesh Kumar (Electrician)</option>
               <option value="102">Mohammad Aslam (Plumber)</option>
-              <option value="103">Sunita Sharma (Healthcare)</option>
+              <option value="103">Sunita Sharma (Tailoring)</option>
               <option value="104">Vikram Singh (Driver)</option>
               <option value="105">Pooja Devi (Cleaning)</option>
+              <option value="108">Rameshwar Mistri (Carpentry)</option>
+              <option value="107">Ram Dayal Prajapati (Pottery)</option>
+              <option value="109">Kishan Luhar (Blacksmith)</option>
+              <option value="110">Manoj Painter (Painting)</option>
             </select>
           </div>
         </div>
@@ -3657,28 +3747,32 @@
                 <span>🔧 Plumber</span>
               </label>
               <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
-                <input type="checkbox" name="min_debar_service" value="healthcare" class="w-3.5 h-3.5 text-red-600 rounded" />
-                <span>🩺 Healthcare</span>
-              </label>
-              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
                 <input type="checkbox" name="min_debar_service" value="driver" class="w-3.5 h-3.5 text-red-600 rounded" />
                 <span>🚗 Driver</span>
               </label>
               <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
-                <input type="checkbox" name="min_debar_service" value="carpenter" class="w-3.5 h-3.5 text-red-600 rounded" />
-                <span>🪚 Carpenter</span>
+                <input type="checkbox" name="min_debar_service" value="tailoring" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>✂️ Tailoring</span>
               </label>
               <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
-                <input type="checkbox" name="min_debar_service" value="appliances" class="w-3.5 h-3.5 text-red-600 rounded" />
-                <span>📺 Appliance Repair</span>
+                <input type="checkbox" name="min_debar_service" value="cleaning" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>✨ Cleaning</span>
               </label>
               <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
-                <input type="checkbox" name="min_debar_service" value="masonry" class="w-3.5 h-3.5 text-red-600 rounded" />
-                <span>🧱 Masonry</span>
+                <input type="checkbox" name="min_debar_service" value="carpentry" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🪚 Carpentry</span>
               </label>
               <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
-                <input type="checkbox" name="min_debar_service" value="painter" class="w-3.5 h-3.5 text-red-600 rounded" />
-                <span>🎨 Painter</span>
+                <input type="checkbox" name="min_debar_service" value="pottery" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🏺 Pottery</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="blacksmith" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🛡️ Blacksmith</span>
+              </label>
+              <label class="flex items-center space-x-2 text-slate-700 cursor-pointer">
+                <input type="checkbox" name="min_debar_service" value="painting" class="w-3.5 h-3.5 text-red-600 rounded" />
+                <span>🎨 Painting</span>
               </label>
             </div>
           </div>

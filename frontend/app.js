@@ -232,7 +232,7 @@ const TRANSLATIONS = {
     "min-reviews-sub": "Track complaints against technicians, positive commendations, and enforce federation discipline",
     "min-revenue-title": "Platform Revenue Generated & Cooperative Welfare Audit",
     "min-revenue-sub": "Transparent public ledger: 100% worker wage pass-through + 3.5% non-profit social protection pool",
-    "txt-show-all-services": "Show All 12 Services",
+    "txt-show-all-services": "Show All 6 Services",
     "txt-show-less-services": "Show Less",
     "txt-schedule-title": "Choose Service Date & Time Slot",
     "txt-schedule-subtitle": "Instant emergency dispatch or scheduled future arrival by certified technician",
@@ -257,7 +257,12 @@ const TRANSLATIONS = {
     "min-discipline-title": "Worker Rejection Auditing & Ministry Disciplinary Desk",
     "min-discipline-sub": "Workers with ≥ 3 declined dispatches are flagged for formal show-cause review, suspension, or license revocation",
     "escalate-modal-title": "Escalate Customer Incident to Backend",
-    "escalate-modal-sub": "Raise official complaint for delayed service, customer misbehavior, or OTP refusal"
+    "escalate-modal-sub": "Raise official complaint for delayed service, customer misbehavior, or OTP refusal",
+    "ngo-banner-title": "NGO, Non-Profit & Institutional Partner Portal",
+    "ngo-banner-desc": "Verify your NITI Aayog DARPAN ID to unlock 20% social welfare subsidy and direct access to Heritage Artisan Guilds (Pottery, Blacksmith, Painting).",
+    "ngo-banner-btn": "Verify NGO Credentials",
+    "txt-ngo-artisan-quick-label": "Additionally Unlocked Services:",
+    "txt-artisan-quick-label": "Additional NGO Artisan Guilds:"
   },
   hi: {
     "ministry-subtitle": "सहकारिता मंत्रालय, भारत सरकार • \"सेवा से समृद्धि\"",
@@ -434,7 +439,7 @@ const TRANSLATIONS = {
     "min-reviews-sub": "तकनीशियनों के विरुद्ध शिकायतों, प्रशंसा समीक्षाओं पर नज़र रखें और अनुशासन लागू करें",
     "min-revenue-title": "प्लेटफॉर्म राजस्व एवं सहकारी कल्याण ऑडिट",
     "min-revenue-sub": "पारदर्शी सार्वजनिक बहीखाता: 100% श्रमिक मजदूरी + 3.5% गैर-लाभकारी सामाजिक सुरक्षा निधि",
-    "txt-show-all-services": "सभी 12 सेवाएँ देखें",
+    "txt-show-all-services": "सभी 6 सेवाएँ देखें",
     "txt-show-less-services": "कम सेवाएँ देखें",
     "txt-schedule-title": "सेवा की तिथि एवं समय स्लॉट चुनें",
     "txt-schedule-subtitle": "त्वरित आपातकालीन प्रेषण या प्रमाणित तकनीशियन का अग्रिम समय निर्धारण",
@@ -459,7 +464,12 @@ const TRANSLATIONS = {
     "min-discipline-title": "श्रमिक अस्वीकृति ऑडिट एवं मंत्रालय अनुशासनात्मक डेस्क",
     "min-discipline-sub": "≥ 3 अस्वीकृत प्रेषण वाले श्रमिकों को समीक्षा, निलंबन या लाइसेंस रद्दीकरण हेतु चिह्नित किया जाता है",
     "escalate-modal-title": "ग्राहक घटना की शिकायत बैकएंड को भेजें",
-    "escalate-modal-sub": "अत्यधिक देरी, दुर्व्यवहार या ओटीपी न देने पर आधिकारिक शिकायत दर्ज करें"
+    "escalate-modal-sub": "अत्यधिक देरी, दुर्व्यवहार या ओटीपी न देने पर आधिकारिक शिकायत दर्ज करें",
+    "ngo-banner-title": "एनजीओ, गैर-लाभकारी व संस्थागत साझेदार पोर्टल",
+    "ngo-banner-desc": "20% सामाजिक कल्याण सब्सिडी और धरोहर कारीगर संघों (कुम्हार, लुहार, पेंटर) की सेवाओं को अनलॉक करने हेतु नीति आयोग दर्पण आईडी सत्यापित करें।",
+    "ngo-banner-btn": "एनजीओ क्रेडेंशियल सत्यापित करें",
+    "txt-ngo-artisan-quick-label": "अतिरिक्त अनलॉक की गई सेवाएं:",
+    "txt-artisan-quick-label": "अतिरिक्त एनजीओ कारीगर संघ:"
   }
 };
 
@@ -654,7 +664,7 @@ const WORKERS = [
     id: 103,
     name: "Sunita Sharma",
     phone: "+91 98733 90812",
-    skill: "healthcare",
+    skill: "tailoring",
     coop_id: 2,
     coop_name: "South Delhi Multi-Purpose Cooperative",
     coords: [28.5700, 77.2400], // Lajpat Nagar
@@ -662,9 +672,9 @@ const WORKERS = [
     is_verified: true,
     rating: 5.0,
     aadhaar: "XXXX-XXXX-1190",
-    certificate: "General Nursing Assistant (NSDC Certified)",
-    cert_title: "General Nursing Assistant",
-    cert_issuer: "NSDC Certified",
+    certificate: "Weavers Cooperative Federation Master Tailoring Certificate",
+    cert_title: "Weavers Federation Tailoring L4",
+    cert_issuer: "Handloom Development Board & NSDC",
     today_wage: 3200.0,
     coop_ac: "SDMC-PACS-1190338",
     completed_jobs: 76,
@@ -735,27 +745,6 @@ const WORKERS = [
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80"
   },
   {
-    id: 107,
-    name: "Suresh Yadav",
-    phone: "+91 98102 33445",
-    skill: "waste_management",
-    coop_id: 3,
-    coop_name: "NCR Technicians Cooperative",
-    coords: [28.6350, 77.2150], // Barakhamba Road
-    is_available: true,
-    is_verified: true,
-    rating: 4.8,
-    aadhaar: "XXXX-XXXX-6721",
-    certificate: "Municipal Solid Waste Management & Segregation Certified",
-    cert_title: "Solid Waste Management",
-    cert_issuer: "MCD Attested",
-    today_wage: 1800.0,
-    coop_ac: "NCRT-PACS-6721440",
-    completed_jobs: 63,
-    total_earned: 28500.0,
-    photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80"
-  },
-  {
     id: 108,
     name: "Rameshwar Mistri",
     phone: "+91 98188 44551",
@@ -775,48 +764,6 @@ const WORKERS = [
     completed_jobs: 118,
     total_earned: 58900.0,
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80"
-  },
-  {
-    id: 109,
-    name: "Kailash Chand Prajapati",
-    phone: "+91 98711 77665",
-    skill: "pottery",
-    coop_id: 3,
-    coop_name: "NCR Technicians & Artisans Cooperative",
-    coords: [28.6250, 77.2280], // Mandi House / Pragati Maidan
-    is_available: true,
-    is_verified: true,
-    rating: 5.0,
-    aadhaar: "XXXX-XXXX-3382",
-    certificate: "KVIC Master Artisan Pottery & Terracotta Seal",
-    cert_title: "KVIC Master Terracotta Artisan",
-    cert_issuer: "Khadi & Village Industries Commission",
-    today_wage: 2400.0,
-    coop_ac: "NCRT-PACS-3382901",
-    completed_jobs: 84,
-    total_earned: 42100.0,
-    photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80"
-  },
-  {
-    id: 110,
-    name: "Harishankar Lohar",
-    phone: "+91 98992 33441",
-    skill: "blacksmith",
-    coop_id: 1,
-    coop_name: "Delhi Central Labour Cooperative",
-    coords: [28.6380, 77.2100], // Paharganj
-    is_available: true,
-    is_verified: true,
-    rating: 4.8,
-    aadhaar: "XXXX-XXXX-6619",
-    certificate: "Labour Cooperative Metal Fabrication & Welding Guild",
-    cert_title: "Labour Metal Fabrication Guild",
-    cert_issuer: "Delhi Labour Board Attested",
-    today_wage: 2700.0,
-    coop_ac: "DCCB-PACS-6619430",
-    completed_jobs: 102,
-    total_earned: 51200.0,
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
   },
   {
     id: 111,
@@ -840,46 +787,67 @@ const WORKERS = [
     photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
   },
   {
-    id: 112,
-    name: "Manoj Kumar",
-    phone: "+91 98105 88992",
-    skill: "masonry",
-    coop_id: 2,
-    coop_name: "South Delhi Multi-Purpose Cooperative",
-    coords: [28.6400, 77.2250], // ITO
+    id: 107,
+    name: "Ram Dayal",
+    phone: "+91 98119 88776",
+    skill: "pottery",
+    coop_id: 3,
+    coop_name: "NCR Technicians & Artisans Cooperative",
+    coords: [28.6180, 77.2250], // Crafts Museum / Pragati Maidan
     is_available: true,
     is_verified: true,
-    rating: 4.9,
-    aadhaar: "XXXX-XXXX-4411",
-    certificate: "BOCW Board Master Mason & Tiling Trade Grade A",
-    cert_title: "BOCW Master Mason Grade A",
-    cert_issuer: "Building & Construction Workers Board",
-    today_wage: 3100.0,
-    coop_ac: "SDMC-PACS-4411200",
-    completed_jobs: 125,
-    total_earned: 63800.0,
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+    rating: 5.0,
+    aadhaar: "XXXX-XXXX-6721",
+    certificate: "KVIC Master Terracotta Artisan & Khadi Board Guild Attested",
+    cert_title: "KVIC Master Terracotta Artisan",
+    cert_issuer: "Khadi & Village Industries Commission (KVIC)",
+    today_wage: 2100.0,
+    coop_ac: "COOP-DL-2024-007",
+    completed_jobs: 124,
+    total_earned: 59200.0,
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80"
   },
   {
-    id: 113,
-    name: "Surender Pal",
-    phone: "+91 98119 22339",
-    skill: "painting",
+    id: 109,
+    name: "Kishan Luhar",
+    phone: "+91 98101 33445",
+    skill: "blacksmith",
     coop_id: 1,
     coop_name: "Delhi Central Labour Cooperative",
-    coords: [28.6350, 77.2050], // Shivaji Stadium
+    coords: [28.6450, 77.2100], // Paharganj
     is_available: true,
     is_verified: true,
     rating: 4.8,
-    aadhaar: "XXXX-XXXX-5590",
-    certificate: "NSDC Decorative Wall Finishing & Surface Painting",
-    cert_title: "NSDC Painting & Decorating",
-    cert_issuer: "Paints and Coatings Skill Council",
-    today_wage: 2650.0,
-    coop_ac: "DCCB-PACS-5590112",
-    completed_jobs: 110,
-    total_earned: 49200.0,
-    photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=200&q=80"
+    aadhaar: "XXXX-XXXX-5519",
+    certificate: "Labour Cooperative Guild Master Blacksmith & Arc Welding Attested",
+    cert_title: "Master Blacksmith & Arc Welder",
+    cert_issuer: "Labour Cooperative Guild & NCVT",
+    today_wage: 2750.0,
+    coop_ac: "COOP-DL-2024-009",
+    completed_jobs: 108,
+    total_earned: 62400.0,
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+  },
+  {
+    id: 110,
+    name: "Manoj Painter",
+    phone: "+91 98711 77889",
+    skill: "painting",
+    coop_id: 2,
+    coop_name: "South Delhi Multi-Purpose Cooperative",
+    coords: [28.5800, 77.2200], // Defence Colony
+    is_available: true,
+    is_verified: true,
+    rating: 4.9,
+    aadhaar: "XXXX-XXXX-4482",
+    certificate: "NSDC Decorative Finishing & Surface Coating Guild Master",
+    cert_title: "NSDC Decorative Finishing Master",
+    cert_issuer: "National Skill Development Corporation (NSDC)",
+    today_wage: 2450.0,
+    coop_ac: "COOP-DL-2024-010",
+    completed_jobs: 136,
+    total_earned: 66800.0,
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
   }
 ];
 
@@ -947,71 +915,6 @@ const SERVICES = [
     keywords: ["clean", "sweep", "dust", "mop", "wash", "sanit", "deep clean", "safai", "housekeeping", "सफाई", "धुलाई", "स्वच्छता", "झाड़ू", "पोछा", "किचन"]
   },
   {
-    id: "painting",
-    name: "Painting & Wall Artisan",
-    name_hi: "रंगाई-पुताई एवं भित्ति शिल्प",
-    icon: "brush",
-    base: 105,
-    badge: "NSDC Decorative Finishing",
-    badge_hi: "एनएसडीसी पेंटिंग प्रमाणित",
-    rating: 4.9,
-    time: "15 mins",
-    time_hi: "15 मिनट",
-    keywords: ["paint", "color", "wall", "distemper", "whitewash", "waterproof", "texture", "rang", "rangai", "putai", "चित्रकार", "पेंट", "रंगाई", "पुताई", "सफेदी", "दीवार", "टेक्सचर"]
-  },
-  {
-    id: "healthcare",
-    name: "Elder Healthcare",
-    name_hi: "स्वास्थ्य / बुजुर्ग सेवा",
-    icon: "heart-pulse",
-    base: 150,
-    badge: "NSDC Nursing",
-    badge_hi: "एनएसडीसी नर्सिंग",
-    rating: 5.0,
-    time: "12 mins",
-    time_hi: "12 मिनट",
-    keywords: ["health", "nurse", "elder", "medical", "patient", "care", "injection", "bp", "swasthya", "स्वास्थ्य", "बुजुर्ग", "नर्स", "दवा", "इलाज", "मरीज"]
-  },
-  {
-    id: "masonry",
-    name: "Masonry & Tile Artisan",
-    name_hi: "राजमिस्त्री एवं निर्माण शिल्प",
-    icon: "layers",
-    base: 110,
-    badge: "BOCW Board Certified",
-    badge_hi: "श्रम कल्याण बोर्ड प्रमाणित",
-    rating: 4.8,
-    time: "15 mins",
-    time_hi: "15 मिनट",
-    keywords: ["mason", "brick", "cement", "tile", "wall", "plaster", "floor", "construction", "mistri", "rajmistri", "grouting", "stone", "राजमिस्त्री", "मिस्त्री", "ईंट", "सीमेंट", "टाइल्स", "प्लास्टर", "फर्श", "दीवार"]
-  },
-  {
-    id: "pottery",
-    name: "Pottery & Terracotta Craft",
-    name_hi: "कुम्हार एवं मृत्तिका शिल्प",
-    icon: "package",
-    base: 95,
-    badge: "KVIC Khadi & Clay Vetted",
-    badge_hi: "खादी ग्रामोद्योग प्रमाणित",
-    rating: 5.0,
-    time: "18 mins",
-    time_hi: "18 मिनट",
-    keywords: ["potter", "clay", "terracotta", "matti", "matka", "diya", "pottery", "ceramic", "artisan", "kumhar", "gamla", "planter", "कुम्हार", "मिट्टी", "मटका", "दीया", "गमला", "टेराकोटा", "मृत्तिका", "हस्तशिल्प"]
-  },
-  {
-    id: "blacksmith",
-    name: "Blacksmith & Metalcraft",
-    name_hi: "लुहार एवं धातु शिल्प",
-    icon: "shield",
-    base: 120,
-    badge: "Labour Coop Guild Vetted",
-    badge_hi: "श्रम गिल्ड सत्यापित",
-    rating: 4.8,
-    time: "14 mins",
-    time_hi: "14 मिनट",
-    keywords: ["blacksmith", "iron", "metal", "grill", "gate", "weld", "welding", "loha", "luhar", "hinge", "shutter", "लुहार", "लोहा", "वेल्डिंग", "ग्रिल", "गेट", "कब्जा", "धातु", "शिल्प"]
-  },
-  {
     id: "tailoring",
     name: "Tailoring & Handloom Repair",
     name_hi: "दर्जी एवं हथकरघा शिल्प",
@@ -1038,22 +941,51 @@ const SERVICES = [
     keywords: ["driv", "car", "taxi", "chauffeur", "ride", "auto", "ambulance", "gadi", "chalak", "चालक", "गाड़ी", "ड्राइवर", "ड्राइविंग", "सवारी"]
   },
   {
-    id: "waste_management",
-    name: "Waste Management",
-    name_hi: "कचरा प्रबंधन",
-    icon: "trash-2",
-    base: 80,
-    badge: "Municipal Grade",
-    badge_hi: "नगर निगम स्तर",
+    id: "pottery",
+    name: "Pottery & Terracotta",
+    name_hi: "मृत्तिका शिल्प एवं कुम्हार कला",
+    icon: "flower-2",
+    base: 95,
+    badge: "KVIC Heritage Certified",
+    badge_hi: "केवीआईसी विरासत प्रमाणित",
+    rating: 5.0,
+    time: "15 mins",
+    time_hi: "15 मिनट",
+    isArtisan: true,
+    keywords: ["pottery", "clay", "matka", "terracotta", "tandoor", "diya", "handi", "surahi", "kumhar", "mitti", "bartan", "कुम्हार", "मिट्टी", "मटका", "तंदूर", "दीया", "हांडी", "सुराही", "टेराकोटा", "शिल्प"]
+  },
+  {
+    id: "blacksmith",
+    name: "Blacksmith & Metalcraft",
+    name_hi: "लोहार एवं धातु शिल्प",
+    icon: "shield",
+    base: 120,
+    badge: "Labour Guild Certified",
+    badge_hi: "श्रम गिल्ड प्रमाणित",
     rating: 4.8,
-    time: "16 mins",
-    time_hi: "16 मिनट",
-    keywords: ["waste", "garbage", "trash", "rubbish", "segregat", "kachra", "debris", "recycle", "कचरा", "कूड़ा", "सफाई", "अपशिष्ट", "रीसायकल"]
+    time: "12 mins",
+    time_hi: "12 मिनट",
+    isArtisan: true,
+    keywords: ["blacksmith", "iron", "welding", "grill", "gate", "metal", "shutter", "sharpen", "loha", "luhar", "welder", "लोहार", "लोहा", "वेल्डिंग", "गेट", "ग्रिल", "धातु", "शटर", "कुल्हाड़ी"]
+  },
+  {
+    id: "painting",
+    name: "Painting & Wall Artisan",
+    name_hi: "रंग रोगन एवं पेंटिंग कारीगर",
+    icon: "palette",
+    base: 105,
+    badge: "NSDC Decorative Master",
+    badge_hi: "एनएसडीसी मास्टर पेंटर",
+    rating: 4.9,
+    time: "15 mins",
+    time_hi: "15 मिनट",
+    isArtisan: true,
+    keywords: ["paint", "painter", "wall", "color", "whitewash", "distemper", "putty", "texture", "rang", "safedi", "seepage", "damp", "पेंट", "पेंटर", "रंग", "सफेदी", "पुट्टी", "दीवार", "टेक्सचर", "सीलन"]
   }
 ];
 
 // ==========================================
-// SPECIFIC WORK / SUB-SERVICES CATALOG (ALL 12 COOPERATIVE TRADES)
+// SPECIFIC WORK / SUB-SERVICES CATALOG (6 ESSENTIAL COOPERATIVE TRADES)
 // ==========================================
 const SUB_SERVICES_CATALOG = {
   electrician: [
@@ -1328,346 +1260,6 @@ const SUB_SERVICES_CATALOG = {
       base: 120
     }
   ],
-  painting: [
-    {
-      id: "room_wall_paint",
-      title: "Single Room Repainting",
-      title_hi: "एक कमरे का रंग रोगन",
-      desc: "Putty patch filling, acrylic primer & 2 smooth coats of emulsion paint",
-      desc_hi: "पुट्टी भराव, ऐक्रेलिक प्राइमर और इमल्शन पेंट के 2 फिनिश कोट",
-      icon: "palette",
-      badge: "Smooth Finish",
-      badge_hi: "चिकनी फिनिश",
-      base: 350
-    },
-    {
-      id: "waterproof_dampproof",
-      title: "Damp Proofing & Seepage Seal",
-      title_hi: "सीलन व जलरोधी उपचार",
-      desc: "Doctor Fixit / Asian Paints damp seal coating for peeling walls & ceilings",
-      desc_hi: "दीवारों व छत की पपड़ी और सीलन हेतु विशेष वॉटरप्रूफ कोटिंग",
-      icon: "shield",
-      badge: "Leak Proof",
-      badge_hi: "सीलन मुक्त",
-      base: 400
-    },
-    {
-      id: "wood_metal_paint",
-      title: "Wood Polish & Metal Enamel",
-      title_hi: "लकड़ी पॉलिश व ग्रिल पेंट",
-      desc: "Door melamine/PU polish or anti-rust synthetic enamel on iron gates & grills",
-      desc_hi: "दरवाजों की मेलामाइन पॉलिश या लोहे के गेट-ग्रिल पर जंगरोधी एनामेल पेंट",
-      icon: "feather",
-      badge: "Artisan Coat",
-      badge_hi: "कारीगरी कोट",
-      base: 250
-    },
-    {
-      id: "texture_stencil",
-      title: "Texture & Accent Feature Wall",
-      title_hi: "टेक्सचर व डिज़ाइनर दीवार",
-      desc: "Royale play, metallic texture, stencil patterns & feature wall styling",
-      desc_hi: "रॉयल प्ले, मेटैलिक टेक्सचर, स्टेंसिल आर्ट व लिविंग रूम फीचर वॉल",
-      icon: "eye",
-      badge: "Design Specialist",
-      badge_hi: "डिज़ाइनर काम",
-      base: 450
-    },
-    {
-      id: "full_home_painting",
-      title: "Complete Flat / House Painting",
-      title_hi: "सम्पूर्ण घर का पेंटिंग कार्य",
-      desc: "Full interior & exterior painting contract executed by cooperative guild painters",
-      desc_hi: "सहकारी गिल्ड के कुशल पेंटरों द्वारा पूरे घर का अंदरूनी व बाहरी रंग-रोगन",
-      icon: "home",
-      badge: "Co-op Warranty",
-      badge_hi: "सहकारी वारंटी",
-      base: 600
-    },
-    {
-      id: "other_painting",
-      title: "Touch-up & Minor Patchwork",
-      title_hi: "टचअप व छोटी मरम्मत",
-      desc: "Drill hole putty touch-up, water spot coat or single wall repair",
-      desc_hi: "कील के छेद भरना, पानी के दाग छुपाना या छोटी दीवार का पैच पेंट",
-      icon: "paintbrush",
-      badge: "Quick Touch",
-      badge_hi: "त्वरित कार्य",
-      base: 180
-    }
-  ],
-  healthcare: [
-    {
-      id: "vitals_check",
-      title: "Elderly Vitals & Health Check",
-      title_hi: "वरिष्ठ नागरिक स्वास्थ्य जांच",
-      desc: "Blood pressure, blood sugar testing, pulse oximetry, posture & health record",
-      desc_hi: "रक्तचाप, शुगर जांच, पल्स ऑक्सीमीटर, मुद्रा व डिजिटल स्वास्थ्य रिकॉर्ड",
-      icon: "activity",
-      badge: "Certified ANM",
-      badge_hi: "प्रमाणित एएनएम",
-      base: 120
-    },
-    {
-      id: "wound_dressing",
-      title: "Wound Dressing & Bedside Care",
-      title_hi: "घाव की पट्टी व बेडसाइड देखभाल",
-      desc: "Sterile surgical dressing, bed sore prevention, antiseptic care & bandaging",
-      desc_hi: "सर्जिकल घाव की जीवाणुरहित पट्टी, बेड सोर रोकथाम व रोगाणुरोधी देखभाल",
-      icon: "heart",
-      badge: "Sterile Care",
-      badge_hi: "जीवाणुरहित",
-      base: 150
-    },
-    {
-      id: "physiotherapy_assist",
-      title: "Mobility & Physiotherapy Support",
-      title_hi: "गतिशीलता व फिजियोथेरेपी सहायता",
-      desc: "Guided joint movements, stroke recovery walking aid & post-injury exercises",
-      desc_hi: "जोड़ों के व्यायाम, पक्षाघात सुधार व चोट के बाद चलने-फिरने में सहायता",
-      icon: "user-check",
-      badge: "Trained Physiotherapist",
-      badge_hi: "प्रशिक्षित थेरेपिस्ट",
-      base: 250
-    },
-    {
-      id: "post_surgery_care",
-      title: "Post-Surgical Patient Attendant",
-      title_hi: "सर्जरी उपरांत परिचर्या सेवा",
-      desc: "Post-discharge monitoring, sponge bath, medication administration & nutrition assist",
-      desc_hi: "अस्पताल से छुट्टी के बाद देखभाल, स्पंज बाथ, दवा प्रबंधन व भोजन सहायता",
-      icon: "shield",
-      badge: "Hospital Grade",
-      badge_hi: "अस्पताल स्तर",
-      base: 300
-    },
-    {
-      id: "vaccination_injection",
-      title: "Doctor Injection & IV Drip Setup",
-      title_hi: "इंजेक्शन व आईवी ड्रिप सेवा",
-      desc: "Prescription-verified intramuscular/intravenous injection or normal saline IV drip",
-      desc_hi: "डॉक्टर पर्चे अनुसार आईएम/आईवी इंजेक्शन लगाना या सेलाइन ड्रिप चढ़ाना",
-      icon: "plus-circle",
-      badge: "Registered Nurse",
-      badge_hi: "पंजीकृत नर्स",
-      base: 180
-    },
-    {
-      id: "other_healthcare",
-      title: "Custom Healthcare Attendant",
-      title_hi: "अन्य स्वास्थ्य परिचर्या",
-      desc: "General daytime elderly companion, hospital escort or medical chaperone",
-      desc_hi: "बुजुर्गों के साथ दिनभर का सहयोगी, अस्पताल ले जाने वाला सहायक आदि",
-      icon: "smile",
-      badge: "Dedicated Care",
-      badge_hi: "समर्पित सेवा",
-      base: 150
-    }
-  ],
-  masonry: [
-    {
-      id: "tile_floor_repair",
-      title: "Tile & Marble Floor Repair",
-      title_hi: "टाइल व मार्बल फर्श मरम्मत",
-      desc: "Replace cracked or broken tiles, hollow floor regrouting & marble edge polish",
-      desc_hi: "टूटी टाइलें बदलना, खोखले फर्श की ग्राउटिंग व मार्बल किनारों की पॉलिश",
-      icon: "layout",
-      badge: "Level Finish",
-      badge_hi: "समतल फिनिश",
-      base: 200
-    },
-    {
-      id: "plaster_wall_crack",
-      title: "Wall Plaster & Structural Bonding",
-      title_hi: "दीवार प्लास्टर व दरार भराव",
-      desc: "Cement mortar patching, re-plastering damaged walls & expanding crack bonding",
-      desc_hi: "सीमेंट प्लास्टर मरम्मत, खराब दीवारों का नया प्लास्टर व गहरी दरारें भरना",
-      icon: "layers",
-      badge: "Mason Certified",
-      badge_hi: "राजमिस्त्री प्रमाणित",
-      base: 220
-    },
-    {
-      id: "brickwork_partition",
-      title: "Brickwork & Small Wall Partition",
-      title_hi: "ईंट चिनाई व विभाजन दीवार",
-      desc: "Red clay or fly-ash brick partition walls, planter beds or boundary repair",
-      desc_hi: "लाल ईंट या फ्लाई-ऐश से विभाजन दीवार, क्यारी निर्माण या चारदीवारी मरम्मत",
-      icon: "grid",
-      badge: "High Strength",
-      badge_hi: "मजबूत निर्माण",
-      base: 350
-    },
-    {
-      id: "kitchen_countertop",
-      title: "Granite Countertop & Sink Setting",
-      title_hi: "ग्रेनाइट काउंटरटॉप व सिंक फिटिंग",
-      desc: "Granite stone cutting, edge chamfering & solid under-counter sink mounting",
-      desc_hi: "ग्रेनाइट पत्थर कटाई, मोल्डिंग चैम्फरिंग व किचन सिंक की मजबूत फिटिंग",
-      icon: "box",
-      badge: "Precision Mason",
-      badge_hi: "सटीक राजमिस्त्री",
-      base: 400
-    },
-    {
-      id: "drain_slope_leveling",
-      title: "Terrace & Balcony Slope Leveling",
-      title_hi: "छत व बालकनी ढलान समतलन",
-      desc: "Fix rain water stagnation by correcting cement slope toward drainage spout",
-      desc_hi: "बारिश का पानी रुकने की समस्या हेतु सीमेंट ढलान सही करना",
-      icon: "compass",
-      badge: "Accurate Slope",
-      badge_hi: "सही ढलान",
-      base: 250
-    },
-    {
-      id: "other_masonry",
-      title: "Custom Masonry & Stone Work",
-      title_hi: "अन्य राजमिस्त्री व पत्थर कार्य",
-      desc: "Door frame grouting, step stone fixing, coping stones or cement work",
-      desc_hi: "चौखट जाम करना, सीढ़ियों का पत्थर लगाना या अन्य सीमेंट निर्माण कार्य",
-      icon: "tool",
-      badge: "Fair Wage",
-      badge_hi: "उचित मजदूरी",
-      base: 180
-    }
-  ],
-  pottery: [
-    {
-      id: "earthen_pots_tandoor",
-      title: "Clay Tandoor & Earthen Cookware",
-      title_hi: "मिट्टी का तंदूर व हांडी निर्माण",
-      desc: "Traditional clay tandoor setup, unglazed earthen handi, biryani pots & restoration",
-      desc_hi: "पारंपरिक मिट्टी का तंदूर, कच्ची मिट्टी की हांडी, मटका व बर्तनों का निर्माण",
-      icon: "sun",
-      badge: "Handmade Art",
-      badge_hi: "हस्तनिर्मित कला",
-      base: 150
-    },
-    {
-      id: "decorative_terracotta",
-      title: "Terracotta Decor & Garden Planters",
-      title_hi: "टेराकोटा गमले व सजावटी शिल्प",
-      desc: "Handmade porous terracotta flower pots, hanging planters, garden murals & wind chimes",
-      desc_hi: "हाथ से बने टेराकोटा गमले, हैंगिंग पॉट्स, गार्डन भित्ति चित्र व विंड चाइम्स",
-      icon: "flower-2",
-      badge: "Eco-Friendly",
-      badge_hi: "पर्यावरण अनुकूल",
-      base: 180
-    },
-    {
-      id: "clay_diyas_festival",
-      title: "Festival Diyas & Sacred Pottery",
-      title_hi: "त्योहार दीये व पूजा सामग्री",
-      desc: "Artisan hand-pressed Diwali oil diyas, kulhars, temple kalash & havan kunds",
-      desc_hi: "दीपावली दीये, कुल्हड़, मंदिर कलश, धूपदानी व पारम्परिक पूजा मिट्टी के बर्तन",
-      icon: "flame",
-      badge: "Traditional",
-      badge_hi: "पारंपरिक",
-      base: 120
-    },
-    {
-      id: "pottery_wheel_workshop",
-      title: "Live Pottery Wheel Demonstration",
-      title_hi: "कुम्हार चाक प्रशिक्षण व कार्यशाला",
-      desc: "Interactive pottery wheel experience & clay shaping workshop for schools or events",
-      desc_hi: "स्कूलों या आयोजनों हेतु कुम्हार के चाक पर जीवंत मिट्टी कला प्रशिक्षण",
-      icon: "rotate-cw",
-      badge: "Master Artisan",
-      badge_hi: "मास्टर कारीगर",
-      base: 300
-    },
-    {
-      id: "clay_water_dispenser",
-      title: "Alkaline Clay Matka / Water Pot",
-      title_hi: "शीतल जल मटका व सुराही",
-      desc: "Natural cooling alkaline clay matka with brass tap assembly & stand",
-      desc_hi: "पीतल की टोंटी वाला शुद्ध प्राकृतिक मिट्टी का मटका व सुराही स्थापना",
-      icon: "droplet",
-      badge: "100% Pure Clay",
-      badge_hi: "100% शुद्ध मिट्टी",
-      base: 160
-    },
-    {
-      id: "other_pottery",
-      title: "Custom Terracotta Craft Assignment",
-      title_hi: "अन्य मृत्तिका शिल्प कार्य",
-      desc: "Bespoke terracotta sculpture, clay wall relief or customized clay artifacts",
-      desc_hi: "विशेष टेराकोटा मूर्तियां, मिट्टी की नक्काशी या अन्य हस्तशिल्प कार्य",
-      icon: "sparkles",
-      badge: "Heritage Guild",
-      badge_hi: "धरोहर संघ",
-      base: 140
-    }
-  ],
-  blacksmith: [
-    {
-      id: "gate_grill_welding",
-      title: "Iron Gate & Grill Arc Welding",
-      title_hi: "लोहे का गेट व ग्रिल वेल्डिंग",
-      desc: "Electric arc welding on broken hinges, security grills, gates & reinforcement",
-      desc_hi: "टूटे कब्जे, खिड़की की ग्रिल, लोहे के मुख्य द्वार की इलेक्ट्रिक आर्क वेल्डिंग",
-      icon: "zap",
-      badge: "High Tensile",
-      badge_hi: "मजबूत वेल्डिंग",
-      base: 180
-    },
-    {
-      id: "tool_sharpening_forging",
-      title: "Tool Forging, Tempering & Sharpening",
-      title_hi: "औजार निर्माण व धार लगाना",
-      desc: "Axe, sickle, chisel, knife forging, tempering on hot anvil & diamond wheel sharpening",
-      desc_hi: "कुल्हाड़ी, दरांती, छेनी की भट्टी पर गर्म फोर्जिंग व धार लगाना",
-      icon: "shield",
-      badge: "Traditional Forge",
-      badge_hi: "पारंपरिक भट्टी",
-      base: 140
-    },
-    {
-      id: "shutter_channel_fix",
-      title: "Shop Rolling Shutter & Spring Repair",
-      title_hi: "रोलिंग शटर व स्प्रिंग मरम्मत",
-      desc: "Commercial shutter tension spring balancing, side channel straightening & locks",
-      desc_hi: "दुकान के रोलिंग शटर का स्प्रिंग बदलना, साइड चैनल सीधा करना व सेंटर लॉक",
-      icon: "sliders",
-      badge: "Heavy Duty",
-      badge_hi: "हैवी ड्यूटी",
-      base: 260
-    },
-    {
-      id: "railing_safety_bars",
-      title: "Staircase Railing & Balcony Safety",
-      title_hi: "रेलिंग व बालकनी सुरक्षा बार",
-      desc: "Wrought iron railing installation, safety grills for kids and pet barriers",
-      desc_hi: "लोहे की सीढ़ी रेलिंग लगाना, बालकनी सेफ्टी ग्रिल व बच्चों की सुरक्षा जाल",
-      icon: "lock",
-      badge: "ISI Certified",
-      badge_hi: "आईएसआई प्रमाणित",
-      base: 320
-    },
-    {
-      id: "metal_fabrication",
-      title: "Custom Structural Iron Fabrication",
-      title_hi: "कस्टम धातु निर्माण कार्य",
-      desc: "MS angle iron racks, tin sheet roofing shed frames or utility stands",
-      desc_hi: "लोहे के रैक, शेड का ढांचा, वाशिंग मशीन स्टैंड या कस्टम स्ट्रक्चर",
-      icon: "box",
-      badge: "Master Blacksmith",
-      badge_hi: "मास्टर लुहार",
-      base: 380
-    },
-    {
-      id: "other_blacksmith",
-      title: "Custom On-Site Metal Repair",
-      title_hi: "अन्य धातु शिल्प कार्य",
-      desc: "Cold metal cutting, pad-eye welding, chain link fence repair or metal fittings",
-      desc_hi: "लोहा कटाई, कुंडा वेल्डिंग, जालीदार तार फेंसिंग या अन्य लोहे की मरम्मत",
-      icon: "tool",
-      badge: "Fair Wage",
-      badge_hi: "उचित मजदूरी",
-      base: 150
-    }
-  ],
   tailoring: [
     {
       id: "clothes_alteration",
@@ -1804,72 +1396,211 @@ const SUB_SERVICES_CATALOG = {
       base: 140
     }
   ],
-  waste_management: [
+
+  painting: [
     {
-      id: "household_dry_wet",
-      title: "Doorstep Dry & Wet Waste Clearing",
-      title_hi: "गीला व सूखा कचरा पृथक्करण उठान",
-      desc: "Scheduled eco-friendly segregated garbage collection directly from your doorstep",
-      desc_hi: "घर के दरवाजे से गीला व सूखा अलग-अलग कचरा उठाने की पर्यावरण-अनुकूल सेवा",
-      icon: "trash",
-      badge: "Green Protocol",
-      badge_hi: "हरित प्रोटोकॉल",
-      base: 80
+      id: "room_wall_paint",
+      title: "Single Room Repainting",
+      title_hi: "एक कमरे का रंग रोगन",
+      desc: "Putty patch filling, acrylic primer & 2 smooth coats of emulsion paint",
+      desc_hi: "पुट्टी भराव, ऐक्रेलिक प्राइमर और इमल्शन पेंट के 2 फिनिश कोट",
+      icon: "palette",
+      badge: "Smooth Finish",
+      badge_hi: "चिकनी फिनिश",
+      base: 350
     },
     {
-      id: "electronic_ewaste",
-      title: "Certified E-Waste & Appliance Disposal",
-      title_hi: "ई-कचरा व पुराने उपकरण निस्तारण",
-      desc: "CPCB certified safe recycling of discarded TVs, laptops, cables & batteries",
-      desc_hi: "पुराने टीवी, लैपटॉप, तार व बैटरियों का प्रमाणित सुरक्षित रीसाइक्लिंग निस्तारण",
-      icon: "cpu",
-      badge: "CPCB Certified",
-      badge_hi: "सीपीसीबी प्रमाणित",
-      base: 140
+      id: "waterproof_dampproof",
+      title: "Damp Proofing & Seepage Seal",
+      title_hi: "सीलन व जलरोधी उपचार",
+      desc: "Doctor Fixit / Asian Paints damp seal coating for peeling walls & ceilings",
+      desc_hi: "दीवारों व छत की पपड़ी और सीलन हेतु विशेष वॉटरप्रूफ कोटिंग",
+      icon: "shield",
+      badge: "Leak Proof",
+      badge_hi: "सीलन मुक्त",
+      base: 400
     },
     {
-      id: "construction_debris",
-      title: "Renovation Debris & Rubble Clearing",
-      title_hi: "मलबा व निर्माण अपशिष्ट उठाव",
-      desc: "Clear brick rubble, broken tiles, cement dust bags and plaster post-renovation",
-      desc_hi: "घर की मरम्मत के बाद का मलबा, टूटी टाइलें व सीमेंट बोरियां हटाने की सेवा",
-      icon: "truck",
-      badge: "Municipal Grade",
-      badge_hi: "नगर निगम स्तर",
-      base: 260
+      id: "wood_metal_paint",
+      title: "Wood Polish & Metal Enamel",
+      title_hi: "लकड़ी पॉलिश व ग्रिल पेंट",
+      desc: "Door melamine/PU polish or anti-rust synthetic enamel on iron gates & grills",
+      desc_hi: "दरवाजों की मेलामाइन पॉलिश या लोहे के गेट-ग्रिल पर जंगरोधी एनामेल पेंट",
+      icon: "feather",
+      badge: "Artisan Coat",
+      badge_hi: "कारीगरी कोट",
+      base: 250
     },
     {
-      id: "bulk_paper_plastic",
-      title: "Bulk Paper, Carton & Plastic Scrap",
-      title_hi: "बल्क पेपर, गत्ते व प्लास्टिक स्क्रैप",
-      desc: "Bulk collection of old newspapers (raddi), corrugated shipping boxes & plastics",
-      desc_hi: "पुराने अखबार, रद्दी, पैकेजिंग गत्ते व प्लास्टिक कबाड़ का सामूहिक उठान",
-      icon: "file-text",
-      badge: "Co-op Recycler",
-      badge_hi: "सहकारी रीसायकल",
+      id: "texture_stencil",
+      title: "Texture & Accent Feature Wall",
+      title_hi: "टेक्सचर व डिज़ाइनर दीवार",
+      desc: "Royale play, metallic texture, stencil patterns & feature wall styling",
+      desc_hi: "रॉयल प्ले, मेटैलिक टेक्सचर, स्टेंसिल आर्ट व लिविंग रूम फीचर वॉल",
+      icon: "eye",
+      badge: "Design Specialist",
+      badge_hi: "डिज़ाइनर काम",
+      base: 450
+    },
+    {
+      id: "full_home_painting",
+      title: "Complete Flat / House Painting",
+      title_hi: "सम्पूर्ण घर का पेंटिंग कार्य",
+      desc: "Full interior & exterior painting contract executed by cooperative guild painters",
+      desc_hi: "सहकारी गिल्ड के कुशल पेंटरों द्वारा पूरे घर का अंदरूनी व बाहरी रंग-रोगन",
+      icon: "home",
+      badge: "Co-op Warranty",
+      badge_hi: "सहकारी वारंटी",
+      base: 600
+    },
+    {
+      id: "other_painting",
+      title: "Touch-up & Minor Patchwork",
+      title_hi: "टचअप व छोटी मरम्मत",
+      desc: "Drill hole putty touch-up, water spot coat or single wall repair",
+      desc_hi: "कील के छेद भरना, पानी के दाग छुपाना या छोटी दीवार का पैच पेंट",
+      icon: "paintbrush",
+      badge: "Quick Touch",
+      badge_hi: "त्वरित कार्य",
+      base: 180
+    }
+  ],
+
+  pottery: [
+    {
+      id: "earthen_pots_tandoor",
+      title: "Clay Tandoor & Earthen Cookware",
+      title_hi: "मिट्टी का तंदूर व हांडी निर्माण",
+      desc: "Traditional clay tandoor setup, unglazed earthen handi, biryani pots & restoration",
+      desc_hi: "पारंपरिक मिट्टी का तंदूर, कच्ची मिट्टी की हांडी, मटका व बर्तनों का निर्माण",
+      icon: "sun",
+      badge: "Handmade Art",
+      badge_hi: "हस्तनिर्मित कला",
+      base: 150
+    },
+    {
+      id: "decorative_terracotta",
+      title: "Terracotta Decor & Garden Planters",
+      title_hi: "टेराकोटा गमले व सजावटी शिल्प",
+      desc: "Handmade porous terracotta flower pots, hanging planters, garden murals & wind chimes",
+      desc_hi: "हाथ से बने टेराकोटा गमले, हैंगिंग पॉट्स, गार्डन भित्ति चित्र व विंड चाइम्स",
+      icon: "flower-2",
+      badge: "Eco-Friendly",
+      badge_hi: "पर्यावरण अनुकूल",
+      base: 180
+    },
+    {
+      id: "clay_diyas_festival",
+      title: "Festival Diyas & Sacred Pottery",
+      title_hi: "त्योहार दीये व पूजा सामग्री",
+      desc: "Artisan hand-pressed Diwali oil diyas, kulhars, temple kalash & havan kunds",
+      desc_hi: "दीपावली दीये, कुल्हड़, मंदिर कलश, धूपदानी व पारम्परिक पूजा मिट्टी के बर्तन",
+      icon: "flame",
+      badge: "Traditional",
+      badge_hi: "पारंपरिक",
       base: 120
     },
     {
-      id: "green_garden_waste",
-      title: "Garden Foliage & Pruning Debris",
-      title_hi: "बगीचा छंटाई व हरित कचरा",
-      desc: "Clearing tree branch trimmings, grass clippings and garden leaves for composting",
-      desc_hi: "पेड़ों की छंटी टहनियां, घास व सूखी पत्तियां खाद बनाने हेतु एकत्रित करना",
-      icon: "trees",
-      badge: "Compost Cycle",
-      badge_hi: "कम्पोस्ट चक्र",
-      base: 110
+      id: "pottery_wheel_workshop",
+      title: "Live Pottery Wheel Demonstration",
+      title_hi: "कुम्हार चाक प्रशिक्षण व कार्यशाला",
+      desc: "Interactive pottery wheel experience & clay shaping workshop for schools or events",
+      desc_hi: "स्कूलों या आयोजनों हेतु कुम्हार के चाक पर जीवंत मिट्टी कला प्रशिक्षण",
+      icon: "rotate-cw",
+      badge: "Master Artisan",
+      badge_hi: "मास्टर कारीगर",
+      base: 300
     },
     {
-      id: "other_waste",
-      title: "Custom Society / Bulky Waste Removal",
-      title_hi: "अन्य कचरा प्रबंधन कार्य",
-      desc: "Old mattress disposal, bulky junk clearing or residential society cleanup drive",
-      desc_hi: "पुराने गद्दे, भारी कबाड़ हटाना या आवासीय सोसाइटी का विशेष सफाई अभियान",
-      icon: "check-square",
-      badge: "Zero Landfill",
-      badge_hi: "शून्य लैंडफिल",
-      base: 100
+      id: "clay_water_dispenser",
+      title: "Alkaline Clay Matka / Water Pot",
+      title_hi: "शीतल जल मटका व सुराही",
+      desc: "Natural cooling alkaline clay matka with brass tap assembly & stand",
+      desc_hi: "पीतल की टोंटी वाला शुद्ध प्राकृतिक मिट्टी का मटका व सुराही स्थापना",
+      icon: "droplet",
+      badge: "100% Pure Clay",
+      badge_hi: "100% शुद्ध मिट्टी",
+      base: 160
+    },
+    {
+      id: "other_pottery",
+      title: "Custom Terracotta Craft Assignment",
+      title_hi: "अन्य मृत्तिका शिल्प कार्य",
+      desc: "Bespoke terracotta sculpture, clay wall relief or customized clay artifacts",
+      desc_hi: "विशेष टेराकोटा मूर्तियां, मिट्टी की नक्काशी या अन्य हस्तशिल्प कार्य",
+      icon: "sparkles",
+      badge: "Heritage Guild",
+      badge_hi: "धरोहर संघ",
+      base: 140
+    }
+  ],
+
+  blacksmith: [
+    {
+      id: "gate_grill_welding",
+      title: "Iron Gate & Grill Arc Welding",
+      title_hi: "लोहे का गेट व ग्रिल वेल्डिंग",
+      desc: "Electric arc welding on broken hinges, security grills, gates & reinforcement",
+      desc_hi: "टूटे कब्जे, खिड़की की ग्रिल, लोहे के मुख्य द्वार की इलेक्ट्रिक आर्क वेल्डिंग",
+      icon: "zap",
+      badge: "High Tensile",
+      badge_hi: "मजबूत वेल्डिंग",
+      base: 180
+    },
+    {
+      id: "tool_sharpening_forging",
+      title: "Tool Forging, Tempering & Sharpening",
+      title_hi: "औजार निर्माण व धार लगाना",
+      desc: "Axe, sickle, chisel, knife forging, tempering on hot anvil & diamond wheel sharpening",
+      desc_hi: "कुल्हाड़ी, दरांती, छेनी की भट्टी पर गर्म फोर्जिंग व धार लगाना",
+      icon: "shield",
+      badge: "Traditional Forge",
+      badge_hi: "पारंपरिक भट्टी",
+      base: 140
+    },
+    {
+      id: "shutter_channel_fix",
+      title: "Shop Rolling Shutter & Spring Repair",
+      title_hi: "रोलिंग शटर व स्प्रिंग मरम्मत",
+      desc: "Commercial shutter tension spring balancing, side channel straightening & locks",
+      desc_hi: "दुकान के रोलिंग शटर का स्प्रिंग बदलना, साइड चैनल सीधा करना व सेंटर लॉक",
+      icon: "sliders",
+      badge: "Heavy Duty",
+      badge_hi: "हैवी ड्यूटी",
+      base: 260
+    },
+    {
+      id: "railing_safety_bars",
+      title: "Staircase Railing & Balcony Safety",
+      title_hi: "रेलिंग व बालकनी सुरक्षा बार",
+      desc: "Wrought iron railing installation, safety grills for kids and pet barriers",
+      desc_hi: "लोहे की सीढ़ी रेलिंग लगाना, बालकनी सेफ्टी ग्रिल व बच्चों की सुरक्षा जाल",
+      icon: "lock",
+      badge: "ISI Certified",
+      badge_hi: "आईएसआई प्रमाणित",
+      base: 320
+    },
+    {
+      id: "metal_fabrication",
+      title: "Custom Structural Iron Fabrication",
+      title_hi: "कस्टम धातु निर्माण कार्य",
+      desc: "MS angle iron racks, tin sheet roofing shed frames or utility stands",
+      desc_hi: "लोहे के रैक, शेड का ढांचा, वाशिंग मशीन स्टैंड या कस्टम स्ट्रक्चर",
+      icon: "box",
+      badge: "Master Blacksmith",
+      badge_hi: "मास्टर लुहार",
+      base: 380
+    },
+    {
+      id: "other_blacksmith",
+      title: "Custom On-Site Metal Repair",
+      title_hi: "अन्य धातु शिल्प कार्य",
+      desc: "Cold metal cutting, pad-eye welding, chain link fence repair or metal fittings",
+      desc_hi: "लोहा कटाई, कुंडा वेल्डिंग, जालीदार तार फेंसिंग या अन्य लोहे की मरम्मत",
+      icon: "tool",
+      badge: "Fair Wage",
+      badge_hi: "उचित मजदूरी",
+      base: 150
     }
   ]
 };
@@ -1914,7 +1645,7 @@ const CITIZEN_PERSONAS = {
 const WORKER_SWITCH_PERSONAS = {
   "101": { id: 101, name: "Rajesh Kumar", skill: "electrician", phone: "+91 98123 45678", coop_name: "Delhi Central Labour Cooperative", pacs_id: "PACS-DL-4029", otp: "5821", photo: "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=120" },
   "102": { id: 102, name: "Mohammad Aslam", skill: "plumber", phone: "+91 98111 22334", coop_name: "Delhi Central Labour Cooperative", pacs_id: "PACS-DL-4532", otp: "3892", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120" },
-  "103": { id: 103, name: "Sunita Sharma", skill: "healthcare", phone: "+91 98733 90812", coop_name: "South Delhi Multi-Purpose Cooperative", pacs_id: "SDMC-PACS-1190", otp: "6214", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120" },
+  "103": { id: 103, name: "Sunita Sharma", skill: "tailoring", phone: "+91 98733 90812", coop_name: "South Delhi Multi-Purpose Cooperative", pacs_id: "SDMC-PACS-1190", otp: "6214", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120" },
   "106": { id: 106, name: "Amit Verma", skill: "electrician", phone: "+91 98700 11223", coop_name: "Delhi Central Labour Cooperative", pacs_id: "PACS-DL-8831", otp: "9401", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120" }
 };
 
@@ -2636,8 +2367,8 @@ function toggleLanguage(lang) {
   const searchInput = document.getElementById("service-search-input");
   if (searchInput) {
     searchInput.placeholder = isHi 
-      ? "सेवा खोजें (उदा. बढ़ई, कुम्हार, लोहार, इलेक्ट्रीशियन, प्लम्बर)..." 
-      : "Type a trade (e.g. Carpentry, Pottery, Blacksmith, Electrician, Plumber)...";
+      ? "सेवा खोजें (उदा. इलेक्ट्रीशियन, प्लम्बर, बढ़ई, सफाई, सिलाई, ड्राइवर)..." 
+      : "Type a trade (e.g. Electrician, Plumber, Carpentry, Cleaning, Tailoring, Driver)...";
   }
 
   const startOtpInput = document.getElementById("input-start-otp");
@@ -3171,30 +2902,17 @@ function initServiceGrid(filteredList = null) {
   const rawList = filteredList || SERVICES;
   const isHi = state.currentLanguage === "hi";
 
-  // When not searching: show first 6 if !state.showAllServices, otherwise all services
-  const list = isSearchActive
-    ? rawList
-    : (state.showAllServices ? rawList : rawList.slice(0, 6));
-
-  // Sync toggle button visibility and text
-  const toggleContainer = document.getElementById("service-toggle-container");
-  const toggleBtnText = document.getElementById("txt-toggle-services");
-  const toggleIcon = document.getElementById("icon-toggle-services");
-
-  if (toggleContainer) {
-    if (isSearchActive) {
-      toggleContainer.style.display = "none";
-    } else {
-      toggleContainer.style.display = "flex";
-      if (toggleBtnText) {
-        toggleBtnText.innerText = state.showAllServices
-          ? (isHi ? "कम सेवाएँ देखें" : "Show Less")
-          : (isHi ? `सभी ${SERVICES.length} सेवाएँ देखें` : `Show All ${SERVICES.length} Services`);
-      }
-      if (toggleIcon) {
-        toggleIcon.setAttribute("data-lucide", state.showAllServices ? "chevron-up" : "chevron-down");
-      }
+  // Filter out artisan services if NGO credentials have NOT been verified
+  const list = rawList.filter(s => {
+    if (s.isArtisan && !state.ngoVerified) {
+      return false;
     }
+    return true;
+  });
+
+  const toggleContainer = document.getElementById("service-toggle-container");
+  if (toggleContainer) {
+    toggleContainer.style.display = "none";
   }
 
   if (list.length === 0) {
@@ -3207,7 +2925,7 @@ function initServiceGrid(filteredList = null) {
       </div>
       <p class="font-black text-slate-900 text-sm mb-1">${isHi ? "कोई सहकारी सेवा नहीं मिली" : "No Cooperative Services Found"}</p>
       <p class="text-xs text-slate-500 max-w-sm mx-auto mb-3.5">
-        ${isHi ? "बढ़ई, कुम्हार, लोहार, इलेक्ट्रीशियन, प्लम्बर, राजमिस्त्री या पेंटर खोजें।" : "Try searching for Carpentry, Pottery, Blacksmith, Electrician, Plumber, Masonry or Painting."}
+        ${isHi ? "इलेक्ट्रीशियन, प्लम्बर, बढ़ई, सफाई, सिलाई या ड्राइवर खोजें।" : "Try searching for Electrician, Plumber, Carpentry, Cleaning, Tailoring or Driver."}
       </p>
       <button onclick="clearSearch()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition btn-tactile">
         ${isHi ? "सभी सेवाएँ देखें" : "Show All Services"}
@@ -3217,6 +2935,8 @@ function initServiceGrid(filteredList = null) {
     safeCreateIcons();
     return;
   }
+
+  let artisanHeaderAdded = false;
 
   list.forEach(s => {
     const isSelected = state.selectedService === s.id;
@@ -3229,6 +2949,35 @@ function initServiceGrid(filteredList = null) {
     const debarCheck = isCustomerDebarredForService(state.currentCustomerName, s.id);
     const isDebarred = debarCheck.debarred;
 
+    // When NGO is verified and we reach the artisan services, render a prominent additional section header!
+    if (state.ngoVerified && s.isArtisan && !artisanHeaderAdded && !isSearchActive) {
+      artisanHeaderAdded = true;
+      const artisanDivider = document.createElement("div");
+      artisanDivider.id = "artisan-guilds-section-header";
+      artisanDivider.className = "col-span-2 sm:col-span-3 mt-3 mb-1 p-3.5 bg-gradient-to-r from-amber-500/15 via-amber-100 to-amber-500/15 border-2 border-amber-400 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-xs transition-all";
+      artisanDivider.innerHTML = `
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-white flex items-center justify-center shadow-xs flex-shrink-0">
+            <i data-lucide="sparkles" class="w-5 h-5 text-amber-100"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-black text-amber-950">${isHi ? "धरोहर कारीगर संघ (सत्यापित एनजीओ हेतु अतिरिक्त अनलॉक)" : "Heritage Artisan Guilds (Additionally Unlocked for Verified NGO)"}</span>
+              <span class="text-[10px] font-black bg-amber-600 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">${isHi ? "3 अतिरिक्त सेवाएं" : "3 Additional Services"}</span>
+            </div>
+            <p class="text-[11px] text-amber-900 font-medium">
+              ${isHi ? "कुम्हार, लोहार और पेंटिंग कारीगरों तक सीधी पहुंच • 20% सामाजिक कल्याण सब्सिडी लागू" : "Pottery, Blacksmith & Metalcraft, and Painting Artisans are now fully accessible with 20% welfare subsidy."}
+            </p>
+          </div>
+        </div>
+        <span class="text-[10px] font-black text-emerald-800 bg-white border border-emerald-300 px-2.5 py-1 rounded-xl shadow-xs whitespace-nowrap flex items-center gap-1">
+          <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>${isHi ? "20% एनजीओ सब्सिडी सक्रिय" : "20% NGO Subsidy Active"}</span>
+        </span>
+      `;
+      grid.appendChild(artisanDivider);
+    }
+
     const card = document.createElement("div");
     card.setAttribute("data-service-id", s.id);
     card.setAttribute("onclick", `selectService('${s.id}', true)`);
@@ -3239,8 +2988,8 @@ function initServiceGrid(filteredList = null) {
     };
 
     let borderClass = isSelected 
-      ? "border-blue-600 bg-blue-50/80 shadow-md ring-2 ring-blue-500/20" 
-      : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm";
+      ? (s.isArtisan ? "border-amber-600 bg-amber-50/90 shadow-md ring-2 ring-amber-500/30" : "border-blue-600 bg-blue-50/80 shadow-md ring-2 ring-blue-500/20")
+      : (s.isArtisan ? "border-amber-300 bg-amber-50/40 hover:border-amber-500 hover:bg-amber-50/80 shadow-xs" : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm");
 
     if (isDebarred) {
       borderClass = "border-red-400 bg-red-50/50 hover:border-red-600 opacity-90";
@@ -3251,30 +3000,40 @@ function initServiceGrid(filteredList = null) {
     card.innerHTML = `
       <div class="flex items-center justify-between w-full">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center ${
-          isDebarred ? "bg-red-100 text-red-700" : (isSelected ? "bg-blue-600 text-white shadow-sm" : "bg-slate-100 text-slate-700")
+          isDebarred ? "bg-red-100 text-red-700" : (isSelected ? (s.isArtisan ? "bg-amber-600 text-white shadow-sm" : "bg-blue-600 text-white shadow-sm") : (s.isArtisan ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-xs" : "bg-slate-100 text-slate-700"))
         }">
           <i data-lucide="${s.icon}" class="w-5 h-5"></i>
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1.5 flex-wrap justify-end">
+          ${s.isArtisan ? `
+            <span class="text-[9px] font-black text-amber-900 bg-amber-200 border border-amber-400 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+              <i data-lucide="sparkles" class="w-2.5 h-2.5 text-amber-700"></i> ${isHi ? "अतिरिक्त कारीगर" : "Additional Artisan"}
+            </span>
+          ` : ""}
           ${isDebarred ? `
             <span class="text-[10px] font-black text-red-700 bg-red-100 border border-red-300 px-2 py-0.5 rounded-full flex items-center gap-1">
               <i data-lucide="shield-x" class="w-3 h-3"></i> Debarred
             </span>
           ` : `
-            <span class="text-[10px] font-black ${isSelected ? "text-blue-800 bg-blue-100/90" : "text-slate-500 bg-slate-100"} px-2.5 py-0.5 rounded-full">
+            <span class="text-[10px] font-black ${isSelected ? (s.isArtisan ? "text-amber-900 bg-amber-200" : "text-blue-800 bg-blue-100/90") : (s.isArtisan ? "text-amber-800 bg-amber-100" : "text-slate-500 bg-slate-100")} px-2.5 py-0.5 rounded-full">
               ${time}
             </span>
           `}
         </div>
       </div>
       <div>
-        <h4 class="font-black text-sm ${isDebarred ? "text-red-950" : (isSelected ? "text-blue-950" : "text-slate-900")}">${name}</h4>
-        <span class="text-[10px] ${isDebarred ? "text-red-600" : "text-emerald-700"} font-bold block mt-0.5">
+        <h4 class="font-black text-sm ${isDebarred ? "text-red-950" : (isSelected ? (s.isArtisan ? "text-amber-950" : "text-blue-950") : (s.isArtisan ? "text-amber-950" : "text-slate-900"))}">${name}</h4>
+        <span class="text-[10px] ${isDebarred ? "text-red-600" : (s.isArtisan ? "text-amber-800 font-bold" : "text-emerald-700")} font-bold block mt-0.5">
           ${isDebarred ? "🚫 Debarred by Ministry" : `✓ ${badge}`}
         </span>
       </div>
-      <div class="flex items-center justify-between w-full pt-1.5 border-t border-slate-100 text-xs">
-        <span class="font-black text-slate-900">₹${s.base}${hrSuffix}</span>
+      <div class="flex items-center justify-between w-full pt-1.5 border-t ${s.isArtisan ? "border-amber-200/80" : "border-slate-100"} text-xs">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-black ${s.isArtisan ? "text-amber-950" : "text-slate-900"}">₹${s.base}${hrSuffix}</span>
+          ${state.ngoVerified && s.isArtisan ? `
+            <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded">NGO: ₹${Math.round(s.base * 0.8)}${hrSuffix}</span>
+          ` : ""}
+        </div>
         <span class="text-amber-500 font-bold text-[11px]">★ ${s.rating}</span>
       </div>
     `;
@@ -3282,12 +3041,44 @@ function initServiceGrid(filteredList = null) {
     grid.appendChild(card);
   });
 
+  // If NGO is NOT verified and not currently in active search, show teaser card for heritage crafts
+  if (!state.ngoVerified && !isSearchActive) {
+    const teaserCard = document.createElement("div");
+    teaserCard.id = "artisan-teaser-card";
+    teaserCard.className = "p-4 rounded-2xl border-2 border-dashed border-indigo-200 bg-gradient-to-br from-indigo-50/50 via-purple-50/30 to-amber-50/30 transition flex flex-col items-start justify-between text-left space-y-2 cursor-pointer hover:border-indigo-400 group btn-tactile";
+    teaserCard.onclick = (e) => {
+      e.stopPropagation();
+      sfx.playClick();
+      openNgoVerificationModal();
+    };
+    teaserCard.innerHTML = `
+      <div class="flex items-center justify-between w-full">
+        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center group-hover:scale-105 transition">
+          <i data-lucide="sparkles" class="w-5 h-5 text-indigo-600"></i>
+        </div>
+        <span class="text-[10px] font-black text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+          <i data-lucide="lock" class="w-3 h-3 text-amber-600"></i> NGO Access
+        </span>
+      </div>
+      <div>
+        <h4 class="font-black text-sm text-indigo-950">${isHi ? "धरोहर कारीगर सेवाएं" : "Heritage Artisan Crafts"}</h4>
+        <span class="text-[10px] text-indigo-600 font-bold block mt-0.5">
+          ${isHi ? "कुम्हार, लुहार व पेंटिंग सेवाएं" : "Pottery, Blacksmith & Painting"}
+        </span>
+      </div>
+      <div class="flex items-center justify-between w-full pt-1.5 border-t border-indigo-100 text-xs text-indigo-700 font-bold">
+        <span>${isHi ? "दर्पण सत्यापन आवश्यक →" : "Verify DARPAN to Unlock →"}</span>
+      </div>
+    `;
+    grid.appendChild(teaserCard);
+  }
+
   safeCreateIcons();
 }
 
 function toggleShowAllServices() {
   sfx.playClick();
-  state.showAllServices = !state.showAllServices;
+  state.showAllServices = true;
   initServiceGrid();
 }
 
@@ -3303,11 +3094,6 @@ function selectService(serviceId, openModal = true) {
   state.selectedService = serviceId;
 
   try {
-    // Auto-expand services if selected service is outside the first 6
-    const first6 = SERVICES.slice(0, 6);
-    if (!state.showAllServices && !first6.some(s => s.id === serviceId)) {
-      state.showAllServices = true;
-    }
     initServiceGrid();
   } catch (err) {
     console.warn("initServiceGrid non-fatal warning:", err);
@@ -3363,6 +3149,12 @@ function openServiceBookingModal(serviceId, step = 1) {
     state.selectedSubServices = catalog.length > 0 ? [catalog[0]] : [];
   }
   state.selectedSubService = state.selectedSubServices[0] || null;
+
+  // Normal customers can only book from a schedule; ensure scheduled mode if non-subscribed
+  if (!state.activeSubscription) {
+    state.bookingScheduleType = "scheduled";
+    setBookingScheduleType("scheduled", false);
+  }
 
   try {
     updateServiceBookingModalUI();
@@ -3826,6 +3618,10 @@ function goToBookingStep(step) {
     }
 
     // Refresh quote & icons in step 2
+    if (!state.activeSubscription && state.bookingScheduleType === "immediate") {
+      setBookingScheduleType("scheduled", false);
+    }
+    updateSubscriberGatingUI();
     calculateLiveQuote();
   }
 
@@ -3850,7 +3646,30 @@ function selectPlan(planType) {
 
 function toggleEmergencyMode() {
   const toggle = document.getElementById("emergency-toggle");
-  state.isEmergency = toggle ? toggle.checked : false;
+  const isChecked = toggle ? toggle.checked : false;
+
+  // Emergency Triage is strictly allowed ONLY to subscribed users
+  if (isChecked && !state.activeSubscription) {
+    if (toggle) toggle.checked = false;
+    state.isEmergency = false;
+    const box = document.getElementById("emergency-box");
+    const siren = document.getElementById("siren-icon");
+    if (box) box.classList.remove("emergency-active");
+    if (siren) siren.classList.remove("animate-bounce");
+    sfx.playFallbackWarning();
+    calculateLiveQuote();
+    showToast(
+      state.currentLanguage === "hi"
+        ? "आपातकालीन ट्रायज केवल समृद्धी पास धारकों (VIP Subscribers) के लिए उपलब्ध है। अनलॉक करने हेतु कृपया पास लें।"
+        : "Emergency Triage Mode is exclusive to Seva Setu Pass subscribers! Subscribe to unlock priority SOS triage.",
+      "warning"
+    );
+    openSubscriptionCheckoutModal();
+    updateSubscriberGatingUI();
+    return;
+  }
+
+  state.isEmergency = isChecked;
   
   const box = document.getElementById("emergency-box");
   const siren = document.getElementById("siren-icon");
@@ -3869,6 +3688,7 @@ function toggleEmergencyMode() {
   }
 
   calculateLiveQuote();
+  updateSubscriberGatingUI();
 }
 
 // ==========================================
@@ -3885,7 +3705,6 @@ function initBookingSchedule() {
   const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
   state.bookingDate = tomorrowStr;
-  state.bookingScheduleType = "immediate";
   state.bookingTimeSlot = "09:00 AM - 12:00 PM";
   state.bookingTimeSlotKey = "morning";
   state.bookingCustomTime = "";
@@ -3896,11 +3715,32 @@ function initBookingSchedule() {
     dateInput.value = tomorrowStr;
   }
 
-  updateBookingScheduleUI();
+  // Normal customers can only book from a schedule; Instant Dispatch is exclusive to subscribers
+  const defaultMode = Boolean(state.activeSubscription) ? "immediate" : "scheduled";
+  setBookingScheduleType(defaultMode, false);
 }
 
-function setBookingScheduleType(type) {
-  sfx.playClick();
+function setBookingScheduleType(type, userInitiated = true) {
+  const isSubscribed = Boolean(state.activeSubscription);
+
+  // Normal customers can only book a service from a schedule; Instant Dispatch is exclusive to subscribers
+  if (type === "immediate" && !isSubscribed) {
+    if (userInitiated) {
+      sfx.playFallbackWarning();
+      showToast(
+        state.currentLanguage === "hi"
+          ? "त्वरित प्रेषण (Instant Dispatch) केवल समृद्धी पास (VIP Subscribers) के लिए उपलब्ध है। सामान्य ग्राहक केवल शेड्यूल करके सेवा बुक कर सकते हैं।"
+          : "Instant Dispatch is exclusive to Seva Setu Pass subscribers! Normal customers can book from a schedule.",
+        "warning"
+      );
+      openSubscriptionCheckoutModal();
+    }
+    type = "scheduled";
+  }
+
+  if (userInitiated) {
+    sfx.playClick();
+  }
   state.bookingScheduleType = type;
 
   const btnImm = document.getElementById("btn-mode-immediate");
@@ -3926,6 +3766,95 @@ function setBookingScheduleType(type) {
   }
 
   updateBookingScheduleUI();
+  updateSubscriberGatingUI();
+}
+
+function updateSubscriberGatingUI() {
+  const isSub = Boolean(state.activeSubscription);
+  const isHi = state.currentLanguage === "hi";
+
+  // 0. Emergency Triage Mode column visibility (strictly for premium / subscribed users)
+  const emCol = document.getElementById("emergency-triage-col");
+  const searchCol = document.getElementById("search-bar-col");
+  if (emCol && searchCol) {
+    if (isSub) {
+      emCol.classList.remove("hidden");
+      searchCol.className = "w-full lg:w-3/5 space-y-4";
+    } else {
+      emCol.classList.add("hidden");
+      searchCol.className = "w-full space-y-4";
+      if (state.isEmergency) {
+        state.isEmergency = false;
+        const toggle = document.getElementById("emergency-toggle");
+        if (toggle) toggle.checked = false;
+        const box = document.getElementById("emergency-box");
+        const siren = document.getElementById("siren-icon");
+        if (box) box.classList.remove("emergency-active");
+        if (siren) siren.classList.remove("animate-bounce");
+      }
+    }
+  }
+
+  // 1. Emergency box badge and description
+  const emBadge = document.getElementById("emergency-sub-badge");
+  const emDesc = document.getElementById("txt-emergency-desc");
+  if (emBadge) {
+    if (isSub) {
+      emBadge.className = "bg-emerald-100 text-emerald-900 border border-emerald-300 text-[9px] font-black uppercase px-1.5 py-0.5 rounded flex items-center gap-0.5";
+      emBadge.innerHTML = `<i data-lucide="crown" class="w-2.5 h-2.5 text-amber-600"></i> ${isHi ? "पास सक्रिय (VIP)" : "Pass Active (VIP)"}`;
+    } else {
+      emBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-black uppercase px-1.5 py-0.5 rounded flex items-center gap-0.5";
+      emBadge.innerHTML = `<i data-lucide="crown" class="w-2.5 h-2.5 text-amber-600"></i> ${isHi ? "केवल सब्सक्राइबर्स" : "Subscribers Only"}`;
+    }
+  }
+  if (emDesc) {
+    if (isSub) {
+      emDesc.innerText = isHi 
+        ? "गैस रिसाव, शॉर्ट सर्किट या आपातकाल के लिए 30 मिनट में प्राथमिकता प्रेषण (पास सक्रिय)।" 
+        : "Priority sub-30m dispatch for gas leak, short circuit, or medical transit (Pass Active).";
+    } else {
+      emDesc.innerText = isHi 
+        ? "गैस रिसाव, शॉर्ट सर्किट या आपातकाल के लिए 30 मिनट में प्राथमिकता प्रेषण (केवल समृद्धी पास)।" 
+        : "Priority sub-30m dispatch for gas leak, short circuit, or medical transit (Pass Subscribers Exclusive).";
+    }
+  }
+
+  // 2. Dispatch Mode instant dispatch badge and description
+  const immBadge = document.getElementById("badge-immediate-access");
+  const immDesc = document.getElementById("desc-immediate-mode");
+  if (immBadge) {
+    if (isSub) {
+      immBadge.className = "text-[9px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1";
+      immBadge.innerHTML = `<i data-lucide="check" class="w-2.5 h-2.5 text-white"></i> ${isHi ? "अनलॉक (VIP)" : "VIP Unlocked"}`;
+    } else {
+      immBadge.className = "text-[9px] bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1";
+      immBadge.innerHTML = `<i data-lucide="crown" class="w-2.5 h-2.5 text-slate-950"></i> ${isHi ? "केवल सब्सक्राइबर्स" : "Subscribers Only"}`;
+    }
+  }
+  if (immDesc) {
+    if (isSub) {
+      immDesc.innerText = isHi 
+        ? "तकनीशियन तुरंत रवाना होगा (<30 मिनट आगमन) • समृद्धी पास सक्रिय" 
+        : "Technician dispatched immediately (<30 min arrival) • Samriddhi Pass Active";
+    } else {
+      immDesc.innerText = isHi 
+        ? "तकनीशियन तुरंत रवाना होगा (<30 मिनट आगमन) • 🔒 केवल समृद्धी पास" 
+        : "Technician dispatched immediately (<30 min average arrival) • 🔒 Pass Exclusive";
+    }
+  }
+
+  // 3. If user is not subscribed and currently in immediate mode, revert to scheduled
+  if (!isSub && state.bookingScheduleType === "immediate") {
+    state.bookingScheduleType = "scheduled";
+    const btnImm = document.getElementById("btn-mode-immediate");
+    const btnSch = document.getElementById("btn-mode-scheduled");
+    const details = document.getElementById("scheduled-picker-details");
+    if (btnImm) btnImm.className = "p-3.5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 text-left transition btn-tactile shadow-xs";
+    if (btnSch) btnSch.className = "p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/80 text-left transition btn-tactile shadow-sm ring-2 ring-blue-500/20";
+    if (details) details.classList.remove("hidden");
+  }
+
+  safeCreateIcons();
 }
 
 function selectQuickDay(dayKey) {
@@ -4469,6 +4398,28 @@ function openPaymentGatewayModal() {
     if (alertBanner) alertBanner.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
+
+  // Subscription gating for emergency triage & instant dispatch
+  if (state.isEmergency && !state.activeSubscription) {
+    state.isEmergency = false;
+    const emToggle = document.getElementById("emergency-toggle");
+    if (emToggle) emToggle.checked = false;
+    calculateLiveQuote();
+    showToast(isHi 
+      ? "आपातकालीन ट्रायज केवल समृद्धी पास धारकों (VIP Subscribers) के लिए उपलब्ध है।" 
+      : "Emergency Triage Mode is exclusive to Seva Setu Pass subscribers! Subscribe to unlock priority SOS triage.", "warning");
+    openSubscriptionCheckoutModal();
+    return;
+  }
+  if (state.bookingScheduleType === "immediate" && !state.activeSubscription) {
+    setBookingScheduleType("scheduled", false);
+    showToast(isHi 
+      ? "त्वरित प्रेषण केवल समृद्धी पास धारकों के लिए उपलब्ध है। सामान्य ग्राहक केवल शेड्यूल करके सेवा बुक कर सकते हैं।" 
+      : "Instant Dispatch is exclusive to Seva Setu Pass subscribers! Normal customers can book from a schedule.", "warning");
+    openSubscriptionCheckoutModal();
+    return;
+  }
+
   // Hide the booking modal if open so payment gateway displays cleanly
   const serviceBookingModal = document.getElementById("modal-service-booking");
   if (serviceBookingModal) {
@@ -4771,11 +4722,64 @@ function submitNgoVerification(e) {
     btn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4"></i> <span>${isHi ? "दर्पण सत्यापित करें और 20% सब्सिडी लागू करें" : "Verify DARPAN & Apply 20% Subsidy"}</span>`;
     safeCreateIcons();
 
+    // Update NGO Status Bar in Home UI
+    const unverifiedState = document.getElementById("ngo-unverified-state");
+    const verifiedState = document.getElementById("ngo-verified-state");
+    const orgNameEl = document.getElementById("ngo-bar-org-name");
+    if (unverifiedState) unverifiedState.classList.add("hidden");
+    if (verifiedState) verifiedState.classList.remove("hidden");
+    if (orgNameEl && name) orgNameEl.innerText = name;
+
+    // Unhide artisan quick chips under the search bar
+    const artisanChips = document.getElementById("artisan-quick-chips");
+    if (artisanChips) artisanChips.classList.remove("hidden");
+
+    // Refresh service grid to reveal artisan services!
+    initServiceGrid();
+
     closeNgoVerificationModal(true);
     sfx.playSuccessFanfare();
     calculateLiveQuote();
-    showToast(isHi ? `✓ एनजीओ सत्यापित: ${name} (20% सब्सिडी लागू)` : `✓ NGO Verified: ${name} (20% Subsidy Applied)`, "success");
+    showToast(isHi ? `✓ एनजीओ सत्यापित: ${name} (20% सब्सिडी लागू व धरोहर कारीगर अनलॉक)` : `✓ NGO Verified: ${name} (20% Subsidy & Artisan Guilds Unlocked)`, "success");
   }, 700);
+}
+
+function resetNgoVerification() {
+  sfx.playClick();
+  state.ngoVerified = false;
+  state.isNgo = false;
+  state.ngoData = null;
+
+  const cb = document.getElementById("ngo-checkbox");
+  if (cb) cb.checked = false;
+
+  const pill = document.getElementById("ngo-verified-pill");
+  const hint = document.getElementById("ngo-unverified-hint");
+  if (pill) pill.classList.add("hidden");
+  if (hint) hint.classList.remove("hidden");
+
+  const unverifiedState = document.getElementById("ngo-unverified-state");
+  const verifiedState = document.getElementById("ngo-verified-state");
+  if (unverifiedState) unverifiedState.classList.remove("hidden");
+  if (verifiedState) verifiedState.classList.add("hidden");
+
+  const container = document.getElementById("ngo-selection-container");
+  if (container) container.classList.remove("ngo-verified-glow", "p-2");
+
+  // Hide artisan quick chips under the search bar
+  const artisanChips = document.getElementById("artisan-quick-chips");
+  if (artisanChips) artisanChips.classList.add("hidden");
+
+  // If currently selected service is an artisan service, reset to electrician
+  if (SERVICES.find(s => s.id === state.selectedService && s.isArtisan)) {
+    state.selectedService = "electrician";
+    state.activeWorker = WORKERS.find(w => w.skill === "electrician") || WORKERS[0];
+  }
+
+  initServiceGrid();
+  calculateLiveQuote();
+  const isHi = state.currentLanguage === "hi";
+  showToast(isHi ? "एनजीओ सत्यापन रीसेट किया गया" : "NGO status reset to regular citizen view", "info");
 }
 
 // 10. Booking Dispatch & Dual OTP Generation
@@ -4805,6 +4809,18 @@ function executeBookingConfirmed() {
     openServiceDebarmentModal(state.selectedService, debarCheck.reason);
     showToast(isHi ? `🚫 सेवा प्रतिबंधित: ${customerName} निष्कासित है` : `🚫 Service Restricted: ${customerName} is debarred from this service`, "emergency");
     if (alertBanner) alertBanner.scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  // Subscription gating enforcement
+  if (state.isEmergency && !state.activeSubscription) {
+    state.isEmergency = false;
+    showToast(isHi ? "आपातकालीन ट्रायज केवल समृद्धी पास धारकों के लिए उपलब्ध है।" : "Emergency Triage is exclusive to Seva Setu Pass subscribers.", "warning");
+    return;
+  }
+  if (state.bookingScheduleType === "immediate" && !state.activeSubscription) {
+    setBookingScheduleType("scheduled", false);
+    showToast(isHi ? "त्वरित प्रेषण केवल समृद्धी पास धारकों के लिए उपलब्ध है। सामान्य ग्राहक केवल शेड्यूल करके सेवा ले सकते हैं।" : "Instant Dispatch is exclusive to Seva Setu Pass subscribers. Normal customers can only book from a schedule.", "warning");
     return;
   }
 
@@ -6190,6 +6206,16 @@ function resetDemoState() {
   if (subStatusBadge) subStatusBadge.classList.add("hidden");
   selectSubTier("monthly_pass");
 
+  // Reset emergency & schedule gating
+  state.isEmergency = false;
+  if (emCheck) emCheck.checked = false;
+  const emBox = document.getElementById("emergency-box");
+  const siren = document.getElementById("siren-icon");
+  if (emBox) emBox.classList.remove("emergency-active");
+  if (siren) siren.classList.remove("animate-bounce");
+  setBookingScheduleType("scheduled", false);
+  updateSubscriberGatingUI();
+
   // Reset reviews
   state.reviewFilter = "all";
   filterCitizenReviews("all");
@@ -6289,6 +6315,10 @@ function closeSubscriptionModal() {
   sfx.playClick();
   const modal = document.getElementById("modal-subscription-gateway");
   if (modal) modal.classList.add("hidden");
+  const bookingModal = document.getElementById("modal-service-booking");
+  if (!bookingModal || bookingModal.classList.contains("hidden")) {
+    document.body.classList.remove("overflow-hidden");
+  }
 }
 
 function simulateSubPaymentApproval() {
@@ -6359,7 +6389,7 @@ async function confirmSubscriptionActivation() {
         {
           code: "FESTIVAL500",
           title: "₹500 Seasonal Festival Artisan Voucher",
-          description: "₹500 credit redeemable on home painting, carpentry renovation, and artisan terracotta decor.",
+          description: "₹500 credit redeemable on carpentry renovation, tailoring, and electrical home upgrades.",
           type: "wallet_credit",
           value: 500
         },
@@ -6411,8 +6441,9 @@ async function confirmSubscriptionActivation() {
       : `Pass Active: ${tier.discount_pct}% Off Applied`;
   }
 
-  // Update Invoice Quote
+  // Update Invoice Quote & Gating UI
   calculateLiveQuote();
+  updateSubscriberGatingUI();
 
   // Show Offers Modal Vault
   openOffersModal();
@@ -6449,6 +6480,10 @@ function closeOffersModal() {
   sfx.playClick();
   const modal = document.getElementById("modal-subscription-success");
   if (modal) modal.classList.add("hidden");
+  const bookingModal = document.getElementById("modal-service-booking");
+  if (!bookingModal || bookingModal.classList.contains("hidden")) {
+    document.body.classList.remove("overflow-hidden");
+  }
 }
 
 function copyOfferCode(code) {
@@ -6519,11 +6554,11 @@ async function fetchReviews() {
       user_name: "Col. Sanjeev Malik (Retd)",
       worker_id: 103,
       worker_name: "Sunita Sharma",
-      service: "healthcare",
-      service_title: "Elder Nursing & Vitals Check",
+      service: "tailoring",
+      service_title: "Boutique Fit & Kurta Alteration",
       rating: 5,
       type: "positive",
-      comment: "Sunita did an exceptional job monitoring post-operative vitals for my mother. NSDC certified, extremely polite, and compassionate.",
+      comment: "Sunita did an exceptional job stitching custom festival kurtas and altering suits for my family. Extremely polite, prompt, and skilled.",
       verified_booking: true,
       timestamp: "Yesterday, 04:20 PM",
       status: "resolved",
@@ -6815,23 +6850,16 @@ const DEFAULT_REGIONAL_DEMAND = [
     status: "Critical Shortage",
     monthly_orders: 1420,
     trade_demand: {
-      electrician: 98, plumber: 85, carpentry: 82, cleaning: 92, painting: 76,
-      healthcare: 78, masonry: 74, pottery: 68, blacksmith: 70, tailoring: 75,
-      driver: 88, waste_management: 80
+      electrician: 98, plumber: 85, carpentry: 82, cleaning: 92,
+      tailoring: 75, driver: 88
     },
     trade_requirements: {
       electrician: { required: 32, active: 18, deficit: 14, demand_score: 98, monthly_orders: 420 },
       plumber: { required: 24, active: 15, deficit: 9, demand_score: 85, monthly_orders: 310 },
       carpentry: { required: 18, active: 11, deficit: 7, demand_score: 82, monthly_orders: 240 },
       cleaning: { required: 28, active: 20, deficit: 8, demand_score: 92, monthly_orders: 360 },
-      painting: { required: 16, active: 10, deficit: 6, demand_score: 76, monthly_orders: 190 },
-      healthcare: { required: 20, active: 14, deficit: 6, demand_score: 78, monthly_orders: 220 },
-      masonry: { required: 14, active: 8, deficit: 6, demand_score: 74, monthly_orders: 160 },
-      pottery: { required: 10, active: 6, deficit: 4, demand_score: 68, monthly_orders: 110 },
-      blacksmith: { required: 12, active: 7, deficit: 5, demand_score: 70, monthly_orders: 130 },
       tailoring: { required: 15, active: 11, deficit: 4, demand_score: 75, monthly_orders: 150 },
-      driver: { required: 22, active: 16, deficit: 6, demand_score: 88, monthly_orders: 280 },
-      waste_management: { required: 16, active: 11, deficit: 5, demand_score: 80, monthly_orders: 180 }
+      driver: { required: 22, active: 16, deficit: 6, demand_score: 88, monthly_orders: 280 }
     }
   },
   {
@@ -6843,23 +6871,16 @@ const DEFAULT_REGIONAL_DEMAND = [
     status: "High Demand",
     monthly_orders: 1850,
     trade_demand: {
-      electrician: 84, plumber: 82, carpentry: 86, cleaning: 89, painting: 88,
-      healthcare: 96, masonry: 70, pottery: 74, blacksmith: 66, tailoring: 80,
-      driver: 85, waste_management: 78
+      electrician: 84, plumber: 82, carpentry: 86, cleaning: 89,
+      tailoring: 80, driver: 85
     },
     trade_requirements: {
       electrician: { required: 26, active: 22, deficit: 4, demand_score: 84, monthly_orders: 340 },
       plumber: { required: 22, active: 18, deficit: 4, demand_score: 82, monthly_orders: 290 },
       carpentry: { required: 20, active: 16, deficit: 4, demand_score: 86, monthly_orders: 260 },
       cleaning: { required: 30, active: 25, deficit: 5, demand_score: 89, monthly_orders: 410 },
-      painting: { required: 18, active: 15, deficit: 3, demand_score: 88, monthly_orders: 230 },
-      healthcare: { required: 28, active: 24, deficit: 4, demand_score: 96, monthly_orders: 380 },
-      masonry: { required: 12, active: 10, deficit: 2, demand_score: 70, monthly_orders: 140 },
-      pottery: { required: 12, active: 10, deficit: 2, demand_score: 74, monthly_orders: 150 },
-      blacksmith: { required: 10, active: 8, deficit: 2, demand_score: 66, monthly_orders: 120 },
       tailoring: { required: 16, active: 14, deficit: 2, demand_score: 80, monthly_orders: 200 },
-      driver: { required: 25, active: 22, deficit: 3, demand_score: 85, monthly_orders: 320 },
-      waste_management: { required: 15, active: 13, deficit: 2, demand_score: 78, monthly_orders: 170 }
+      driver: { required: 25, active: 22, deficit: 3, demand_score: 85, monthly_orders: 320 }
     }
   },
   {
@@ -6871,23 +6892,16 @@ const DEFAULT_REGIONAL_DEMAND = [
     status: "Stable Supply",
     monthly_orders: 980,
     trade_demand: {
-      electrician: 75, plumber: 80, carpentry: 72, cleaning: 78, painting: 70,
-      healthcare: 65, masonry: 84, pottery: 86, blacksmith: 82, tailoring: 88,
-      driver: 70, waste_management: 82
+      electrician: 75, plumber: 80, carpentry: 72, cleaning: 78,
+      tailoring: 88, driver: 70
     },
     trade_requirements: {
       electrician: { required: 18, active: 16, deficit: 2, demand_score: 75, monthly_orders: 210 },
       plumber: { required: 16, active: 14, deficit: 2, demand_score: 80, monthly_orders: 190 },
       carpentry: { required: 14, active: 12, deficit: 2, demand_score: 72, monthly_orders: 160 },
       cleaning: { required: 20, active: 18, deficit: 2, demand_score: 78, monthly_orders: 240 },
-      painting: { required: 12, active: 11, deficit: 1, demand_score: 70, monthly_orders: 130 },
-      healthcare: { required: 14, active: 13, deficit: 1, demand_score: 65, monthly_orders: 150 },
-      masonry: { required: 20, active: 16, deficit: 4, demand_score: 84, monthly_orders: 220 },
-      pottery: { required: 18, active: 14, deficit: 4, demand_score: 86, monthly_orders: 180 },
-      blacksmith: { required: 16, active: 12, deficit: 4, demand_score: 82, monthly_orders: 170 },
       tailoring: { required: 22, active: 18, deficit: 4, demand_score: 88, monthly_orders: 250 },
-      driver: { required: 15, active: 13, deficit: 2, demand_score: 70, monthly_orders: 180 },
-      waste_management: { required: 18, active: 15, deficit: 3, demand_score: 82, monthly_orders: 190 }
+      driver: { required: 15, active: 13, deficit: 2, demand_score: 70, monthly_orders: 180 }
     }
   },
   {
@@ -6899,23 +6913,16 @@ const DEFAULT_REGIONAL_DEMAND = [
     status: "Shortage Alert",
     monthly_orders: 1210,
     trade_demand: {
-      electrician: 90, plumber: 94, carpentry: 88, cleaning: 80, painting: 82,
-      healthcare: 72, masonry: 80, pottery: 70, blacksmith: 78, tailoring: 84,
-      driver: 76, waste_management: 74
+      electrician: 90, plumber: 94, carpentry: 88, cleaning: 80,
+      tailoring: 84, driver: 76
     },
     trade_requirements: {
       electrician: { required: 25, active: 17, deficit: 8, demand_score: 90, monthly_orders: 310 },
       plumber: { required: 24, active: 14, deficit: 10, demand_score: 94, monthly_orders: 330 },
       carpentry: { required: 18, active: 12, deficit: 6, demand_score: 88, monthly_orders: 220 },
       cleaning: { required: 22, active: 18, deficit: 4, demand_score: 80, monthly_orders: 260 },
-      painting: { required: 16, active: 12, deficit: 4, demand_score: 82, monthly_orders: 180 },
-      healthcare: { required: 16, active: 13, deficit: 3, demand_score: 72, monthly_orders: 170 },
-      masonry: { required: 16, active: 12, deficit: 4, demand_score: 80, monthly_orders: 190 },
-      pottery: { required: 11, active: 8, deficit: 3, demand_score: 70, monthly_orders: 120 },
-      blacksmith: { required: 14, active: 10, deficit: 4, demand_score: 78, monthly_orders: 150 },
       tailoring: { required: 18, active: 14, deficit: 4, demand_score: 84, monthly_orders: 210 },
-      driver: { required: 18, active: 15, deficit: 3, demand_score: 76, monthly_orders: 200 },
-      waste_management: { required: 14, active: 11, deficit: 3, demand_score: 74, monthly_orders: 160 }
+      driver: { required: 18, active: 15, deficit: 3, demand_score: 76, monthly_orders: 200 }
     }
   },
   {
@@ -6927,23 +6934,16 @@ const DEFAULT_REGIONAL_DEMAND = [
     status: "Balanced",
     monthly_orders: 840,
     trade_demand: {
-      electrician: 70, plumber: 66, carpentry: 68, cleaning: 72, painting: 64,
-      healthcare: 62, masonry: 72, pottery: 75, blacksmith: 74, tailoring: 70,
-      driver: 68, waste_management: 76
+      electrician: 70, plumber: 66, carpentry: 68, cleaning: 72,
+      tailoring: 70, driver: 68
     },
     trade_requirements: {
       electrician: { required: 15, active: 13, deficit: 2, demand_score: 70, monthly_orders: 170 },
       plumber: { required: 14, active: 12, deficit: 2, demand_score: 66, monthly_orders: 150 },
       carpentry: { required: 12, active: 10, deficit: 2, demand_score: 68, monthly_orders: 140 },
       cleaning: { required: 16, active: 14, deficit: 2, demand_score: 72, monthly_orders: 180 },
-      painting: { required: 10, active: 9, deficit: 1, demand_score: 64, monthly_orders: 110 },
-      healthcare: { required: 12, active: 11, deficit: 1, demand_score: 62, monthly_orders: 130 },
-      masonry: { required: 14, active: 12, deficit: 2, demand_score: 72, monthly_orders: 150 },
-      pottery: { required: 14, active: 12, deficit: 2, demand_score: 75, monthly_orders: 140 },
-      blacksmith: { required: 12, active: 10, deficit: 2, demand_score: 74, monthly_orders: 130 },
       tailoring: { required: 14, active: 12, deficit: 2, demand_score: 70, monthly_orders: 150 },
-      driver: { required: 14, active: 12, deficit: 2, demand_score: 68, monthly_orders: 160 },
-      waste_management: { required: 15, active: 13, deficit: 2, demand_score: 76, monthly_orders: 160 }
+      driver: { required: 14, active: 12, deficit: 2, demand_score: 68, monthly_orders: 160 }
     }
   }
 ];
@@ -6960,7 +6960,7 @@ function initMinistryServiceRequirements() {
     const chipsHtml = [
       `<button type="button" onclick="onMinistryServiceChange('all')" id="min-chip-all" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition whitespace-nowrap btn-tactile flex items-center gap-1.5 shadow-xs">
         <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-        <span>${isHi ? "सभी 12 सेवाएँ" : "All 12 Services"}</span>
+        <span>${isHi ? "सभी 6 सेवाएँ" : "All 6 Services"}</span>
       </button>`
     ];
 
@@ -6997,7 +6997,7 @@ function onMinistryServiceChange(serviceId) {
   fetchRegionalDemandCharts();
 
   const isHi = state.currentLanguage === "hi";
-  let label = isHi ? "सभी 12 सेवाएँ" : "All 12 Services";
+  let label = isHi ? "सभी 6 सेवाएँ" : "All 6 Services";
   if (serviceId !== "all") {
     const s = SERVICES.find(x => x.id === serviceId);
     if (s) label = isHi ? s.name_hi : s.name;
@@ -7061,7 +7061,7 @@ function renderMinistryServiceRequirements(districts, serviceId = "all", apiSumm
   const isHi = state.currentLanguage === "hi";
   const selectedService = serviceId || state.ministrySelectedService || "all";
   const serviceObj = SERVICES.find(s => s.id === selectedService);
-  const serviceName = serviceObj ? (isHi ? serviceObj.name_hi : serviceObj.name) : (isHi ? "सभी 12 सेवाएँ" : "All 12 Services");
+  const serviceName = serviceObj ? (isHi ? serviceObj.name_hi : serviceObj.name) : (isHi ? "सभी 6 सेवाएँ" : "All 6 Services");
 
   // 1. Calculate Aggregated Requirement Metrics
   let totalReq = 0;
@@ -7364,7 +7364,7 @@ ${districtLines}
 * Zero Intermediary Mandate: Disburse 100% of fair-wage earnings directly
   via Direct Benefit Transfer (DBT) to attested technician bank accounts.
 * Grassroots Skill Expansion: Extend Khadi & Village Industries (KVIC) master
-  artisan stipends to regional pottery, blacksmith, and carpentry clusters.
+  artisan stipends to regional tailoring and carpentry clusters.
 
 ===============================================================
 Digitally Certified & Sealed by:
@@ -7625,15 +7625,15 @@ const WORKER_PERSONAS = {
   sunita: {
     id: 103,
     name: "Sunita Sharma",
-    skill: "healthcare",
+    skill: "tailoring",
     phone: "+91 98733 90812",
     coop_name: "South Delhi Multi-Purpose Cooperative",
     coop_id: "DL/PACS/2026/103",
     otp: "9042",
     aadhaar: "XXXX-XXXX-1190",
-    certificate: "General Nursing Assistant (NSDC Certified)",
-    cert_title: "General Nursing Assistant",
-    cert_issuer: "NSDC Certified",
+    certificate: "Weavers Cooperative Federation Master Tailoring Certificate",
+    cert_title: "Weavers Federation Tailoring L4",
+    cert_issuer: "Handloom Development Board & NSDC",
     photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
   },
   vikram: {
@@ -7663,6 +7663,48 @@ const WORKER_PERSONAS = {
     cert_title: "State Wireman Attested",
     cert_issuer: "NCR Tech Federation",
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80"
+  },
+  ramdayal: {
+    id: 107,
+    name: "Ram Dayal",
+    skill: "pottery",
+    phone: "+91 98119 88776",
+    coop_name: "NCR Technicians & Artisans Cooperative",
+    coop_id: "DL/PACS/2026/107",
+    otp: "5291",
+    aadhaar: "XXXX-XXXX-6721",
+    certificate: "KVIC Master Terracotta Artisan & Khadi Board Guild Attested",
+    cert_title: "KVIC Master Terracotta Artisan",
+    cert_issuer: "Khadi & Village Industries Commission (KVIC)",
+    photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80"
+  },
+  kishan: {
+    id: 109,
+    name: "Kishan Luhar",
+    skill: "blacksmith",
+    phone: "+91 98101 33445",
+    coop_name: "Delhi Central Labour Cooperative",
+    coop_id: "DL/PACS/2026/109",
+    otp: "7741",
+    aadhaar: "XXXX-XXXX-5519",
+    certificate: "Labour Cooperative Guild Master Blacksmith & Arc Welding Attested",
+    cert_title: "Master Blacksmith & Arc Welder",
+    cert_issuer: "Labour Cooperative Guild & NCVT",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+  },
+  manoj: {
+    id: 110,
+    name: "Manoj Painter",
+    skill: "painting",
+    phone: "+91 98711 77889",
+    coop_name: "South Delhi Multi-Purpose Cooperative",
+    coop_id: "DL/PACS/2026/110",
+    otp: "6612",
+    aadhaar: "XXXX-XXXX-4482",
+    certificate: "NSDC Decorative Finishing & Surface Coating Guild Master",
+    cert_title: "NSDC Decorative Finishing Master",
+    cert_issuer: "National Skill Development Corporation (NSDC)",
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
   }
 };
 
@@ -9922,19 +9964,23 @@ if (typeof window !== "undefined") {
   window.selectTimeSlot = selectTimeSlot;
   window.onBookingDateInputChange = onBookingDateInputChange;
   window.onCustomTimeChange = onCustomTimeChange;
-  window.clearCustomTime = clearCustomTime;
+  window.state = state;
+  window.SERVICES = SERVICES;
+  window.WORKERS = WORKERS;
   window.selectPlan = selectPlan;
   window.handleNgoCheckboxChange = handleNgoCheckboxChange;
   window.openNgoVerificationModal = openNgoVerificationModal;
   window.closeNgoVerificationModal = closeNgoVerificationModal;
   window.autoFillSampleNgo = autoFillSampleNgo;
   window.submitNgoVerification = submitNgoVerification;
+  window.resetNgoVerification = resetNgoVerification;
   window.openPaymentGatewayModal = openPaymentGatewayModal;
   window.closePaymentGatewayModal = closePaymentGatewayModal;
   window.executeBookingConfirmed = executeBookingConfirmed;
   window.switchPortal = switchPortal;
   window.toggleEmergencyMode = toggleEmergencyMode;
   window.toggleShowAllServices = toggleShowAllServices;
+  window.updateSubscriberGatingUI = updateSubscriberGatingUI;
 
   // In-Menu Satisfaction Panel & Subservices Selection
   window.backToSubServicesSelection = backToSubServicesSelection;
